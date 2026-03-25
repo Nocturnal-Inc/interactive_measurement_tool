@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html><head><style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0f1624; color: #94a3b8; font-family: 'DM Mono', monospace; display: flex; flex-direction: column; align-items: center; padding: 24px 16px; gap: 20px; min-width: 900px; }
+h2 { color: #f472b6; font-size: 14px; letter-spacing: 0.1em; }
+
+.controls-wrap { display: flex; flex-direction: column; gap: 12px; width: 640px; }
+.ctrl-group { background: #131c2e; border-radius: 10px; padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; }
+.ctrl-group-title { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: #334155; }
+.ctrl { display: flex; align-items: center; gap: 10px; font-size: 11px; }
+.ctrl-label { width: 148px; text-align: right; color: #64748b; }
+.ctrl-val { width: 64px; color: #f472b6; font-size: 11px; font-weight: bold; }
+input[type=range] { flex: 1; accent-color: #f472b6; }
+
+.ctrl-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 28px; }
+
+/* derived outputs */
+.derived-row { display: flex; gap: 20px; flex-wrap: wrap; padding: 4px 0 0 0; border-top: 1px solid #1e293b; margin-top: 2px; }
+.derived-item { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+.derived-label { color: #475569; }
+.derived-val { color: #22d3ee; font-weight: bold; min-width: 52px; }
+
+/* lock toggle */
+.lock-row { display: flex; align-items: center; gap: 8px; font-size: 10px; color: #475569; }
+.lock-btn { background: #1e293b; border: 1px solid #334155; border-radius: 4px; color: #94a3b8; font-size: 10px; font-family: monospace; padding: 2px 10px; cursor: pointer; letter-spacing: 0.05em; transition: all 0.12s; }
+.lock-btn.active { background: #f472b620; border-color: #f472b6; color: #f472b6; }
+.lock-hint { color: #22d3ee88; font-size: 10px; margin-left: 6px; }
+
+.section-title { font-size: 10px; color: #334155; letter-spacing: 0.12em; text-transform: uppercase; align-self: flex-start; margin-left: 20px; }
+.static-row { display: flex; gap: 12px; justify-content: center; overflow-x: auto; width: 100%; padding: 0 12px; }
+</style></head>
+<body>
+
+<h2>FACE CROSS-SECTION · TOP-DOWN VIEW</h2>
+
+<div class="controls-wrap">
+
+  <div class="ctrl-group">
+    <div class="ctrl-group-title">Cranial Shape</div>
+
+    <div class="ctrl">
+      <div class="ctrl-label">Circumference C</div>
+      <input type="range" id="circ" min="50" max="65" step="0.1" value="57.5">
+      <div class="ctrl-val" id="circ-v">57.5 cm</div>
+    </div>
+
+    <div class="ctrl-row">
+      <div class="ctrl">
+        <div class="ctrl-label">BZ Width</div>
+        <input type="range" id="bz" min="12" max="18" step="0.05" value="14.5">
+        <div class="ctrl-val" id="bz-v">14.50 cm</div>
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-label">Skull Depth</div>
+        <input type="range" id="depth" min="14" max="24" step="0.05" value="19.0">
+        <div class="ctrl-val" id="depth-v">19.0 cm</div>
+      </div>
+    </div>
+
+    <div class="lock-row">
+      <span>When C changes, lock:</span>
+      <button class="lock-btn active" id="lock-bz" onclick="setLock('bz')">BZ</button>
+      <button class="lock-btn" id="lock-depth" onclick="setLock('depth')">Depth</button>
+      <span class="lock-hint" id="lock-hint">→ depth adjusts to satisfy C</span>
+    </div>
+
+    <div class="derived-row">
+      <div class="derived-item">
+        <span class="derived-label">Skull Width (mastoid-mastoid):</span>
+        <span class="derived-val" id="mastoid-v">—</span>
+      </div>
+      <div class="derived-item">
+        <span class="derived-label">C (ellipse check):</span>
+        <span class="derived-val" id="c-check-v">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ctrl-group">
+    <div class="ctrl-group-title">Mask Parameters</div>
+    <div class="ctrl-row">
+      <div class="ctrl">
+        <div class="ctrl-label">Mask Width</div>
+        <input type="range" id="mwidth" min="20" max="32" step="0.5" value="25.5">
+        <div class="ctrl-val" id="mwidth-v">25.5 cm</div>
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-label">Mask Flex (pivot)</div>
+        <input type="range" id="flex" min="0" max="35" step="1" value="22">
+        <div class="ctrl-val" id="flex-v">22°</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<svg id="interactive" style="width:100%;max-width:640px;background:#131c2e;border-radius:12px;display:block;"></svg>
+
+<div class="section-title">── population percentiles ──</div>
+<div class="static-row" id="static-row"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+const PROFILES = [
+  {label:'P5',  bz:12.4,  color:'#f472b6'},
+  {label:'P35', bz:13.4,  color:'#fbbf24'},
+  {label:'P65', bz:14.35, color:'#34d399'},
+  {label:'P95', bz:15.5,  color:'#818cf8'},
+];
+const panColors = ['#fbbf24','#a78bfa','#34d399','#38bdf8'];
+const nosePr = 3.0;
+const wingLen = 6.5;
+
+let lockedParam = 'bz';
+
+function setLock(param) {
+  lockedParam = param;
+  document.getElementById('lock-bz').classList.toggle('active', param === 'bz');
+  document.getElementById('lock-depth').classList.toggle('active', param === 'depth');
+  document.getElementById('lock-hint').textContent =
+    param === 'bz' ? '→ depth adjusts to satisfy C' : '→ BZ adjusts to satisfy C';
+  redraw('circ');
+}
+
+function fR(bz, nose) { return (bz*bz/4 + nose*nose)/(2*nose); }
+function bzToC(b) { return 53 + (b-12.4)/3.1*7; }
+
+function ellipseCirc(bz, depth) {
+  const a = bz/2, b = depth/2;
+  return Math.PI * (3*(a+b) - Math.sqrt((3*a+b)*(a+3*b)));
+}
+function solveDepth(bz, C) {
+  let lo = bz*0.8, hi = 42;
+  for (let i=0; i<80; i++) { const m=(lo+hi)/2; ellipseCirc(bz,m)<C ? lo=m : hi=m; }
+  return (lo+hi)/2;
+}
+function solveBZ(depth, C) {
+  let lo = 8, hi = 22;
+  for (let i=0; i<80; i++) { const m=(lo+hi)/2; ellipseCirc(m,depth)<C ? lo=m : hi=m; }
+  return (lo+hi)/2;
+}
+
+// Compute skull half-width at mastoid level from BZ and headDepth
+function computeSkullXatMastoid(bz, headDepth) {
+  const nose = nosePr, R = fR(bz, nose), a = bz/2;
+  if (a >= R) return a;
+  const cheekAngle = Math.asin(a/R);
+  const skullHalfW = bzToC(bz)/(2*Math.PI)*1.05;
+  const R_vis = bzToC(bz)/(2*Math.PI)*1.1;
+  const chx = R*Math.sin(cheekAngle), chy = R*(1-Math.cos(cheekAngle));
+  const TCx = chx - R_vis*Math.sin(cheekAngle);
+  const TCy = chy + R_vis*Math.cos(cheekAngle);
+  const u0x = (chx-TCx)/R_vis, u0y = (chy-TCy)/R_vis;
+  const tempSpan = (skullHalfW - a)/R_vis;
+  if (tempSpan <= 0) return a;
+  const rx = u0x*Math.cos(tempSpan)-u0y*Math.sin(tempSpan);
+  const ry = u0x*Math.sin(tempSpan)+u0y*Math.cos(tempSpan);
+  const tex = TCx+rx*R_vis, tey = TCy+ry*R_vis;
+  const denom = 2*(tey - headDepth);
+  if (Math.abs(denom) < 0.001) return a;
+  const backCy = (tex*tex+tey*tey-headDepth*headDepth)/denom;
+  const backR = headDepth - backCy;
+  if (backR <= 0) return a;
+  const mastoidY = headDepth*0.55;
+  const cosTM = (mastoidY - backCy)/backR;
+  if (Math.abs(cosTM) > 1) return a;
+  return backR*Math.sqrt(1 - cosTM*cosTM);
+}
+
+// ── Slider sync ──
+// BZ and Depth are now BOTH direct controls.
+// Moving BZ → recomputes C from bz+depth (C slider follows)
+// Moving Depth → recomputes C from bz+depth (C slider follows)
+// Moving C → updates whichever is unlocked (BZ or Depth)
+function syncSliders(changed) {
+  let C     = +document.getElementById('circ').value;
+  let bz    = +document.getElementById('bz').value;
+  let depth = +document.getElementById('depth').value;
+
+  if (changed === 'circ') {
+    if (lockedParam === 'bz') {
+      depth = solveDepth(bz, C);
+      depth = Math.max(14, Math.min(24, depth));
+    } else {
+      bz = solveBZ(depth, C);
+      bz = Math.max(12, Math.min(18, bz));
+    }
+  } else if (changed === 'bz' || changed === 'depth') {
+    C = ellipseCirc(bz, depth);
+    C = Math.max(50, Math.min(65, C));
+    document.getElementById('circ').value = C.toFixed(1);
+  }
+
+  document.getElementById('bz').value    = bz.toFixed(2);
+  document.getElementById('depth').value = depth.toFixed(2);
+  document.getElementById('circ-v').textContent  = C.toFixed(1) + ' cm';
+  document.getElementById('bz-v').textContent    = bz.toFixed(2) + ' cm';
+  document.getElementById('depth-v').textContent = depth.toFixed(1) + ' cm';
+
+  const mastoidHW = computeSkullXatMastoid(bz, depth);
+  document.getElementById('mastoid-v').textContent  = (mastoidHW*2).toFixed(1) + ' cm';
+  document.getElementById('c-check-v').textContent  = ellipseCirc(bz, depth).toFixed(1) + ' cm';
+
+  return { bz, depth, C };
+}
+
+function getGap(bz, nose, maskWidth, maxflex) {
+  const R = fR(bz, nose), half = maskWidth/2;
+  const unmet = Math.max(0, half/R - 3*maxflex*Math.PI/180);
+  const Rt = 5.87*(bzToC(bz)/bzToC(15.5));
+  return Rt*(1-Math.cos((half-bz/2)/Rt))*10 + (unmet>0 ? R*(1-Math.cos(unmet))*10 : 0);
+}
+
+function buildGeom(bz, maskWidth, maxflex, headDepthOverride) {
+  const a = bz/2, R = fR(bz, nosePr);
+  const maskHalf = maskWidth/2;
+  const g3 = maskHalf - wingLen;
+
+  function fPt(θ) { return [R*Math.sin(θ), R*(1-Math.cos(θ))]; }
+  const cheekAngle = Math.asin(a/R);
+
+  const R_vis = bzToC(bz)/(2*Math.PI)*1.1;
+  const skullHalfW = bzToC(bz)/(2*Math.PI)*1.05;
+  const [chx,chy] = fPt(cheekAngle);
+  const TCx = chx - R_vis*Math.sin(cheekAngle);
+  const TCy = chy + R_vis*Math.cos(cheekAngle);
+  const u0x = (chx-TCx)/R_vis, u0y = (chy-TCy)/R_vis;
+  const tempSpan = (skullHalfW - a) / R_vis;
+  const tempArc = d3.range(0, tempSpan+0.005, 0.018).map(da => {
+    const rx = u0x*Math.cos(da)-u0y*Math.sin(da);
+    const ry = u0x*Math.sin(da)+u0y*Math.cos(da);
+    return [TCx+rx*R_vis, TCy+ry*R_vis];
+  });
+  const faceEnd = tempArc[tempArc.length-1];
+
+  const headDepth = headDepthOverride || bzToC(bz)/Math.PI;
+  const [tex,tey] = faceEnd;
+  const backCy = (tex*tex + tey*tey - headDepth*headDepth) / (2*(tey - headDepth));
+  const backR  = headDepth - backCy;
+  const angToTemp = Math.atan2(tex, tey - backCy);
+  const backArc = d3.range(angToTemp, -angToTemp-0.01, -0.025).map(t =>
+    [backR*Math.sin(t), backCy + backR*Math.cos(t)]
+  );
+
+  const grooves = [0, 3.5, g3-0.75, g3];
+  const ga = grooves.map(gv => gv/R);
+
+  const outerAngle = g3/R;
+  const [g3x,g3y] = fPt(outerAngle);
+  const flexRad = maxflex * Math.PI / 180;
+  const wDx = Math.cos(outerAngle + flexRad), wDy = Math.sin(outerAngle + flexRad);
+  const wingTip = [g3x+wingLen*wDx, g3y+wingLen*wDy];
+  const gap = getGap(bz, nosePr, maskWidth, maxflex);
+
+  const mastoidY = headDepth*0.55;
+  const cosTM = (mastoidY - backCy) / backR;
+  const skullXatMastoid = Math.abs(cosTM) <= 1 ? backR*Math.sqrt(1 - cosTM*cosTM) : a;
+
+  return { fPt, cheekAngle, chx, chy, tempArc, faceEnd, backArc,
+           headDepth, ga, g3x, g3y, wDx, wDy, wingTip, gap, R, a,
+           mastoidY, skullXatMastoid };
+}
+
+function renderGeom(svg, g, sc, ox, oy, col, opts={}) {
+  const {fPt, cheekAngle, chy, tempArc, backArc,
+         headDepth, ga, g3x, g3y, wDx, wDy, wingTip, gap,
+         mastoidY, skullXatMastoid, a} = g;
+
+  function toS([x,y]) { return [ox+x*sc, oy+y*sc]; }
+  function dPath(pts, mir) {
+    return 'M '+pts.map(([x,y])=>toS(mir?[-x,y]:[x,y]).join(',')).join(' L ');
+  }
+
+  const frontR = d3.range(0, cheekAngle+0.01, 0.015).map(θ => fPt(θ));
+
+  // Head fill
+  const outline = [...frontR, ...g.tempArc, ...backArc,
+    ...g.tempArc.slice().reverse().map(([x,y])=>[-x,y]),
+    ...frontR.slice().reverse().map(([x,y])=>[-x,y])];
+  svg.append('path')
+    .attr('d','M '+outline.map(p=>toS(p).join(',')).join(' L ')+' Z')
+    .attr('fill','#1e3a5c').attr('opacity',0.55);
+
+  // Skull outline
+  ['R','L'].forEach(side => {
+    const m = side==='L';
+    svg.append('path').attr('d',dPath(frontR,m)).attr('fill','none').attr('stroke',col).attr('stroke-width',2).attr('opacity',0.9);
+    svg.append('path').attr('d',dPath(g.tempArc,m)).attr('fill','none').attr('stroke',col).attr('stroke-width',2).attr('opacity',0.9);
+  });
+  svg.append('path').attr('d',dPath(backArc,false)).attr('fill','none').attr('stroke',col).attr('stroke-width',2).attr('opacity',0.9);
+
+  const cyan = '#22d3ee', dash = '7 4';
+  // Vertical axis
+  svg.append('line').attr('x1',ox).attr('y1',oy-12).attr('x2',ox).attr('y2',oy+headDepth*sc+8)
+    .attr('stroke',cyan).attr('stroke-width',1.2).attr('stroke-dasharray',dash).attr('opacity',0.45);
+
+  // BZ crosshair (cyan)
+  const bzY = oy+g.chy*sc;
+  svg.append('line')
+    .attr('x1',ox-a*sc-6).attr('y1',bzY).attr('x2',ox+a*sc+6).attr('y2',bzY)
+    .attr('stroke',cyan).attr('stroke-width',1.5).attr('stroke-dasharray',dash).attr('opacity',0.8);
+  [-1,1].forEach(s => svg.append('line').attr('x1',ox+s*a*sc).attr('y1',bzY-5).attr('x2',ox+s*a*sc).attr('y2',bzY+5).attr('stroke',cyan).attr('stroke-width',1.8).attr('opacity',0.9));
+
+  // Mastoid crosshair (pink)
+  const mastY = oy+mastoidY*sc;
+  svg.append('line')
+    .attr('x1',ox-skullXatMastoid*sc-6).attr('y1',mastY).attr('x2',ox+skullXatMastoid*sc+6).attr('y2',mastY)
+    .attr('stroke','#f472b6').attr('stroke-width',1.2).attr('stroke-dasharray',dash).attr('opacity',0.7);
+  [-1,1].forEach(s => svg.append('line').attr('x1',ox+s*skullXatMastoid*sc).attr('y1',mastY-5).attr('x2',ox+s*skullXatMastoid*sc).attr('y2',mastY+5).attr('stroke','#f472b6').attr('stroke-width',1.8).attr('opacity',0.9));
+
+  if (opts.axisLabels) {
+    svg.append('text').attr('x',ox+a*sc+8).attr('y',bzY+4)
+      .attr('fill',cyan).attr('font-size',10).attr('font-family','monospace').attr('opacity',0.85).text('BZ');
+    svg.append('text').attr('x',ox+skullXatMastoid*sc+8).attr('y',mastY+4)
+      .attr('fill','#f472b6').attr('font-size',10).attr('font-family','monospace').attr('opacity',0.85).text('mastoid');
+  }
+
+  // Groove panels
+  ga.slice(0,-1).forEach((ang,k) => {
+    const pts = d3.range(ang, ga[k+1]+0.005, 0.015).map(θ => fPt(θ));
+    [false,true].forEach(m =>
+      svg.append('path').attr('d',dPath(pts,m)).attr('fill','none').attr('stroke',panColors[k]).attr('stroke-width',opts.small?4:5).attr('opacity',0.9)
+    );
+  });
+
+  // Wing
+  [1,-1].forEach(s => {
+    const [x1,y1]=toS([s*g3x,g3y]), [x2,y2]=toS([s*wingTip[0],wingTip[1]]);
+    svg.append('line').attr('x1',x1).attr('y1',y1).attr('x2',x2).attr('y2',y2)
+      .attr('stroke','#fbbf24').attr('stroke-width',opts.small?2:2.5).attr('stroke-dasharray','7 3');
+    if (!opts.small)
+      svg.append('text').attr('x',(x1+x2)/2+s*4).attr('y',(y1+y2)/2-5)
+        .attr('fill','#fbbf24').attr('font-size',8).attr('font-family','monospace')
+        .attr('text-anchor',s>0?'start':'end').text('6.5cm');
+  });
+
+  // Gap line
+  [1,-1].forEach(s => {
+    const [wx,wy]   = toS([s*wingTip[0], wingTip[1]]);
+    const [skx,sky] = toS([s*skullXatMastoid, mastoidY]);
+    svg.append('line').attr('x1',wx).attr('y1',wy).attr('x2',skx).attr('y2',sky)
+      .attr('stroke','#ef4444').attr('stroke-width',1.8).attr('stroke-dasharray','5 3');
+    [[wx,wy],[skx,sky]].forEach(([px,py]) =>
+      svg.append('line').attr('x1',px-3).attr('y1',py).attr('x2',px+3).attr('y2',py).attr('stroke','#ef4444').attr('stroke-width',1.5)
+    );
+    const distMm = (Math.hypot(wingTip[0]-skullXatMastoid, wingTip[1]-mastoidY)*10).toFixed(1);
+    svg.append('text')
+      .attr('x', (wx+skx)/2 + s*8).attr('y', (wy+sky)/2 + 4)
+      .attr('fill','#ef4444').attr('font-size',opts.small?8:9).attr('font-family','monospace')
+      .attr('text-anchor', s>0?'start':'end').text(distMm+'mm');
+  });
+
+  // Groove dots
+  ga.forEach(ang => {
+    const [px,py] = toS(fPt(ang));
+    [1,-1].forEach(s =>
+      svg.append('circle').attr('cx',s>0?px:2*ox-px).attr('cy',py).attr('r',opts.small?3:4)
+        .attr('fill','#818cf8').attr('stroke','#0f1624').attr('stroke-width',1)
+    );
+  });
+}
+
+function drawInteractive(changed) {
+  const { bz, depth, C } = syncSliders(changed || 'circ');
+  const maskWidth = +document.getElementById('mwidth').value;
+  const maxflex   = +document.getElementById('flex').value;
+  document.getElementById('mwidth-v').textContent = maskWidth.toFixed(1)+' cm';
+  document.getElementById('flex-v').textContent   = maxflex+'°';
+
+  const g = buildGeom(bz, maskWidth, maxflex, depth);
+  const svg = d3.select('#interactive');
+  svg.selectAll('*').remove();
+
+  const sc = 16, ox = 0, oy = 0;
+  const halfW  = Math.ceil((g.a + 6.5 + 2.5) * sc) + 75;
+  const totalH = Math.ceil(g.headDepth * sc) + 36;
+  document.getElementById('interactive')
+    .setAttribute('viewBox', `${-halfW} -28 ${halfW*2} ${totalH}`);
+
+  renderGeom(svg, g, sc, ox, oy, '#3b82f6', {axisLabels:true});
+
+  svg.append('text').attr('x',0).attr('y',-14).attr('text-anchor','middle')
+    .attr('fill','#94a3b8').attr('font-size',9).attr('font-family','monospace')
+    .text(`C=${C.toFixed(1)}cm  BZ=${bz.toFixed(2)}cm  depth=${depth.toFixed(1)}cm  mastoid=${(g.skullXatMastoid*2).toFixed(1)}cm  gap=${g.gap.toFixed(1)}mm`);
+}
+
+function drawStatic() {
+  const maskWidth = +document.getElementById('mwidth').value;
+  const maxflex   = +document.getElementById('flex').value;
+  const container = document.getElementById('static-row');
+  container.innerHTML = '';
+  PROFILES.forEach(prof => {
+    const g = buildGeom(prof.bz, maskWidth, maxflex);
+    const sc = 10;
+    const padX = Math.ceil((6.5+2)*sc)+30, padTop = 28, padBot = 16;
+    const halfW = Math.ceil(g.a*sc)+padX;
+    const totalH = Math.ceil(g.headDepth*sc)+padTop+padBot;
+    const svgEl = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svgEl.setAttribute('viewBox',`${-halfW} ${-padTop} ${halfW*2} ${totalH}`);
+    svgEl.setAttribute('width',halfW*2); svgEl.setAttribute('height',totalH);
+    svgEl.style.cssText = 'background:#131c2e;border-radius:8px;display:block;';
+    const svg = d3.select(svgEl);
+    renderGeom(svg, g, sc, 0, 0, prof.color, {small:true});
+    svg.append('text').attr('x',0).attr('y',-padTop+11).attr('text-anchor','middle')
+      .attr('fill',prof.color).attr('font-size',10).attr('font-family','monospace').attr('font-weight','bold')
+      .text(prof.label+' · BZ='+prof.bz+'cm');
+    svg.append('text').attr('x',0).attr('y',-padTop+20).attr('text-anchor','middle')
+      .attr('fill','#475569').attr('font-size',7).attr('font-family','monospace')
+      .text('mastoid='+(g.skullXatMastoid*2).toFixed(1)+'cm · gap='+g.gap.toFixed(1)+'mm');
+    container.appendChild(svgEl);
+  });
+}
+
+function redraw(changed) { drawInteractive(changed); drawStatic(); }
+document.getElementById('circ') .addEventListener('input', () => redraw('circ'));
+document.getElementById('bz')   .addEventListener('input', () => redraw('bz'));
+document.getElementById('depth').addEventListener('input', () => redraw('depth'));
+document.getElementById('mwidth').addEventListener('input',() => redraw('mwidth'));
+document.getElementById('flex') .addEventListener('input', () => redraw('flex'));
+redraw('circ');
+</script>
+</body></html>

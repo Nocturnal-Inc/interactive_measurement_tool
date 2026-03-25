@@ -1,0 +1,2335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Head Anthropometry — Population Distribution & Product Fit</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg:        #0d1117;
+    --surface:   #161b22;
+    --card:      #1c2230;
+    --border:    #2d3748;
+    --male:      #38bdf8;
+    --male-glow: #0ea5e940;
+    --female:    #f472b6;
+    --female-glow:#ec489940;
+    --product:   #fbbf24;
+    --gap:       #ef4444;
+    --text:      #e2e8f0;
+    --muted:     #64748b;
+    --accent:    #a78bfa;
+    --niosh:     #34d399;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ── Header ── */
+  header {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 36px 48px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, #38bdf820 0%, transparent 70%);
+    pointer-events: none;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 40%;
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, #f472b615 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(22px, 3vw, 36px);
+    font-weight: 400;
+    line-height: 1.2;
+    color: #f1f5f9;
+    margin-bottom: 8px;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 640px;
+    line-height: 1.6;
+  }
+
+  /* ── Legend strip ── */
+  .legend-strip {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding: 14px 48px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .legend-swatch {
+    width: 28px; height: 3px;
+    border-radius: 2px;
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .legend-rect {
+    width: 18px; height: 10px;
+    border-radius: 2px;
+    opacity: 0.35;
+  }
+  .legend-label { color: var(--text); font-weight: 500; }
+
+  /* ── Product controls ── */
+  .controls-bar {
+    padding: 16px 48px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-end;
+  }
+  .controls-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--product);
+    letter-spacing: 0.05em;
+    align-self: center;
+    padding-right: 8px;
+    border-right: 1px solid var(--border);
+    margin-right: 4px;
+  }
+
+  /* ── Charts grid — 2 cols, 5th card spans full width centered ── */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    padding: 2px;
+    background: var(--border);
+  }
+  .chart-card.full-width {
+    grid-column: 1 / -1;
+  }
+  @media (max-width: 900px) {
+    .charts-grid { grid-template-columns: 1fr; }
+    .chart-card.full-width { grid-column: 1; }
+    .controls-bar, .legend-strip, header { padding-left: 20px; padding-right: 20px; }
+  }
+
+  .chart-card {
+    background: var(--card);
+    padding: 24px 28px 20px;
+    position: relative;
+  }
+  /* bizygomatic card gets a subtle accent border */
+  .chart-card.niosh-card {
+    border-top: 2px solid var(--niosh);
+  }
+  /* inner wrapper to constrain the biz chart width on wide screens */
+  .chart-card.full-width .inner {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .chart-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    color: #f1f5f9;
+    margin-bottom: 2px;
+  }
+  .chart-subtitle {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 10px;
+  }
+  .niosh-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--niosh);
+    background: #34d39918;
+    border: 1px solid #34d39930;
+    border-radius: 4px;
+    padding: 2px 8px;
+    margin-bottom: 12px;
+  }
+  svg { display: block; width: 100%; overflow: visible; }
+
+  /* curve paths */
+  .curve-male    { fill: none; stroke: var(--male);   stroke-width: 2.5; }
+  .curve-female  { fill: none; stroke: var(--female); stroke-width: 2.5; }
+  .area-male     { fill: var(--male);   opacity: 0.10; }
+  .area-female   { fill: var(--female); opacity: 0.10; }
+
+  /* percentile markers */
+  .pct-line { stroke-dasharray: 4 3; stroke-width: 1; }
+  .pct-male   { stroke: var(--male);   }
+  .pct-female { stroke: var(--female); }
+
+  /* product range rect */
+  .product-range { fill: var(--product); opacity: 0.15; }
+  .product-line  { stroke: var(--product); stroke-width: 2; stroke-dasharray: 6 3; }
+  .gap-range     { fill: var(--gap); opacity: 0.18; }
+
+  /* axis */
+  .axis path, .axis line { stroke: var(--border); }
+  .axis text { fill: var(--muted); font-size: 10px; font-family: 'DM Mono', monospace; }
+  .axis-label { fill: var(--muted); font-size: 11px; font-family: 'DM Sans', sans-serif; }
+
+  /* stat badges */
+  .stat-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .stat-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+  .stat-badge.male    { color: var(--male);    border-color: var(--male);    background: var(--male-glow); }
+  .stat-badge.female  { color: var(--female);  border-color: var(--female);  background: var(--female-glow); }
+  .stat-badge.product { color: var(--product); border-color: var(--product); background: #fbbf2420; }
+  .stat-badge.gap     { color: var(--gap);     border-color: var(--gap);     background: #ef444420; }
+  .stat-badge.niosh   { color: var(--niosh);   border-color: var(--niosh);   background: #34d39918; }
+
+  /* coverage bar */
+  .coverage-section {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .coverage-label {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .coverage-bar-bg {
+    height: 8px;
+    background: var(--surface);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .coverage-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+  .coverage-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--product);
+    margin-top: 4px;
+  }
+  .gap-callout {
+    margin-top: 8px;
+    font-size: 10px;
+    color: var(--gap);
+    font-family: 'DM Mono', monospace;
+    flex-wrap: wrap;
+  }
+
+  /* tooltip */
+  #tooltip {
+    position: fixed;
+    background: #1e2a3a;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 1000;
+    max-width: 200px;
+    line-height: 1.7;
+  }
+
+  /* summary strip */
+  .summary-strip {
+    padding: 24px 48px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+  .summary-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: #f1f5f9;
+    margin-bottom: 16px;
+  }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 1100px) { .summary-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 700px)  { .summary-grid { grid-template-columns: 1fr 1fr; } }
+  .summary-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .summary-card.niosh-summary {
+    border-color: #34d39940;
+  }
+  .summary-card-title {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    padding: 3px 0;
+    border-bottom: 1px solid #2d374840;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .label { color: var(--muted); }
+  .summary-row .val-m { color: var(--male); }
+  .summary-row .val-f { color: var(--female); }
+
+  .note-strip {
+    padding: 12px 48px;
+    background: #161b22;
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+    border-top: 1px solid var(--border);
+    line-height: 1.7;
+  }
+
+  /* ── Overall Fit Section ── */
+  .overall-fit-section {
+    padding: 32px 48px 40px;
+    background: var(--card);
+    border-top: 2px solid var(--accent);
+    position: relative;
+    overflow: hidden;
+  }
+  .overall-fit-section::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, #a78bfa12 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .overall-fit-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: #f1f5f9;
+    margin-bottom: 4px;
+  }
+  .overall-fit-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 24px;
+  }
+  .overall-fit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 28px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .overall-fit-grid { grid-template-columns: 1fr; }
+    .overall-fit-section { padding-left: 20px; padding-right: 20px; }
+  }
+  .overall-gauge-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  #overall-gauge-svg {
+    width: 100%;
+    max-width: 280px;
+  }
+  .overall-big-pct {
+    font-family: 'DM Serif Display', serif;
+    font-size: 52px;
+    text-align: center;
+    line-height: 1;
+    transition: color 0.4s;
+  }
+  .overall-pct-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+  .overall-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .overall-dim-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .overall-dim-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .overall-dim-name {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--text);
+  }
+  .overall-dim-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .overall-dim-bar-bg {
+    height: 6px;
+    background: var(--surface);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .overall-dim-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+  .overall-dim-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .overall-methodology {
+    margin-top: 20px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .overall-methodology strong {
+    color: var(--accent);
+  }
+  .weight-controls {
+    margin-top: 20px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .weight-controls-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+  .weight-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .weight-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    width: 160px;
+    flex-shrink: 0;
+  }
+  .weight-input {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 3px 7px;
+    width: 52px;
+    outline: none;
+  }
+  .weight-bar-bg {
+    flex: 1;
+    height: 4px;
+    background: var(--card);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .weight-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    opacity: 0.5;
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+  .weight-total {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  #weight-total-val {
+    font-weight: 600;
+  }
+
+  /* ── Mask Geometry Section ── */
+  .flex-fit-panel {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-left: 3px solid #ef4444;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .flex-fit-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .flex-fit-badge {
+    font-size: 9px;
+    font-family: 'DM Mono', monospace;
+    background: #ef444422;
+    color: #ef4444;
+    border: 1px solid #ef444440;
+    border-radius: 4px;
+    padding: 1px 6px;
+    letter-spacing: 0.05em;
+  }
+  .flex-fit-subtitle {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 10px;
+  }
+  .flex-fit-coverage-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+  }
+  .flex-fit-cov-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+  .flex-fit-cov-pct {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'DM Serif Display', serif;
+  }
+  .flex-fit-bar-bg {
+    background: #1e293b;
+    border-radius: 4px;
+    height: 6px;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+  .flex-fit-bar-fill {
+    height: 6px;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+  .flex-fit-sub {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+    padding: 32px 48px 40px;
+    background: var(--surface);
+    border-top: 2px solid #818cf8;
+    position: relative;
+    overflow: hidden;
+  }
+  .mask-geo-section::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, #818cf812 0%, transparent 70%);
+    pointer-events: none;
+  }
+  @media (max-width: 900px) { .mask-geo-section { padding-left: 20px; padding-right: 20px; } }
+  .mask-geo-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: #f1f5f9;
+    margin-bottom: 4px;
+  }
+  .mask-geo-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 24px;
+  }
+  .mask-geo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 900px) { .mask-geo-grid { grid-template-columns: 1fr; } }
+  .mask-geo-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+  }
+  .mask-geo-card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    color: #f1f5f9;
+    margin-bottom: 4px;
+  }
+  .mask-geo-card-sub {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 14px;
+  }
+  .mg-controls-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 28px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .mg-ctrl-row {
+    padding: 12px 48px;
+    background: var(--card);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--border);
+  }
+  .mg-ctrl-row:last-child { border-bottom: none; }
+  .mg-ctrl-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 130px;
+  }
+  .mg-ctrl-label {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: #818cf8;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .mg-ctrl-value {
+    color: var(--product);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .mg-ctrl-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+    margin: 4px 0 0;
+  }
+  .mg-ctrl-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #818cf8;
+    cursor: pointer;
+    border: 2px solid var(--card);
+    box-shadow: 0 0 0 1px #818cf8;
+  }
+  .mg-ctrl-slider::-moz-range-thumb {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #818cf8;
+    cursor: pointer;
+    border: 2px solid var(--card);
+  }
+  .mg-ctrl-divider {
+    width: 1px;
+    background: var(--border);
+    align-self: stretch;
+    margin: 0 4px;
+  }
+  .mg-ctrl-section-label {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--product);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    align-self: center;
+    padding-right: 10px;
+    border-right: 1px solid var(--border);
+    margin-right: 4px;
+    white-space: nowrap;
+  }
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 16px;
+    padding: 12px 14px;
+    background: var(--surface);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .mask-geo-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .mask-geo-input-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #818cf8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .mask-geo-input {
+    background: var(--card);
+    border: 1px solid #818cf840;
+    border-radius: 5px;
+    color: #c7d2fe;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 5px 8px;
+    width: 72px;
+    outline: none;
+  }
+  .mask-profile-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .mask-profile-card {
+    background: var(--surface);
+    border-radius: 6px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+  }
+  .mask-profile-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 5px;
+  }
+  .mask-profile-stat {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 1px 0;
+    border-bottom: 1px solid #2d374840;
+  }
+  .mask-profile-stat:last-child { border: none; }
+  .mask-profile-stat .sk { color: var(--muted); }
+  .mask-profile-stat .sv { color: #c7d2fe; }
+  .mask-profile-stat .sv.good { color: #4ade80; }
+  .mask-profile-stat .sv.warn { color: #fbbf24; }
+  .mask-profile-stat .sv.bad  { color: #ef4444; }
+  .mask-geo-full { grid-column: 1 / -1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-eyebrow">U.S. Adult Population · Anthropometric Analysis</div>
+  <h1>Head &amp; Ear Measurement<br>Distribution &amp; Product Fit Coverage</h1>
+  <p class="header-sub">Bell curves show estimated normal distributions across the adult population. Enter your product's design dimensions to visualize fit coverage and identify uncovered ranges. Bizygomatic breadth added from NIOSH 2005 survey (N=3,997) as the primary mask-fit reference dimension.</p>
+</header>
+
+<div class="legend-strip">
+  <div class="legend-item">
+    <div class="legend-swatch" style="background:var(--male);"></div>
+    <span class="legend-label">Male</span> &nbsp;curve &amp; range
+  </div>
+  <div class="legend-item">
+    <div class="legend-swatch" style="background:var(--female);"></div>
+    <span class="legend-label">Female</span> &nbsp;curve &amp; range
+  </div>
+  <div class="legend-item">
+    <div class="legend-rect" style="background:var(--male);"></div>
+    <span>Male 5th–95th span</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-rect" style="background:var(--female);"></div>
+    <span>Female 5th–95th span</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-swatch" style="background:var(--product);"></div>
+    <span class="legend-label">Product range</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-rect" style="background:var(--gap); opacity:0.5;"></div>
+    <span class="legend-label">Uncovered gap</span>
+  </div>
+  <div class="legend-item">
+    <div style="width:10px;height:10px;border-radius:2px;background:var(--niosh);opacity:0.7;"></div>
+    <span style="color:var(--niosh);">NIOSH 2005 direct measurement</span>
+  </div>
+</div>
+
+<div class="controls-bar">
+  <div class="controls-title">▸ PRODUCT<br>DIMENSIONS</div>
+  <div id="product-inputs"></div>
+</div>
+
+<div class="charts-grid" id="charts-grid"></div>
+
+<div class="mask-geo-section">
+  <div class="mask-geo-title">Mask Flex Demand &amp; Lift Gap by Face Width</div>
+  <div class="mask-geo-subtitle">The critical variable is <strong style="color:#34d399">bizygomatic breadth (BZ)</strong> — face width at cheekbone level — not head circumference. Narrow faces demand more total groove flex; when grooves reach their limit, the outer panels lift at the cheeks and temples.</div>
+
+  <div class="mg-controls-bar" id="mg-controls-bar"></div>
+
+  <div class="mask-geo-grid">
+    <!-- Chart 1: Total groove flex demand vs BZ -->
+    <div class="mask-geo-card">
+      <div class="mask-geo-card-title">Total Groove Flex Demand vs. Face Width</div>
+      <div class="mask-geo-card-sub">Degrees of total bend required across all 3 grooves to fully conform the mask to the face. Dashed line = groove capacity (3 × max flex). Gap above line = unmet flex = lift at temple.</div>
+      <svg id="mg-arc-svg" viewBox="0 0 480 240" style="width:100%;display:block;overflow:visible;"></svg>
+    </div>
+    <!-- Chart 2: BZ vs mask conformance gap -->
+    <div class="mask-geo-card">
+      <div class="mask-geo-card-title">Bizygomatic Breadth vs. Mask Wing Conformance Gap</div>
+      <div class="mask-geo-card-sub">Wing tip gap (mm) as a function of BZ — narrower faces (smaller BZ) have higher curvature, demanding more groove flex and producing larger lift gaps where the flat wing panel separates from the face.</div>
+      <svg id="mg-gap-svg" viewBox="0 0 480 240" style="width:100%;display:block;overflow:visible;"></svg>
+    </div>
+    <!-- Chart 3: Gap profile + flex population panel -->
+    <div class="mask-geo-card mask-geo-full">
+      <div class="mask-geo-card-title">Gap Profile Along Mask Arc — Face Contact to Wing</div>
+      <div class="mask-geo-card-sub">Gap between mask surface and face at every point from center (nose) to outer edge (wing tip), for each BZ percentile. <strong style="color:#f1f5f9">Solid line</strong> = face contact zone (groove flex model). <strong style="color:#f1f5f9">Dotted extension</strong> = wing zone beyond the cheekbone, where the face curves posteriorly and the mask lifts away. The transition point shifts rightward on wider faces.</div>
+      <svg id="mg-wing-svg" viewBox="0 0 860 260" style="width:100%;display:block;overflow:visible;"></svg>
+      <!-- Mask Arc Flex population pass/fail — directly under gap profile -->
+      <div class="flex-fit-panel" id="flex-fit-panel" style="margin-top:16px;">
+        <div class="flex-fit-title">
+          Mask Arc Flex — Population Analysis <span class="flex-fit-badge">PRIMARY FIT CONSTRAINT</span>
+        </div>
+        <div class="flex-fit-subtitle">Two independent gap sources. <strong style="color:#ef4444">Groove flex lift</strong> = seal-critical cheek gap from insufficient groove bend. <strong style="color:#818cf8">Temporal recession</strong> = inherent geometric gap as the flat wing panel cannot follow the face curving posteriorly — present for all faces, not a defect.</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0 8px;">
+          <!-- Cheek seal metric -->
+          <div>
+            <div class="flex-fit-coverage-row">
+              <span class="flex-fit-cov-label" style="color:#ef4444">⬤ Cheek Seal Pass <span style="font-size:9px;opacity:0.7">(groove flex lift ≤ threshold)</span></span>
+              <span class="flex-fit-cov-pct" id="flex-seal-pct" style="color:#ef4444">—</span>
+            </div>
+            <div class="flex-fit-bar-bg">
+              <div class="flex-fit-bar-fill" id="flex-seal-bar" style="background:#ef4444"></div>
+            </div>
+            <div class="flex-fit-sub" id="flex-seal-sub"></div>
+          </div>
+          <!-- Temporal info metric -->
+          <div>
+            <div class="flex-fit-coverage-row">
+              <span class="flex-fit-cov-label" style="color:#818cf8">⬤ Temporal Gap Range <span style="font-size:9px;opacity:0.7">(inherent — wing design)</span></span>
+              <span class="flex-fit-cov-pct" id="flex-temp-range" style="color:#818cf8">—</span>
+            </div>
+            <div class="flex-fit-bar-bg">
+              <div class="flex-fit-bar-fill" id="flex-temp-bar" style="background:#818cf8;width:100%"></div>
+            </div>
+            <div class="flex-fit-sub" id="flex-temp-sub"></div>
+          </div>
+        </div>
+
+        <svg id="flex-pop-svg" viewBox="0 0 860 130" style="width:100%;display:block;margin-top:4px;overflow:visible;"></svg>
+      </div>
+    </div>
+    <!-- Chart 4: Cross-section curvature diagram (full width) -->
+    <div class="mask-geo-card mask-geo-full">
+      <div class="mask-geo-card-title">Face Cross-Section — Mask Conformance at BZ P5, P35, P65, P95</div>
+      <div class="mask-geo-card-sub">Top-down view. <strong style="color:#94a3b8">Colored arcs</strong> = face contact zone (grooved mask panels). <strong style="color:#fbbf24">Yellow dashed</strong> = flat mask wing panel (extends tangentially from last groove — cannot curve). <strong style="color:#3b82f6">Blue solid</strong> = face/temporal curvature (face curves posteriorly away from the wing). <strong style="color:#ef4444">Red</strong> = gap between wing tip and face surface = seal gap.</div>
+      <svg id="mg-cross-svg" viewBox="0 0 1200 160" style="width:100%;display:block;overflow:visible;"></svg>
+      <div class="mask-profile-row" id="mg-profile-stats"></div>
+    </div>
+  </div>
+</div>
+
+<div class="overall-fit-section">
+  <div class="overall-fit-title">Overall Population Fit</div>
+  <div class="overall-fit-subtitle">Probability that a random individual fits across ALL dimensions simultaneously</div>
+  <div class="overall-fit-grid">
+    <!-- Left: gauge + big number -->
+    <div class="overall-gauge-wrap">
+      <svg id="overall-gauge-svg" viewBox="0 0 280 165"></svg>
+      <div class="overall-big-pct" id="overall-big-pct">—</div>
+      <div class="overall-pct-label">Weighted Overall Fit</div>
+      <div class="overall-methodology">
+        <strong>Methodology:</strong> Each dimension's fit probability is calculated as the area under the combined male/female normal distribution within your product's min–max range. The overall fit is a weighted combination of per-dimension coverage scores. Weights represent the relative importance of each fit constraint for your product — adjust them to reflect which dimensions are truly limiting.
+      </div>
+    </div>
+    <!-- Right: per-dimension breakdown + weight controls -->
+    <div>
+      <div class="overall-breakdown" id="overall-breakdown"></div>
+      <div class="weight-controls">
+        <div class="weight-controls-title">▸ Dimension Weights (importance)</div>
+        <div id="weight-inputs"></div>
+        <div class="weight-total">Total weight: <span id="weight-total-val">—</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="summary-strip">
+  <div class="summary-title">Population Coverage Summary</div>
+  <div class="summary-grid" id="summary-grid"></div>
+</div>
+
+<div class="note-strip">
+  ★ Bell curves are estimated normal distributions derived from published 5th / 50th / 95th percentile data.
+  Tragus-to-tragus and mastoid-to-mastoid arc values are derived (≈½ cranial circumference each).
+  <strong style="color:var(--niosh)">Bizygomatic breadth</strong> is a direct caliper measurement from Zhuang &amp; Bradtmiller (2005)
+  <em>Head-and-Face Anthropometric Survey of U.S. Respirator Users</em>, NIOSH/NPPTL, N=3,997 weighted to U.S. workforce
+  (male 5th/50th/95th = 13.2/14.35/15.5 cm · female = 12.4/13.51/14.6 cm).
+  Other sources: NIOSH 2003 anthropometric survey; FAA AM-93-10 (1993); Tollefson et al. (Plast. &amp; Reconstr. Surg.); German longitudinal ear study (2007).
+  For clinical use consult primary literature.
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+// ── Data ────────────────────────────────────────────────────────────────────
+
+// BZ population data from NIOSH (combined M+F distribution)
+const BZ_PROFILES = [
+  { label: 'P5',  bz: 12.4,  color: '#f472b6' },
+  { label: 'P15', bz: 12.8,  color: '#fb923c' },
+  { label: 'P25', bz: 13.1,  color: '#fbbf24' },
+  { label: 'P35', bz: 13.4,  color: '#a3e635' },
+  { label: 'P50', bz: 13.9,  color: '#4ade80' },
+  { label: 'P65', bz: 14.35, color: '#34d399' },
+  { label: 'P75', bz: 14.7,  color: '#22d3ee' },
+  { label: 'P85', bz: 15.0,  color: '#38bdf8' },
+  { label: 'P95', bz: 15.5,  color: '#818cf8' },
+];
+
+const BZ_CROSS = [
+  { label: 'BZ P5',  bz: 12.4  },
+  { label: 'BZ P35', bz: 13.4  },
+  { label: 'BZ P65', bz: 14.35 },
+  { label: 'BZ P95', bz: 15.5  },
+];
+
+const mgState = {
+  width:      25.5,
+  nose:       3.0,
+  maxflex:    22,
+  g1:         3.5,
+  g2:         5.5,
+  g3:         6.25,
+  sensor:     7.0,
+  bzInspect:  13.9,
+  gapThresh:  22,     // mm — temporal recession reference line
+  flexThresh:  2,     // mm — groove flex cheek lift pass/fail (seal-critical)
+};
+
+const MG_CONTROLS = [
+  { key: 'width',      label: 'Mask Width',       unit: 'cm',  min: 20,   max: 32,   step: 0.1  },
+  { key: 'nose',       label: 'Nose Projection',   unit: 'cm',  min: 1.5,  max: 5.0,  step: 0.1  },
+  { key: 'maxflex',    label: 'Groove Max Flex',   unit: '°',   min: 5,    max: 45,   step: 1    },
+  { key: 'sensor',     label: 'Sensor Spacing',    unit: 'cm',  min: 3,    max: 12,   step: 0.1  },
+  { key: 'g1',         label: 'Groove 1 ±',        unit: 'cm',  min: 1,    max: 6,    step: 0.1  },
+  { key: 'g2',         label: 'Groove 2 ±',        unit: 'cm',  min: 4,    max: 11,   step: 0.1  },
+  { key: 'g3',         label: 'Groove 3 ±',        unit: 'cm',  min: 7,    max: 14,   step: 0.1  },
+  { key: 'bzInspect',  label: 'BZ Inspect',          unit: 'cm',  min: 11.5, max: 16.5, step: 0.05 },
+  { key: 'flexThresh', label: 'Cheek Seal Threshold', unit: 'mm',  min: 0,    max: 15,   step: 0.5  },
+  { key: 'gapThresh',  label: 'Temporal Ref Line',    unit: 'mm',  min: 10,   max: 50,   step: 1    },
+];
+
+const MEASUREMENTS = [
+  {
+    id: 'cranial',
+    name: 'Cranial Circumference',
+    unit: 'cm',
+    desc: 'Tape at glabella → occipital protuberance',
+    male:   { p5: 54.0, p50: 57.0, p95: 60.0 },
+    female: { p5: 52.0, p50: 55.0, p95: 58.0 },
+    productDefault: { min: 54.0, max: 59.0 },
+    xRange: [49, 64],
+  },
+  {
+    id: 'ear',
+    name: 'Ear Height',
+    unit: 'cm',
+    desc: 'Helix tip → lobule bottom',
+    male:   { p5: 5.7, p50: 6.3, p95: 7.2 },
+    female: { p5: 5.2, p50: 5.9, p95: 6.8 },
+    productDefault: { min: 5.8, max: 6.8 },
+    xRange: [4.5, 8.5],
+  },
+  {
+    id: 'tragus',
+    name: 'Tragus-to-Tragus (Front Arc)',
+    unit: 'cm',
+    desc: 'Surface arc across face, ear to ear',
+    male:   { p5: 26.0, p50: 28.5, p95: 30.5 },
+    female: { p5: 24.5, p50: 27.0, p95: 29.0 },
+    productDefault: { min: 25.5, max: 30.0 },
+    xRange: [22, 33],
+  },
+  {
+    id: 'mastoid',
+    name: 'Mastoid-to-Mastoid (Rear Arc)',
+    unit: 'cm',
+    desc: 'Surface arc over back of skull',
+    male:   { p5: 27.0, p50: 29.5, p95: 32.0 },
+    female: { p5: 25.5, p50: 28.0, p95: 30.5 },
+    productDefault: { min: 26.5, max: 31.5 },
+    xRange: [23, 35],
+  },
+  {
+    id: 'bizygomatic',
+    name: 'Bizygomatic Breadth',
+    unit: 'cm',
+    desc: 'Zygion–zygion straight-line chord (cheekbone to cheekbone)',
+    male:   { p5: 13.2, p50: 14.35, p95: 15.5 },
+    female: { p5: 12.4, p50: 13.51, p95: 14.6 },
+    productDefault: { min: 13.2, max: 14.35 },
+    xRange: [11.0, 17.0],
+    isNiosh: true,
+  },
+  {
+    id: 'maskarcflex',
+    name: 'Mask Arc Flex (BZ-derived)',
+    unit: 'cm',
+    desc: 'Face curvature radius at cheekbone level — smaller = narrower face = more flex demand on mask grooves',
+    male:   { p5: 8.04, p50: 9.20, p95: 10.04 },
+    female: { p5: 7.91, p50: 8.64, p95: 9.38  },
+    productDefault: { min: 8.64, max: 10.04 },
+    xRange: [6.5, 12.0],
+    isMaskFlex: true,
+  },
+];
+
+// product state
+const productState = {};
+MEASUREMENTS.forEach(m => {
+  productState[m.id] = { ...m.productDefault };
+});
+
+// ── Stats helpers ────────────────────────────────────────────────────────────
+function getGaussParams(d) {
+  const z = 1.6449;
+  const sigma = (d.p95 - d.p5) / (2 * z);
+  return { mu: d.p50, sigma };
+}
+function gaussPDF(x, mu, sigma) {
+  return (1 / (sigma * Math.sqrt(2 * Math.PI))) *
+         Math.exp(-0.5 * ((x - mu) / sigma) ** 2);
+}
+function gaussCDF(x, mu, sigma) {
+  return 0.5 * (1 + erf((x - mu) / (sigma * Math.sqrt(2))));
+}
+function erf(x) {
+  const t = 1 / (1 + 0.3275911 * Math.abs(x));
+  const poly = t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429))));
+  const val = 1 - poly * Math.exp(-x * x);
+  return x >= 0 ? val : -val;
+}
+function coverage(params, min, max) {
+  return gaussCDF(max, params.mu, params.sigma) - gaussCDF(min, params.mu, params.sigma);
+}
+
+// ── Build product inputs ─────────────────────────────────────────────────────
+function buildInputs() {
+  const container = document.getElementById('product-inputs');
+  container.style.cssText = 'display:flex; flex-wrap:wrap; gap:20px; align-items:flex-end;';
+  MEASUREMENTS.forEach(m => {
+    const g = document.createElement('div');
+    g.style.cssText = 'display:flex; flex-direction:column; gap:5px;';
+    const labelColor = m.isNiosh ? 'var(--niosh)' : 'var(--muted)';
+    g.innerHTML = `
+      <label style="font-size:11px; font-family:'DM Mono',monospace; color:${labelColor}; text-transform:uppercase; letter-spacing:0.05em;">${m.name.split('(')[0].trim()}${m.isNiosh ? ' ✦' : ''}</label>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <input type="number" step="0.1" value="${m.productDefault.min}" id="min_${m.id}" style="background:var(--surface); border:1px solid ${m.isNiosh ? '#34d39940' : 'var(--border)'}; border-radius:6px; color:var(--product); font-family:'DM Mono',monospace; font-size:12px; padding:6px 8px; width:70px; outline:none;">
+        <span style="color:var(--muted); font-size:12px;">→</span>
+        <input type="number" step="0.1" value="${m.productDefault.max}" id="max_${m.id}" style="background:var(--surface); border:1px solid ${m.isNiosh ? '#34d39940' : 'var(--border)'}; border-radius:6px; color:var(--product); font-family:'DM Mono',monospace; font-size:12px; padding:6px 8px; width:70px; outline:none;">
+        <span style="color:var(--muted); font-size:10px; font-family:'DM Mono',monospace;">cm</span>
+      </div>`;
+    container.appendChild(g);
+    ['min', 'max'].forEach(t => {
+      document.getElementById(`${t}_${m.id}`).addEventListener('input', e => {
+        productState[m.id][t] = parseFloat(e.target.value) || 0;
+        redrawAll();
+      });
+    });
+  });
+}
+
+// ── Chart dimensions ─────────────────────────────────────────────────────────
+const W = 520, H = 260;
+const margin = { top: 20, right: 24, bottom: 44, left: 36 };
+const iW = W - margin.left - margin.right;
+const iH = H - margin.top - margin.bottom;
+
+// ── Build chart shells ────────────────────────────────────────────────────────
+function buildCharts() {
+  const grid = document.getElementById('charts-grid');
+  MEASUREMENTS.forEach(m => {
+    const card = document.createElement('div');
+    const extraClass = (m.isNiosh || m.isMaskFlex) ? ' full-width niosh-card' : '';
+    card.className = 'chart-card' + extraClass;
+    card.id = `card_${m.id}`;
+
+    const accentColor = m.isMaskFlex ? '#ef4444' : '#34d399';
+    const badge = m.isNiosh
+      ? `<div class="niosh-badge">✦ NIOSH 2005 — Direct Caliper Measurement — N=3,997 U.S. Workers — Primary Mask-Fit Dimension</div>`
+      : m.isMaskFlex
+      ? `<div class="niosh-badge" style="border-color:#ef444440;color:#ef4444;background:#ef444410;">⚠ PRIMARY FIT CONSTRAINT — Face radius derived from BZ via R=(BZ²/4+nose²)/(2·nose). Smaller R = higher curvature = more groove flex demand. Product range = BZ range the mask grooves fully accommodate.</div>`
+      : '';
+
+    const innerOpen  = (m.isNiosh || m.isMaskFlex) ? '<div class="inner">' : '';
+    const innerClose = (m.isNiosh || m.isMaskFlex) ? '</div>' : '';
+
+    card.innerHTML = `
+      ${innerOpen}
+      <div class="chart-title" style="${m.isMaskFlex ? 'color:#ef4444' : ''}">${m.name}</div>
+      <div class="chart-subtitle">${m.desc}</div>
+      ${badge}
+      <svg id="svg_${m.id}" viewBox="0 0 ${W} ${H}"></svg>
+      <div class="stat-row" id="stats_${m.id}"></div>
+      <div class="coverage-section">
+        <div class="coverage-label">Combined Population Coverage</div>
+        <div class="coverage-bar-bg"><div class="coverage-bar-fill" id="covbar_${m.id}" style="width:0%;"></div></div>
+        <div class="coverage-pct" id="covpct_${m.id}">—</div>
+        <div class="gap-callout" id="gapcall_${m.id}"></div>
+      </div>
+      ${innerClose}`;
+    grid.appendChild(card);
+  });
+}
+
+// ── Draw / Redraw ─────────────────────────────────────────────────────────────
+function drawChart(m) {
+  const svg = d3.select(`#svg_${m.id}`);
+  svg.selectAll('*').remove();
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const [xMin, xMax] = m.xRange;
+  const x = d3.scaleLinear().domain([xMin, xMax]).range([0, iW]);
+
+  const mParams = getGaussParams(m.male);
+  const fParams = getGaussParams(m.female);
+
+  const points = d3.range(xMin, xMax, (xMax - xMin) / 400);
+  const yMax = d3.max(points, v => Math.max(gaussPDF(v, mParams.mu, mParams.sigma), gaussPDF(v, fParams.mu, fParams.sigma)));
+  const y = d3.scaleLinear().domain([0, yMax * 1.12]).range([iH, 0]);
+
+  // grid lines
+  g.append('g').attr('class', 'grid')
+    .selectAll('line').data(x.ticks(8)).enter().append('line')
+    .attr('x1', d => x(d)).attr('x2', d => x(d))
+    .attr('y1', 0).attr('y2', iH)
+    .attr('stroke', '#2d374840').attr('stroke-width', 1);
+
+  // percentile span bands
+  [{ p: m.male, color: 'var(--male)' }, { p: m.female, color: 'var(--female)' }].forEach(s => {
+    g.append('rect')
+      .attr('x', x(s.p.p5)).attr('y', 0)
+      .attr('width', x(s.p.p95) - x(s.p.p5))
+      .attr('height', iH)
+      .attr('fill', s.color).attr('opacity', 0.07);
+  });
+
+  // product range
+  const prod = productState[m.id];
+  const px1 = Math.max(x(prod.min), 0);
+  const px2 = Math.min(x(prod.max), iW);
+  if (px2 > px1) {
+    g.append('rect').attr('class', 'product-range')
+      .attr('x', px1).attr('y', 0)
+      .attr('width', px2 - px1).attr('height', iH);
+  }
+
+  // gap regions
+  const combinedP5  = Math.min(m.male.p5,  m.female.p5);
+  const combinedP95 = Math.max(m.male.p95, m.female.p95);
+  [[combinedP5, prod.min], [prod.max, combinedP95]].forEach(([a, b]) => {
+    if (b > a) {
+      const gx1 = Math.max(x(a), 0), gx2 = Math.min(x(b), iW);
+      if (gx2 > gx1) {
+        g.append('rect').attr('class', 'gap-range')
+          .attr('x', gx1).attr('y', 0)
+          .attr('width', gx2 - gx1).attr('height', iH);
+      }
+    }
+  });
+
+  // area fills & curves
+  const pts = d3.range(xMin, xMax, (xMax - xMin) / 600);
+  const areaGen = (params) => d3.area()
+    .x(d => x(d)).y0(iH).y1(d => y(gaussPDF(d, params.mu, params.sigma))).curve(d3.curveBasis);
+  const lineGen = (params) => d3.line()
+    .x(d => x(d)).y(d => y(gaussPDF(d, params.mu, params.sigma))).curve(d3.curveBasis);
+
+  g.append('path').datum(pts).attr('class', 'area-male').attr('d', areaGen(mParams));
+  g.append('path').datum(pts).attr('class', 'area-female').attr('d', areaGen(fParams));
+  g.append('path').datum(pts).attr('class', 'curve-male').attr('d', lineGen(mParams));
+  g.append('path').datum(pts).attr('class', 'curve-female').attr('d', lineGen(fParams));
+
+  // percentile tick marks
+  [
+    { v: m.male.p5,    cls: 'pct-male',   label: 'M 5th'  },
+    { v: m.male.p50,   cls: 'pct-male',   label: 'M 50th' },
+    { v: m.male.p95,   cls: 'pct-male',   label: 'M 95th' },
+    { v: m.female.p5,  cls: 'pct-female', label: 'F 5th'  },
+    { v: m.female.p50, cls: 'pct-female', label: 'F 50th' },
+    { v: m.female.p95, cls: 'pct-female', label: 'F 95th' },
+  ].forEach(mk => {
+    g.append('line').attr('class', `pct-line ${mk.cls}`)
+      .attr('x1', x(mk.v)).attr('x2', x(mk.v)).attr('y1', 0).attr('y2', iH);
+  });
+
+  // product boundary lines + label
+  [prod.min, prod.max].forEach(v => {
+    if (v >= xMin && v <= xMax) {
+      g.append('line').attr('class', 'product-line')
+        .attr('x1', x(v)).attr('x2', x(v)).attr('y1', 0).attr('y2', iH);
+    }
+  });
+  const midProd = (prod.min + prod.max) / 2;
+  if (midProd >= xMin && midProd <= xMax) {
+    g.append('text')
+      .attr('x', x(midProd)).attr('y', 12).attr('text-anchor', 'middle')
+      .attr('fill', 'var(--product)').attr('font-size', 9)
+      .attr('font-family', "'DM Mono',monospace").text('PRODUCT');
+  }
+
+  // x-axis
+  const xAxis = d3.axisBottom(x).ticks(7).tickFormat(d => `${d}`);
+  const xG = g.append('g').attr('class', 'axis').attr('transform', `translate(0,${iH})`).call(xAxis);
+  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  xG.select('.domain').attr('stroke', 'var(--border)');
+  xG.selectAll('.tick line').attr('stroke', 'var(--border)');
+  g.append('text').attr('class', 'axis-label')
+    .attr('x', iW / 2).attr('y', iH + 36).attr('text-anchor', 'middle')
+    .attr('fill', 'var(--muted)').attr('font-size', 11).text(`${m.unit}`);
+
+  // hover overlay + tooltip
+  const tip = document.getElementById('tooltip');
+  const vLine = g.append('line')
+    .attr('stroke', '#ffffff30').attr('stroke-width', 1)
+    .attr('y1', 0).attr('y2', iH).attr('opacity', 0);
+  g.append('rect')
+    .attr('width', iW).attr('height', iH).attr('fill', 'transparent').attr('cursor', 'crosshair')
+    .on('mousemove', function(event) {
+      const [mx] = d3.pointer(event);
+      const val = x.invert(mx);
+      if (val < xMin || val > xMax) return;
+      vLine.attr('x1', mx).attr('x2', mx).attr('opacity', 1);
+      const mCdf = gaussCDF(val, mParams.mu, mParams.sigma);
+      const fCdf = gaussCDF(val, fParams.mu, fParams.sigma);
+      tip.style.opacity = '1';
+      tip.style.left = (event.clientX + 14) + 'px';
+      tip.style.top  = (event.clientY - 10) + 'px';
+      tip.innerHTML = `<b style="color:#f1f5f9">${val.toFixed(2)} cm</b><br>
+        <span style="color:var(--male)">♂ pctile: ${(mCdf*100).toFixed(1)}%</span><br>
+        <span style="color:var(--female)">♀ pctile: ${(fCdf*100).toFixed(1)}%</span>`;
+    })
+    .on('mouseleave', () => { vLine.attr('opacity', 0); tip.style.opacity = '0'; });
+
+  // stats row
+  const statsEl = document.getElementById(`stats_${m.id}`);
+  const nioshTag = m.isNiosh ? `<div class="stat-badge niosh">✦ NIOSH 2005 N=3,997</div>` : '';
+  statsEl.innerHTML = `
+    <div class="stat-badge male">♂ μ=${m.male.p50} | σ≈${mParams.sigma.toFixed(2)}</div>
+    <div class="stat-badge female">♀ μ=${m.female.p50} | σ≈${fParams.sigma.toFixed(2)}</div>
+    <div class="stat-badge product">Product: ${prod.min}–${prod.max} cm</div>
+    ${nioshTag}`;
+
+  // coverage
+  const mCov = coverage(mParams, prod.min, prod.max);
+  const fCov = coverage(fParams, prod.min, prod.max);
+  const combined = (mCov + fCov) / 2;
+  const pct = (combined * 100).toFixed(1);
+  const covBar = document.getElementById(`covbar_${m.id}`);
+  const covPct = document.getElementById(`covpct_${m.id}`);
+  const gapCall = document.getElementById(`gapcall_${m.id}`);
+  covBar.style.width = `${Math.min(combined * 100, 100)}%`;
+  covBar.style.background = combined > 0.8 ? 'var(--product)' : combined > 0.6 ? '#fb923c' : 'var(--gap)';
+  covPct.textContent = `${pct}% combined covered  (♂ ${(mCov*100).toFixed(1)}% · ♀ ${(fCov*100).toFixed(1)}%)`;
+  const gaps = [];
+  if (prod.min > combinedP5)  gaps.push(`Small end gap: ${combinedP5.toFixed(2)}–${prod.min.toFixed(2)} cm uncovered`);
+  if (prod.max < combinedP95) gaps.push(`Large end gap: ${prod.max.toFixed(2)}–${combinedP95.toFixed(2)} cm uncovered`);
+  if (gaps.length === 0 && combined > 0.9) {
+    gapCall.innerHTML = `<span style="color:#4ade80">✓ No significant gaps — product covers population well</span>`;
+  } else {
+    gapCall.innerHTML = gaps.map(g => `⚠ ${g}`).join('<br>');
+  }
+}
+
+// ── Summary grid ─────────────────────────────────────────────────────────────
+function buildSummary() {
+  const sg = document.getElementById('summary-grid');
+  sg.innerHTML = '';
+  MEASUREMENTS.forEach(m => {
+    const mP = getGaussParams(m.male);
+    const fP = getGaussParams(m.female);
+    const prod = productState[m.id];
+    const mCov = (coverage(mP, prod.min, prod.max) * 100).toFixed(1);
+    const fCov = (coverage(fP, prod.min, prod.max) * 100).toFixed(1);
+    const combined = ((coverage(mP, prod.min, prod.max) + coverage(fP, prod.min, prod.max)) / 2 * 100).toFixed(1);
+    const card = document.createElement('div');
+    card.className = 'summary-card' + (m.isNiosh ? ' niosh-summary' : '');
+    card.innerHTML = `
+      <div class="summary-card-title" style="color:${m.isNiosh ? 'var(--niosh)' : 'var(--muted)'}">
+        ${m.name.replace('(', '<br>(').replace('Bizygomatic', 'Bizygomatic ✦')}
+      </div>
+      <div class="summary-row"><span class="label">♂ 5–95th</span><span class="val-m">${m.male.p5}–${m.male.p95} cm</span></div>
+      <div class="summary-row"><span class="label">♀ 5–95th</span><span class="val-f">${m.female.p5}–${m.female.p95} cm</span></div>
+      <div class="summary-row"><span class="label">♂ median</span><span class="val-m">${m.male.p50} cm</span></div>
+      <div class="summary-row"><span class="label">♀ median</span><span class="val-f">${m.female.p50} cm</span></div>
+      <div class="summary-row"><span class="label">Product</span><span style="color:var(--product)">${prod.min}–${prod.max} cm</span></div>
+      <div class="summary-row"><span class="label">♂ coverage</span><span class="val-m">${mCov}%</span></div>
+      <div class="summary-row"><span class="label">♀ coverage</span><span class="val-f">${fCov}%</span></div>
+      <div class="summary-row"><span class="label">Combined</span>
+        <span style="color:${combined > 80 ? 'var(--product)' : 'var(--gap)'}">${combined}%</span></div>`;
+    sg.appendChild(card);
+  });
+}
+
+function redrawAll() {
+  MEASUREMENTS.forEach(m => drawChart(m));
+  buildSummary();
+  updateOverallFit();
+}
+
+// ── Overall Fit Section ───────────────────────────────────────────────────────
+
+// Default weights (importance) for each dimension
+const dimWeights = {};
+MEASUREMENTS.forEach(m => { dimWeights[m.id] = 1.0; });
+
+// Special: ear height gets a higher default importance for wearable products
+dimWeights['ear'] = 2.0;
+// Mask arc flex is the primary fit constraint — highest weight
+dimWeights['maskarcflex'] = 3.0;
+
+function buildWeightInputs() {
+  const container = document.getElementById('weight-inputs');
+  container.innerHTML = '';
+  MEASUREMENTS.forEach(m => {
+    const row = document.createElement('div');
+    row.className = 'weight-row';
+    const accent = m.isMaskFlex ? '#ef4444' : m.isNiosh ? 'var(--niosh)' : 'var(--muted)';
+    const mark = m.isMaskFlex ? ' ⚠' : m.isNiosh ? ' ✦' : '';
+    row.innerHTML = `
+      <span class="weight-label" style="color:${accent}">${m.name.split('(')[0].trim()}${mark}</span>
+      <input class="weight-input" type="number" min="0" max="10" step="0.1"
+             id="w_${m.id}" value="${dimWeights[m.id]}">
+      <div class="weight-bar-bg">
+        <div class="weight-bar-fill" id="wb_${m.id}" style="width:${dimWeights[m.id]/5*100}%;${m.isMaskFlex ? 'background:#ef4444;' : ''}"></div>
+      </div>`;
+    container.appendChild(row);
+    document.getElementById(`w_${m.id}`).addEventListener('input', e => {
+      dimWeights[m.id] = Math.max(0, parseFloat(e.target.value) || 0);
+      document.getElementById(`wb_${m.id}`).style.width = `${Math.min(dimWeights[m.id]/5*100, 100)}%`;
+      updateOverallFit();
+    });
+  });
+}
+
+function getCoverageForDim(m) {
+  const mP = getGaussParams(m.male);
+  const fP = getGaussParams(m.female);
+  const prod = productState[m.id];
+  const mCov = coverage(mP, prod.min, prod.max);
+  const fCov = coverage(fP, prod.min, prod.max);
+  return (mCov + fCov) / 2;
+}
+
+function drawGauge(pct) {
+  const svg = d3.select('#overall-gauge-svg');
+  svg.selectAll('*').remove();
+
+  const W = 280, H = 165;
+  const cx = W / 2, cy = H - 18;
+  const r = 108, rInner = 68;
+
+  // d3 arc angles are clockwise from 12 o'clock (top)
+  // Semicircle from 9 o'clock (-π/2 + (-π/2)) = -π  to  3 o'clock (π/2 - (-π/2)) = 0
+  // We want left (9 o'clock) = -π/2 rotated = startAngle -π, endAngle 0 in d3 convention
+  // d3 arc: 0 = 12 o'clock, π/2 = 3 o'clock, π = 6 o'clock, -π/2 = 9 o'clock
+  const startAngle = -Math.PI / 2 - Math.PI / 2;  // = -π  → 9 o'clock (left)
+  const endAngle   =  Math.PI / 2 - Math.PI / 2;  // =  0  → 12 o'clock ... wrong
+
+  // Simpler: use explicit values
+  // Left end of gauge = 9 o'clock = -π/2 - π/2 = -π in d3 coords... let's just use:
+  // startAngle = -π (left, 9 o'clock in d3), endAngle = 0 (top, 12 o'clock in d3)
+  // That gives only a quarter arc. We want a full semicircle.
+  // Semicircle from left to right = startAngle: -π/2 - π/2 not right either.
+  //
+  // d3 arc convention: angle 0 = top (12 o'clock), increases clockwise
+  // 9 o'clock = -π/2,  6 o'clock = π,  3 o'clock = π/2
+  // For a bottom semicircle (left → bottom → right): startAngle = -π/2, endAngle = π/2  ← WRONG direction  
+  // For a TOP semicircle (left → top → right): startAngle = -π/2, endAngle = -(3π/2) going CCW
+  // Easiest: startAngle = π/2+π/2 going other way... 
+  //
+  // CLEAN APPROACH: place center at bottom, arc sweeps from left (-π) to right (0) in d3:
+  // In d3: angle -π = left (9 o'clock), angle 0 = top (12 o'clock)... no.
+  // In d3: angle 0 = 12 o'clock. Going clockwise: π/2 = 3 o'clock, π = 6 o'clock, 3π/2 or -π/2 = 9 o'clock.
+  // 
+  // For center-bottom gauge sweeping left→top→right:
+  // startAngle = -Math.PI  (= 6 o'clock going CCW = left = 9 o'clock)? No.
+  // In d3, negative angles go counter-clockwise from 12.
+  // -π/2 = 9 o'clock (CCW from 12 = left). -π = 6 o'clock going CCW = same as +π.
+  // 
+  // Let's just directly verify: startAngle=-Math.PI/2*3 = -270° = 9 o'clock? 
+  // -π = -180° CCW from top = 6 o'clock (bottom). 
+  // We want LEFT→RIGHT passing through TOP.
+  // That's startAngle = -π/2 - π/2 = ... 
+  // 
+  // JUST USE: startAngle = -Math.PI, endAngle = 0
+  // -π in d3 = bottom (same as +π = 6 o'clock). That's wrong for a top semicircle.
+  //
+  // For tick labels, use the SAME angle formula as d3 uses internally:
+  // d3 arc at angle θ places point at (sin θ, -cos θ) * r  (because 0=top, clockwise)
+  // So: x = cx + r * sin(θ),  y = cy - r * cos(θ)
+  //
+  // TOP semicircle (center at bottom, arc goes over the top):
+  // Left point: x=cx-r, y=cy → sin(θ)=-1, cos(θ)=0 → θ = -π/2 ... wait sin(-π/2)=-1 ✓, cos(-π/2)=0 ✓ → y=cy ✓ x=cx-r ✓
+  // Right point: x=cx+r, y=cy → sin(θ)=1 → θ = π/2 ✓
+  // So startAngle = -π/2 (left), endAngle = π/2 (right), going clockwise through top ✓
+
+  const sA = -Math.PI / 2;   // left  (9 o'clock)
+  const eA =  Math.PI / 2;   // right (3 o'clock)
+
+  const color = pct > 80 ? '#4ade80' : pct > 60 ? '#fbbf24' : pct > 40 ? '#fb923c' : '#ef4444';
+
+  // Background arc
+  svg.append('path')
+    .attr('d', d3.arc().innerRadius(rInner).outerRadius(r).startAngle(sA).endAngle(eA)())
+    .attr('transform', `translate(${cx},${cy})`).attr('fill', '#1e293b');
+
+  // Fill arc
+  const fillEnd = sA + (eA - sA) * (pct / 100);
+  svg.append('path')
+    .attr('d', d3.arc().innerRadius(rInner).outerRadius(r).startAngle(sA).endAngle(fillEnd)())
+    .attr('transform', `translate(${cx},${cy})`).attr('fill', color).attr('opacity', 0.9);
+
+  // Tick marks and labels — using d3 arc angle convention: x=cx+r*sin(θ), y=cy-r*cos(θ)
+  [0, 20, 40, 60, 80, 100].forEach(v => {
+    const θ = sA + (eA - sA) * (v / 100);
+    const sinθ = Math.sin(θ), cosθ = Math.cos(θ);
+    // Tick: from r+4 to r+12 outward
+    const x1 = cx + (r + 2)  * sinθ, y1 = cy - (r + 2)  * cosθ;
+    const x2 = cx + (r + 12) * sinθ, y2 = cy - (r + 12) * cosθ;
+    svg.append('line').attr('x1', x1).attr('y1', y1).attr('x2', x2).attr('y2', y2)
+      .attr('stroke', '#475569').attr('stroke-width', 1.5);
+
+    // Label at r+24, anchor adjusted by position
+    const lx = cx + (r + 24) * sinθ;
+    const ly = cy - (r + 24) * cosθ;
+    const anchor = v === 0 ? 'end' : v === 100 ? 'start' : 'middle';
+    svg.append('text').attr('x', lx).attr('y', ly)
+      .attr('text-anchor', anchor).attr('dominant-baseline', 'middle')
+      .attr('fill', '#94a3b8').attr('font-size', 10)
+      .attr('font-family', "'DM Mono',monospace").text(`${v}%`);
+  });
+
+  // Needle
+  const θn = sA + (eA - sA) * (pct / 100);
+  const nx = cx + (rInner - 10) * Math.sin(θn);
+  const ny = cy - (rInner - 10) * Math.cos(θn);
+  svg.append('line').attr('x1', cx).attr('y1', cy).attr('x2', nx).attr('y2', ny)
+    .attr('stroke', color).attr('stroke-width', 3).attr('stroke-linecap', 'round');
+  svg.append('circle').attr('cx', cx).attr('cy', cy).attr('r', 6).attr('fill', color);
+}
+
+function updateOverallFit() {
+  const dimCovs = {};
+  MEASUREMENTS.forEach(m => { dimCovs[m.id] = getCoverageForDim(m); });
+
+  // Weighted average
+  let weightedSum = 0, totalWeight = 0;
+  MEASUREMENTS.forEach(m => {
+    weightedSum += dimCovs[m.id] * dimWeights[m.id];
+    totalWeight += dimWeights[m.id];
+  });
+  const totalWeightRounded = totalWeight.toFixed(1);
+  document.getElementById('weight-total-val').textContent = totalWeightRounded;
+  const overallPct = totalWeight > 0 ? (weightedSum / totalWeight) * 100 : 0;
+
+  // Update big number
+  const bigEl = document.getElementById('overall-big-pct');
+  bigEl.textContent = `${overallPct.toFixed(1)}%`;
+  bigEl.style.color = overallPct > 80 ? '#4ade80' : overallPct > 60 ? '#fbbf24' : overallPct > 40 ? '#fb923c' : '#ef4444';
+
+  // Draw gauge
+  drawGauge(overallPct);
+
+  // Breakdown bars
+  const breakEl = document.getElementById('overall-breakdown');
+  breakEl.innerHTML = '';
+  MEASUREMENTS.forEach(m => {
+    const cov = dimCovs[m.id];
+    const pct = (cov * 100).toFixed(1);
+    const barColor = cov > 0.8 ? 'var(--product)' : cov > 0.6 ? '#fb923c' : 'var(--gap)';
+    const wt = dimWeights[m.id];
+    const contrib = totalWeight > 0 ? ((cov * wt / totalWeight) * 100).toFixed(1) : '0.0';
+    const mCov = (coverage(getGaussParams(m.male), productState[m.id].min, productState[m.id].max) * 100).toFixed(1);
+    const fCov = (coverage(getGaussParams(m.female), productState[m.id].min, productState[m.id].max) * 100).toFixed(1);
+    const nioshMark = m.isNiosh ? ' <span style="color:var(--niosh)">✦</span>' : '';
+    const row = document.createElement('div');
+    row.className = 'overall-dim-row';
+    row.innerHTML = `
+      <div class="overall-dim-header">
+        <span class="overall-dim-name">${m.name.split('(')[0].trim()}${nioshMark}</span>
+        <span class="overall-dim-pct" style="color:${barColor}">${pct}%</span>
+      </div>
+      <div class="overall-dim-bar-bg">
+        <div class="overall-dim-bar-fill" style="width:${Math.min(cov*100,100)}%; background:${barColor};"></div>
+      </div>
+      <div class="overall-dim-sub">♂ ${mCov}% · ♀ ${fCov}% · weight ${wt.toFixed(1)} · contributes ${contrib}% to overall</div>`;
+    breakEl.appendChild(row);
+  });
+  updateFlexFitPanel();
+}
+
+
+// ── Mask Geometry controls ────────────────────────────────────────────────────
+function buildMgControls() {
+  const bar = document.getElementById('mg-controls-bar');
+  bar.innerHTML = '';
+
+  const rows = [
+    { label: '▸ MASK GEOMETRY',    keys: ['width', 'nose', 'maxflex', 'sensor'] },
+    { label: '▸ GROOVE POSITIONS', keys: ['g1', 'g2', 'g3'] },
+    { label: '▸ ANALYSIS',         keys: ['bzInspect', 'flexThresh', 'gapThresh'] },
+  ];
+
+  rows.forEach(rowDef => {
+    const row = document.createElement('div');
+    row.className = 'mg-ctrl-row';
+
+    const label = document.createElement('div');
+    label.className = 'mg-ctrl-section-label';
+    label.innerHTML = rowDef.label.replace(' ', '<br>');
+    row.appendChild(label);
+
+    rowDef.keys.forEach(key => row.appendChild(makeMgSlider(key)));
+    bar.appendChild(row);
+  });
+}
+
+function makeMgSlider(key) {
+  const cfg = MG_CONTROLS.find(c => c.key === key);
+  const wrap = document.createElement('div');
+  wrap.className = 'mg-ctrl-group';
+
+  const valId = `mgv_${key}`;
+  const sliderId = `mgs_${key}`;
+
+  wrap.innerHTML = `
+    <div class="mg-ctrl-label">
+      <span>${cfg.label}</span>
+      <span class="mg-ctrl-value" id="${valId}">${mgState[key]}${cfg.unit}</span>
+    </div>
+    <input class="mg-ctrl-slider" type="range"
+      id="${sliderId}"
+      min="${cfg.min}" max="${cfg.max}" step="${cfg.step}"
+      value="${mgState[key]}">`;
+
+  // Wire slider
+  wrap.querySelector(`#${sliderId}`).addEventListener('input', e => {
+    mgState[key] = parseFloat(e.target.value);
+    document.getElementById(valId).textContent = mgState[key] + cfg.unit;
+    redrawMaskGeo();
+  });
+
+  return wrap;
+}
+
+function getMaskGeoState() {
+  return { ...mgState };
+}
+
+
+
+function faceRadius(bz, noseProjCm) {
+  return (bz * bz / 4 + noseProjCm * noseProjCm) / (2 * noseProjCm);
+}
+
+function getMaskFlexForBZ(bz, mg) {
+  const R = faceRadius(bz, mg.nose);
+  const half = mg.width / 2;
+  const thetaReq = half / R;
+  const thetaReqDeg = thetaReq * 180 / Math.PI;
+  const grooveCapDeg = 3 * mg.maxflex;
+  const grooveCapRad = grooveCapDeg * Math.PI / 180;
+  const unmetRad = Math.max(0, thetaReq - grooveCapRad);
+  const liftGapMm = R * (1 - Math.cos(unmetRad)) * 10;
+  const panels_half = [mg.g1, mg.g2 - mg.g1, mg.g3 - mg.g2, half - mg.g3];
+  const grooveAngles = panels_half.map(w => (w / R) * 180 / Math.PI);
+  return { R, thetaReqDeg, grooveCapDeg, unmetRad, liftGapMm, grooveAngles };
+}
+
+// ── Shared helpers ────────────────────────────────────────────────────────────
+
+function getTotalTipGap(bz, mg) {
+  return getGapComponents(bz, mg).total;
+}
+
+function getGapComponents(bz, mg) {
+  const a = bz / 2;
+  const R_face = faceRadius(bz, mg.nose);
+  const flex = getMaskFlexForBZ(bz, mg);
+  const half = mg.width / 2;
+  const bzToCirc = b => 53.0 + (b - 12.4) / (15.5 - 12.4) * 7.0;
+  const R_temp = 5.87 * (bzToCirc(bz) / bzToCirc(15.5));
+  const extra = half - a;
+  const temporal = R_temp * (1 - Math.cos(extra / R_temp)) * 10;
+  const flexLift = flex.unmetRad > 0 ? R_face * (1 - Math.cos(flex.unmetRad)) * 10 : 0;
+  return { flexLift, temporal, total: flexLift + temporal };
+}
+
+// ── Flex/Gap population fit panel ────────────────────────────────────────────
+function updateFlexFitPanel() {
+  if (!document.getElementById('flex-seal-pct')) return;
+  const mg = getMaskGeoState();
+  const bzMean = 13.9, bzSD = 0.95;
+  const flexThresh = mg.flexThresh;
+  const tempRef    = mg.gapThresh;
+
+  // Per-profile breakdown
+  const profiles = BZ_PROFILES.map(p => {
+    const c = getGapComponents(p.bz, mg);
+    return { ...p, flexLift: c.flexLift, temporal: c.temporal, total: c.total };
+  });
+
+  // Population-weighted cheek seal pass rate (flexLift ≤ flexThresh)
+  let sealPass = 0, totalPop = 0;
+  const nSamp = 200, bzMin = 10.5, bzMax = 17.0, dBZ = (bzMax - bzMin) / nSamp;
+  for (let i = 0; i <= nSamp; i++) {
+    const bz = bzMin + i * dBZ;
+    const w  = Math.exp(-0.5 * ((bz - bzMean) / bzSD) ** 2);
+    totalPop += w;
+    if (getGapComponents(bz, mg).flexLift <= flexThresh) sealPass += w;
+  }
+  const sealPct = (sealPass / totalPop) * 100;
+
+  // Temporal range across population
+  const tempMin = d3.min(profiles, p => p.temporal);
+  const tempMax = d3.max(profiles, p => p.temporal);
+
+  // Update cheek seal metric
+  const sealPctEl  = document.getElementById('flex-seal-pct');
+  const sealBarEl  = document.getElementById('flex-seal-bar');
+  const sealSubEl  = document.getElementById('flex-seal-sub');
+  const sealColor  = sealPct > 80 ? '#4ade80' : sealPct > 55 ? '#fbbf24' : sealPct > 35 ? '#fb923c' : '#ef4444';
+  sealPctEl.textContent = sealPct.toFixed(1) + '% pass';
+  sealPctEl.style.color = sealColor;
+  sealBarEl.style.width = sealPct + '%';
+  sealBarEl.style.background = sealColor;
+  const failPct = 100 - sealPct;
+  sealSubEl.textContent = `≤${flexThresh}mm cheek lift: ${sealPct.toFixed(0)}% pass · ${failPct.toFixed(0)}% fail — seal-critical`;
+  sealSubEl.style.color = sealColor;
+
+  // Update temporal metric
+  const tempRangeEl = document.getElementById('flex-temp-range');
+  const tempSubEl   = document.getElementById('flex-temp-sub');
+  tempRangeEl.textContent = `${tempMin.toFixed(0)}–${tempMax.toFixed(0)}mm`;
+  tempSubEl.textContent   = `P95 (widest): ${tempMin.toFixed(1)}mm · P5 (narrowest): ${tempMax.toFixed(1)}mm · inherent wing geometry`;
+  tempSubEl.style.color   = '#818cf8';
+
+  // ── Stacked bar chart ──
+  const svg = d3.select('#flex-pop-svg');
+  svg.selectAll('*').remove();
+  const W = 860, H = 130;
+  const m = { top: 16, right: 16, bottom: 30, left: 50 };
+  const iW = W - m.left - m.right, iH = H - m.top - m.bottom;
+  const g = svg.append('g').attr('transform', `translate(${m.left},${m.top})`);
+
+  const maxVal = Math.max(d3.max(profiles, p => p.total), tempRef * 1.1);
+  const x = d3.scaleBand().domain(profiles.map(p => p.label)).range([0, iW]).padding(0.2);
+  const y = d3.scaleLinear().domain([0, maxVal]).range([iH, 0]);
+
+  // Grid
+  g.append('g').selectAll('line').data(y.ticks(4)).enter().append('line')
+    .attr('x1', 0).attr('x2', iW).attr('y1', d => y(d)).attr('y2', d => y(d))
+    .attr('stroke', '#2d374840').attr('stroke-width', 1);
+
+  // Cheek seal threshold line
+  if (flexThresh >= 0 && flexThresh <= maxVal) {
+    g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(flexThresh)).attr('y2', y(flexThresh))
+      .attr('stroke', '#ef4444').attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
+    g.append('text').attr('x', 4).attr('y', y(flexThresh) - 3)
+      .attr('fill', '#ef4444').attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+      .text(`cheek seal threshold ${flexThresh}mm`);
+  }
+
+  // Temporal reference line
+  if (tempRef <= maxVal) {
+    g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(tempRef)).attr('y2', y(tempRef))
+      .attr('stroke', '#818cf8').attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
+    g.append('text').attr('x', iW - 4).attr('y', y(tempRef) - 3)
+      .attr('text-anchor', 'end').attr('fill', '#818cf8').attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+      .text(`temporal ref ${tempRef}mm`);
+  }
+
+  // Stacked bars: temporal (purple, bottom) + flexLift (red/green on top)
+  profiles.forEach(p => {
+    const bx = x(p.label);
+    const bw = x.bandwidth();
+    const sealOk = p.flexLift <= flexThresh;
+
+    // Temporal segment (purple) — always present
+    g.append('rect')
+      .attr('x', bx).attr('y', y(p.temporal))
+      .attr('width', bw).attr('height', iH - y(p.temporal))
+      .attr('fill', '#818cf8').attr('opacity', 0.55).attr('rx', 2);
+
+    // Flex lift segment (on top of temporal) — seal-critical
+    if (p.flexLift > 0.05) {
+      g.append('rect')
+        .attr('x', bx).attr('y', y(p.total))
+        .attr('width', bw).attr('height', y(p.temporal) - y(p.total))
+        .attr('fill', sealOk ? '#4ade80' : '#ef4444').attr('opacity', 0.85).attr('rx', 2);
+    }
+
+    // Total value label
+    g.append('text').attr('x', bx + bw / 2).attr('y', y(p.total) - 3)
+      .attr('text-anchor', 'middle')
+      .attr('fill', sealOk ? '#4ade80' : '#ef4444')
+      .attr('font-size', 7.5).attr('font-family', "'DM Mono',monospace")
+      .text(p.flexLift > 0.05 ? `+${p.flexLift.toFixed(1)}` : '✓');
+
+    // Temporal label inside bar
+    g.append('text').attr('x', bx + bw / 2).attr('y', y(p.temporal / 2))
+      .attr('text-anchor', 'middle').attr('fill', '#c7d2fe')
+      .attr('font-size', 6.5).attr('font-family', "'DM Mono',monospace")
+      .text(p.temporal.toFixed(0) + 'mm');
+  });
+
+  // Legend
+  const leg = [
+    { color: '#ef4444', label: 'Cheek lift (seal fail)' },
+    { color: '#4ade80', label: 'Cheek lift (seal ok)'   },
+    { color: '#818cf8', label: 'Temporal recession (inherent)' },
+  ];
+  leg.forEach((l, i) => {
+    g.append('rect').attr('x', iW - 200).attr('y', i * 14).attr('width', 10).attr('height', 8).attr('fill', l.color).attr('rx', 1);
+    g.append('text').attr('x', iW - 186).attr('y', i * 14 + 7)
+      .attr('fill', '#94a3b8').attr('font-size', 7.5).attr('font-family', "'DM Mono',monospace").text(l.label);
+  });
+
+  // Axes
+  const xA = g.append('g').attr('transform', `translate(0,${iH})`).call(d3.axisBottom(x).tickSize(2));
+  xA.selectAll('text').attr('fill', '#64748b').style('font-size', '8px').style('font-family', "'DM Mono',monospace");
+  xA.select('.domain').attr('stroke', '#1e293b'); xA.selectAll('.tick line').attr('stroke', '#1e293b');
+
+  const yA = g.append('g').call(d3.axisLeft(y).ticks(4).tickFormat(d => d + 'mm'));
+  yA.selectAll('text').attr('fill', '#64748b').style('font-size', '8px').style('font-family', "'DM Mono',monospace");
+  yA.select('.domain').attr('stroke', '#1e293b'); yA.selectAll('.tick line').attr('stroke', '#1e293b');
+}
+
+// ── Chart 1: Total flex demand vs BZ ─────────────────────────────────────────
+function drawMgArcChart(mg) {
+  const svg = d3.select('#mg-arc-svg');
+  svg.selectAll('*').remove();
+  const W = 480, H = 240;
+  const m = { top: 24, right: 30, bottom: 48, left: 50 };
+  const iW = W - m.left - m.right, iH = H - m.top - m.bottom;
+  const g = svg.append('g').attr('transform', `translate(${m.left},${m.top})`);
+
+  const data = BZ_PROFILES.map(p => ({ ...p, ...getMaskFlexForBZ(p.bz, mg) }));
+  const x = d3.scaleLinear().domain([11.8, 16.0]).range([0, iW]);
+  const yMax = Math.max(d3.max(data, d => d.thetaReqDeg), mg.maxflex * 3) * 1.15;
+  const y = d3.scaleLinear().domain([0, yMax]).range([iH, 0]);
+
+  g.append('g').selectAll('line').data(y.ticks(5)).enter().append('line')
+    .attr('x1', 0).attr('x2', iW).attr('y1', d => y(d)).attr('y2', d => y(d))
+    .attr('stroke', '#2d374840').attr('stroke-width', 1);
+
+  const capY = y(mg.maxflex * 3);
+  g.append('rect').attr('x', 0).attr('y', 0).attr('width', iW).attr('height', capY).attr('fill', '#4ade8008');
+  g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', capY).attr('y2', capY)
+    .attr('stroke', '#4ade80').attr('stroke-width', 1.5).attr('stroke-dasharray', '6 3');
+  g.append('text').attr('x', iW - 4).attr('y', capY - 5).attr('text-anchor', 'end')
+    .attr('fill', '#4ade80').attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+    .text('Groove capacity: ' + (mg.maxflex * 3).toFixed(0) + '\u00b0');
+
+  const area = d3.area().x(d => x(d.bz)).y0(d => Math.min(y(d.thetaReqDeg), capY)).y1(capY).curve(d3.curveCatmullRom);
+  const defData = data.filter(d => d.thetaReqDeg > mg.maxflex * 3);
+  if (defData.length) {
+    const defArea = d3.area().x(d => x(d.bz)).y0(capY).y1(d => y(d.thetaReqDeg)).curve(d3.curveCatmullRom);
+    g.append('path').datum(data).attr('d', defArea).attr('fill', '#ef4444').attr('opacity', 0.12);
+  }
+
+  const line = d3.line().x(d => x(d.bz)).y(d => y(d.thetaReqDeg)).curve(d3.curveCatmullRom);
+  g.append('path').datum(data).attr('d', line).attr('fill', 'none').attr('stroke', '#818cf8').attr('stroke-width', 2.5);
+
+  data.forEach(d => {
+    const over = d.thetaReqDeg > mg.maxflex * 3;
+    g.append('circle').attr('cx', x(d.bz)).attr('cy', y(d.thetaReqDeg)).attr('r', 4)
+      .attr('fill', over ? '#ef4444' : d.color).attr('stroke', '#1c2230').attr('stroke-width', 1.5);
+  });
+
+  [{ bz: 12.4, t: 'F P5' }, { bz: 13.51, t: 'F P50' }, { bz: 14.35, t: 'M P50' }, { bz: 15.5, t: 'M P95' }].forEach(mk => {
+    g.append('line').attr('x1', x(mk.bz)).attr('x2', x(mk.bz)).attr('y1', 0).attr('y2', iH)
+      .attr('stroke', '#64748b').attr('stroke-width', 1).attr('stroke-dasharray', '3 3');
+    g.append('text').attr('x', x(mk.bz)).attr('y', iH + 30).attr('text-anchor', 'middle')
+      .attr('fill', '#64748b').attr('font-size', 8).attr('font-family', "'DM Mono',monospace").text(mk.t);
+  });
+
+  const xG = g.append('g').attr('class', 'axis').attr('transform', `translate(0,${iH})`).call(d3.axisBottom(x).ticks(6).tickFormat(d => d + 'cm'));
+  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  xG.select('.domain').attr('stroke', 'var(--border)'); xG.selectAll('.tick line').attr('stroke', 'var(--border)');
+  g.append('text').attr('x', iW/2).attr('y', iH + 44).attr('text-anchor', 'middle')
+    .attr('fill', 'var(--muted)').attr('font-size', 10).attr('font-family', "'DM Sans',sans-serif").text('Bizygomatic Breadth (cm)');
+
+  const yG = g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(5).tickFormat(d => d + '\u00b0'));
+  yG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  yG.select('.domain').attr('stroke', 'var(--border)'); yG.selectAll('.tick line').attr('stroke', 'var(--border)');
+  // BZ inspect cursor
+  const bzX = x(mg.bzInspect);
+  const inspFlex = getMaskFlexForBZ(mg.bzInspect, mg);
+  g.append('line').attr('x1', bzX).attr('x2', bzX).attr('y1', 0).attr('y2', iH)
+    .attr('stroke', '#f59e0b').attr('stroke-width', 2).attr('stroke-dasharray', '5 3');
+  g.append('circle').attr('cx', bzX).attr('cy', y(inspFlex.thetaReqDeg)).attr('r', 6)
+    .attr('fill', '#f59e0b').attr('stroke', '#1c2230').attr('stroke-width', 2);
+  const inspOver = inspFlex.thetaReqDeg > mg.maxflex * 3;
+  const inspLabel = `BZ ${mg.bzInspect.toFixed(2)}cm → ${inspFlex.thetaReqDeg.toFixed(1)}° ${inspOver ? '⚠ over by ' + (inspFlex.thetaReqDeg - mg.maxflex*3).toFixed(1) + '°' : '✓ within cap'}`;
+  const inspX = bzX > iW * 0.6 ? bzX - 6 : bzX + 6;
+  const inspAnchor = bzX > iW * 0.6 ? 'end' : 'start';
+  g.append('text').attr('x', inspX).attr('y', y(inspFlex.thetaReqDeg) - 10)
+    .attr('text-anchor', inspAnchor).attr('fill', '#f59e0b')
+    .attr('font-size', 9).attr('font-family', "'DM Mono',monospace").text(inspLabel);
+}
+function drawMgGapChart(mg) {
+  const svg = d3.select('#mg-gap-svg');
+  svg.selectAll('*').remove();
+  const W = 480, H = 240;
+  const m = { top: 24, right: 30, bottom: 48, left: 50 };
+  const iW = W - m.left - m.right, iH = H - m.top - m.bottom;
+  const g = svg.append('g').attr('transform', `translate(${m.left},${m.top})`);
+
+  const data = BZ_PROFILES.map(p => ({ ...p, lift: getMaskFlexForBZ(p.bz, mg).liftGapMm }));
+  const x = d3.scaleLinear().domain([11.8, 16.0]).range([0, iW]);
+  const y = d3.scaleLinear().domain([0, Math.max(d3.max(data, d => d.lift) * 1.25, 2)]).range([iH, 0]);
+
+  g.append('g').selectAll('line').data(y.ticks(5)).enter().append('line')
+    .attr('x1', 0).attr('x2', iW).attr('y1', d => y(d)).attr('y2', d => y(d))
+    .attr('stroke', '#2d374840').attr('stroke-width', 1);
+
+  g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(0)).attr('y2', y(0))
+    .attr('stroke', '#4ade80').attr('stroke-width', 1).attr('stroke-dasharray', '4 3');
+  g.append('text').attr('x', 4).attr('y', y(0) - 4)
+    .attr('fill', '#4ade80').attr('font-size', 9).attr('font-family', "'DM Mono',monospace").text('Full conformance \u2713');
+
+  g.append('path').datum(data).attr('d', d3.area().x(d => x(d.bz)).y0(iH).y1(d => y(d.lift)).curve(d3.curveCatmullRom))
+    .attr('fill', '#ef4444').attr('opacity', 0.10);
+  g.append('path').datum(data).attr('d', d3.line().x(d => x(d.bz)).y(d => y(d.lift)).curve(d3.curveCatmullRom))
+    .attr('fill', 'none').attr('stroke', '#ef4444').attr('stroke-width', 2.5);
+
+  data.forEach(d => {
+    g.append('circle').attr('cx', x(d.bz)).attr('cy', y(d.lift)).attr('r', 4)
+      .attr('fill', d.color).attr('stroke', '#1c2230').attr('stroke-width', 1.5);
+    if (d.lift > 0.2) {
+      g.append('text').attr('x', x(d.bz)).attr('y', y(d.lift) - 8).attr('text-anchor', 'middle')
+        .attr('fill', d.color).attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+        .text(d.lift.toFixed(1) + 'mm');
+    }
+  });
+
+  [{ bz: 12.4, t: 'F P5' }, { bz: 13.51, t: 'F P50' }, { bz: 14.35, t: 'M P50' }, { bz: 15.5, t: 'M P95' }].forEach(mk => {
+    g.append('line').attr('x1', x(mk.bz)).attr('x2', x(mk.bz)).attr('y1', 0).attr('y2', iH)
+      .attr('stroke', '#64748b').attr('stroke-width', 1).attr('stroke-dasharray', '3 3');
+    g.append('text').attr('x', x(mk.bz)).attr('y', iH + 30).attr('text-anchor', 'middle')
+      .attr('fill', '#64748b').attr('font-size', 8).attr('font-family', "'DM Mono',monospace").text(mk.t);
+  });
+
+  const xG = g.append('g').attr('class', 'axis').attr('transform', `translate(0,${iH})`).call(d3.axisBottom(x).ticks(6).tickFormat(d => d + 'cm'));
+  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  xG.select('.domain').attr('stroke', 'var(--border)'); xG.selectAll('.tick line').attr('stroke', 'var(--border)');
+  g.append('text').attr('x', iW/2).attr('y', iH + 44).attr('text-anchor', 'middle')
+    .attr('fill', 'var(--muted)').attr('font-size', 10).attr('font-family', "'DM Sans',sans-serif").text('Bizygomatic Breadth (cm)');
+
+  const yG = g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(5).tickFormat(d => d.toFixed(1) + 'mm'));
+  yG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  yG.select('.domain').attr('stroke', 'var(--border)'); yG.selectAll('.tick line').attr('stroke', 'var(--border)');
+  g.append('text').attr('transform', 'rotate(-90)').attr('x', -iH/2).attr('y', -38)
+    .attr('text-anchor', 'middle').attr('fill', 'var(--muted)').attr('font-size', 10).text('Outer Panel Lift Gap (mm)');
+
+  // Cheek seal threshold line (flex lift only — not total gap)
+  const thresh = mg.flexThresh;
+  g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(thresh)).attr('y2', y(thresh))
+    .attr('stroke', '#ef4444').attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
+  g.append('text').attr('x', 4).attr('y', y(thresh) - 4)
+    .attr('fill', '#ef4444').attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+    .text(`Cheek seal threshold: ${thresh}mm`);
+
+  // BZ inspect cursor
+  const bzX2 = x(mg.bzInspect);
+  const inspComps = getGapComponents(mg.bzInspect, mg);
+  const inspLift  = inspComps.flexLift;
+  g.append('line').attr('x1', bzX2).attr('x2', bzX2).attr('y1', 0).attr('y2', iH)
+    .attr('stroke', '#f59e0b').attr('stroke-width', 2).attr('stroke-dasharray', '5 3');
+  g.append('circle').attr('cx', bzX2).attr('cy', y(inspLift)).attr('r', 6)
+    .attr('fill', '#f59e0b').attr('stroke', '#1c2230').attr('stroke-width', 2);
+  const iX2 = bzX2 > iW * 0.6 ? bzX2 - 6 : bzX2 + 6;
+  const iA2 = bzX2 > iW * 0.6 ? 'end' : 'start';
+  const iPass = inspLift <= mg.flexThresh;
+  g.append('text').attr('x', iX2).attr('y', y(inspLift) - 10)
+    .attr('text-anchor', iA2).attr('fill', iPass ? '#4ade80' : '#ef4444')
+    .attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+    .text(`BZ ${mg.bzInspect.toFixed(2)} → cheek lift ${inspLift.toFixed(1)}mm ${iPass ? '✓ seal ok' : '✗ seal fail'} + ${inspComps.temporal.toFixed(1)}mm temporal`);
+}
+// ── Chart 4: Cross-section by BZ ─────────────────────────────────────────────
+function drawMgCrossChart(mg) {
+  const svg = d3.select('#mg-cross-svg');
+  svg.selectAll('*').remove();
+  const W = 1200, H = 160;
+  const colors    = ['#f472b6', '#fbbf24', '#34d399', '#818cf8'];
+  const panColors = ['#fbbf24', '#a78bfa', '#34d399', '#38bdf8'];
+  const panelW    = W / BZ_CROSS.length;
+  const sc = 11, noseY = 44;
+  const wingLen = mg.width / 2 - mg.g3;
+
+  BZ_CROSS.forEach((prof, i) => {
+    const bz   = prof.bz;
+    const a    = bz / 2;
+    const R    = faceRadius(bz, mg.nose);
+    const flex = getMaskFlexForBZ(bz, mg);
+    const col  = colors[i];
+    const cx   = panelW * i + panelW / 2;
+    const half = mg.width / 2;
+    const mir  = x => cx - (x - cx);
+
+    function faceArcPt(A) { return [cx + R*sc*Math.sin(A), noseY + R*sc*(1 - Math.cos(A))]; }
+
+    const fraction = flex.thetaReqDeg > 0
+      ? Math.min((3 * mg.maxflex) / flex.thetaReqDeg, 1.0) : 1.0;
+    const groovesHalf = [0, mg.g1, mg.g2, mg.g3, half];
+    let cum = 0; const ga = [0];
+    for (let k = 0; k < groovesHalf.length - 1; k++) {
+      cum += (groovesHalf[k+1] - groovesHalf[k]) / R * fraction;
+      ga.push(cum);
+    }
+    const cheekAngle = a / R;
+    const outerAngle = ga[3];
+
+    const g3 = faceArcPt(outerAngle);
+    const wDx = Math.cos(outerAngle), wDy = Math.sin(outerAngle);
+    const wingTip = [g3[0] + wingLen*sc*wDx, g3[1] + wingLen*sc*wDy];
+
+    const bzToCirc = b => 53.0 + (b - 12.4) / (15.5 - 12.4) * 7.0;
+    const R_vis = bzToCirc(bz) / (2 * Math.PI) * 1.1;
+    const chPt = faceArcPt(cheekAngle);
+    const chDx = Math.cos(cheekAngle), chDy = Math.sin(cheekAngle);
+    const chTCx = chPt[0] + R_vis*sc*(-chDy), chTCy = chPt[1] + R_vis*sc*(chDx);
+    const ch2cx = (chPt[0] - chTCx) / (R_vis*sc), ch2cy = (chPt[1] - chTCy) / (R_vis*sc);
+    const tempSpan = (half - a) / R_vis;
+    const tempArc = d3.range(0, tempSpan + 0.005, 0.012).map(da => {
+      const rx = ch2cx*Math.cos(da) - ch2cy*Math.sin(da);
+      const ry = ch2cx*Math.sin(da) + ch2cy*Math.cos(da);
+      return [chTCx + rx*R_vis*sc, chTCy + ry*R_vis*sc];
+    });
+    const faceEnd = tempArc[tempArc.length - 1];
+    const comps = getGapComponents(bz, mg);
+
+    // 1. Blue face arc (frontal + temporal, both sides)
+    const frontPts = d3.range(0, cheekAngle + 0.005, 0.01).map(A => faceArcPt(A));
+    [false, true].forEach(left => {
+      const m = left ? (([x,y]) => [mir(x),y]) : (p=>p);
+      svg.append('path').attr('d', 'M ' + frontPts.map(m).map(p=>p.join(',')).join(' L '))
+        .attr('fill','none').attr('stroke','#3b82f6').attr('stroke-width',3).attr('opacity',0.85);
+      svg.append('path').attr('d', 'M ' + tempArc.map(m).map(p=>p.join(',')).join(' L '))
+        .attr('fill','none').attr('stroke','#3b82f6').attr('stroke-width',3).attr('opacity',0.85);
+    });
+
+    // 2. Colored grooved panels
+    for (let k = 0; k < groovesHalf.length - 1; k++) {
+      const [x1,y1] = faceArcPt(ga[k]), [x2,y2] = faceArcPt(ga[k+1]);
+      svg.append('line').attr('x1',x1).attr('y1',y1).attr('x2',x2).attr('y2',y2)
+        .attr('stroke',panColors[k]).attr('stroke-width',5).attr('opacity',0.9);
+      if (k > 0) svg.append('line').attr('x1',mir(x1)).attr('y1',y1).attr('x2',mir(x2)).attr('y2',y2)
+        .attr('stroke',panColors[k]).attr('stroke-width',5).attr('opacity',0.9);
+    }
+
+    // 3. Yellow dashed wing from G3
+    svg.append('line').attr('x1',g3[0]).attr('y1',g3[1]).attr('x2',wingTip[0]).attr('y2',wingTip[1])
+      .attr('stroke','#fbbf24').attr('stroke-width',3).attr('stroke-dasharray','8 4').attr('opacity',1);
+    svg.append('line').attr('x1',mir(g3[0])).attr('y1',g3[1]).attr('x2',mir(wingTip[0])).attr('y2',wingTip[1])
+      .attr('stroke','#fbbf24').attr('stroke-width',3).attr('stroke-dasharray','8 4').attr('opacity',1);
+
+    // 4. Red gap: face end → wing tip
+    [[faceEnd[0], wingTip[0]], [mir(faceEnd[0]), mir(wingTip[0])]].forEach(([fx, wx]) => {
+      svg.append('line').attr('x1',fx).attr('y1',faceEnd[1]).attr('x2',wx).attr('y2',wingTip[1])
+        .attr('stroke','#ef4444').attr('stroke-width',2).attr('stroke-dasharray','5 3');
+      [[fx, faceEnd[1]], [wx, wingTip[1]]].forEach(([px,py]) => {
+        svg.append('line').attr('x1',px+wDx*4).attr('y1',py+wDy*4).attr('x2',px-wDx*4).attr('y2',py-wDy*4)
+          .attr('stroke','#ef4444').attr('stroke-width',1.5);
+      });
+    });
+    svg.append('text').attr('x', wingTip[0]+6).attr('y', (faceEnd[1]+wingTip[1])/2+4)
+      .attr('fill','#ef4444').attr('font-size',9).attr('font-family',"'DM Mono',monospace")
+      .text(comps.total.toFixed(1)+'mm');
+
+    // 5. Groove dots
+    ga.slice(1,-1).forEach(ang => {
+      [1,-1].forEach(s => {
+        const [px,py] = faceArcPt(ang);
+        svg.append('circle').attr('cx', s>0?px:mir(px)).attr('cy',py).attr('r',4)
+          .attr('fill','#818cf8').attr('stroke','#1c2230').attr('stroke-width',1);
+      });
+    });
+
+    // 6. Labels
+    svg.append('text').attr('x',cx).attr('y',16).attr('text-anchor','middle')
+      .attr('fill',col).attr('font-family',"'DM Serif Display',serif").attr('font-size',13).text(prof.label);
+    svg.append('text').attr('x',cx).attr('y',28).attr('text-anchor','middle')
+      .attr('fill','var(--muted)').attr('font-family',"'DM Mono',monospace").attr('font-size',8)
+      .text(`BZ=${bz}cm · R=${R.toFixed(1)}cm · gap=${comps.total.toFixed(1)}mm`);
+
+    // 7. Divider
+    if (i < BZ_CROSS.length - 1) {
+      const divX = panelW * (i + 1);
+      svg.append('line').attr('x1',divX).attr('x2',divX).attr('y1',0).attr('y2',H)
+        .attr('stroke','#1e293b').attr('stroke-width',1);
+    }
+  });
+
+  // ── Stats cards ──
+  const statsEl = document.getElementById('mg-profile-stats');
+  statsEl.innerHTML = '';
+  BZ_CROSS.forEach((prof, i) => {
+    const R = faceRadius(prof.bz, mg.nose);
+    const flex = getMaskFlexForBZ(prof.bz, mg);
+    const totalTip = getTotalTipGap(prof.bz, mg);
+    const col = colors[i];
+    const over = flex.thetaReqDeg > flex.grooveCapDeg;
+    const tipClass = totalTip < 10 ? 'good' : totalTip < 25 ? 'warn' : 'bad';
+    const card = document.createElement('div');
+    card.className = 'mask-profile-card';
+    card.innerHTML =
+      '<div class="mask-profile-name" style="color:' + col + '">' + prof.label + ' \u00b7 BZ ' + prof.bz + 'cm</div>' +
+      '<div class="mask-profile-stat"><span class="sk">Face R</span><span class="sv">' + R.toFixed(2) + ' cm</span></div>' +
+      '<div class="mask-profile-stat"><span class="sk">Flex required</span><span class="sv ' + (over?'bad':'good') + '">' + flex.thetaReqDeg.toFixed(1) + '\u00b0</span></div>' +
+      '<div class="mask-profile-stat"><span class="sk">Groove capacity</span><span class="sv">' + flex.grooveCapDeg.toFixed(0) + '\u00b0</span></div>' +
+      '<div class="mask-profile-stat"><span class="sk">Unmet flex</span><span class="sv ' + (over?'bad':'good') + '">' + (over ? (flex.thetaReqDeg - flex.grooveCapDeg).toFixed(1) + '\u00b0' : '\u2014') + '</span></div>' +
+      '<div class="mask-profile-stat"><span class="sk">Total tip gap</span><span class="sv ' + tipClass + '">' + totalTip.toFixed(1) + ' mm</span></div>';
+    statsEl.appendChild(card);
+  });
+}
+
+
+// ── Chart 3: Gap profile along mask arc including wing zone ───────────────────
+function drawMgWingChart(mg) {
+  const svg = d3.select('#mg-wing-svg');
+  svg.selectAll('*').remove();
+  const W = 860, H = 260;
+  const m = { top: 28, right: 140, bottom: 52, left: 52 };
+  const iW = W - m.left - m.right, iH = H - m.top - m.bottom;
+  const g = svg.append('g').attr('transform', `translate(${m.left},${m.top})`);
+
+  const nSamples = 120;
+  const positions = d3.range(0, mg.width / 2 + 0.05, (mg.width / 2) / nSamples);
+
+  // Build gap profile for each BZ profile
+  const profiles = [
+    { label: 'BZ P5',  bz: 12.4,  color: '#f472b6' },
+    { label: 'BZ P35', bz: 13.4,  color: '#fbbf24' },
+    { label: 'BZ P65', bz: 14.35, color: '#34d399' },
+    { label: 'BZ P95', bz: 15.5,  color: '#818cf8' },
+  ];
+
+  const allDataSets = profiles.map(prof => {
+    const { bz } = prof;
+    const a = bz / 2;
+    const R_face = faceRadius(bz, mg.nose);
+    const flex = getMaskFlexForBZ(bz, mg);
+    const unmetRad = flex.unmetRad;
+    const half = mg.width / 2;
+
+    // Temporal radius: calibrated so P95 (BZ=15.5, extra=5.0cm) → 20mm
+    // R_temp_p95 = 5.87cm; scale proportionally with head circumference
+    const bzToCirc = bz => 53.0 + (bz - 12.4) / (15.5 - 12.4) * 7.0;
+    const R_temp = 5.87 * (bzToCirc(bz) / bzToCirc(15.5));
+
+    // Smoothstep blend: transition band of ±blendWidth around BZ/2
+    const blendWidth = Math.min(1.2, a * 0.18);
+    const smoothstep = t => t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t);
+
+    const gapFace = s => {
+      // Face contact zone: cosine lift from unmet groove flex
+      const frac = s / half;
+      return unmetRad > 0 ? R_face * (1 - Math.cos(unmetRad * frac)) * 10 : 0;
+    };
+
+    const gapWing = s => {
+      // Wing zone: carry-in lift + temporal sagitta (head curvature model)
+      // R_temp calibrated to P95 observed gap of ~20mm at wing tip
+      const extra = Math.max(0, s - a);
+      const temporal_mm = R_temp * (1 - Math.cos(extra / R_temp)) * 10;
+      const lift_at_edge = unmetRad > 0 ? R_face * (1 - Math.cos(unmetRad)) * 10 : 0;
+      return lift_at_edge + temporal_mm;
+    };
+
+    const pts = positions.map(s => {
+      const t = smoothstep((s - (a - blendWidth)) / (2 * blendWidth));
+      const gap = (1 - t) * gapFace(s) + t * gapWing(s);
+      const isWing = s > a;
+      return { s, gap, isWing };
+    });
+    return { ...prof, pts, a };
+  });
+
+  const x = d3.scaleLinear().domain([0, mg.width / 2]).range([0, iW]);
+  const maxGap = d3.max(allDataSets, d => d3.max(d.pts, p => p.gap));
+  const y = d3.scaleLinear().domain([0, maxGap * 1.1]).range([iH, 0]);
+
+  // Grid
+  g.append('g').selectAll('line').data(y.ticks(5)).enter().append('line')
+    .attr('x1', 0).attr('x2', iW).attr('y1', d => y(d)).attr('y2', d => y(d))
+    .attr('stroke', '#2d374840').attr('stroke-width', 1);
+
+  // Zero / full contact line
+  g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(0)).attr('y2', y(0))
+    .attr('stroke', '#4ade8060').attr('stroke-width', 1);
+
+  // Groove position markers
+  [mg.g1, mg.g2, mg.g3].forEach((gv, gi) => {
+    g.append('line').attr('x1', x(gv)).attr('x2', x(gv)).attr('y1', 0).attr('y2', iH)
+      .attr('stroke', '#818cf860').attr('stroke-width', 1).attr('stroke-dasharray', '3 3');
+    g.append('text').attr('x', x(gv)).attr('y', -5).attr('text-anchor', 'middle')
+      .attr('fill', '#818cf8').attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+      .text(`G${gi + 1}`);
+  });
+
+  // Mask half-width marker
+  g.append('line').attr('x1', x(mg.width / 2)).attr('x2', x(mg.width / 2))
+    .attr('y1', 0).attr('y2', iH)
+    .attr('stroke', '#fbbf2480').attr('stroke-width', 1).attr('stroke-dasharray', '4 2');
+  g.append('text').attr('x', x(mg.width / 2) - 3).attr('y', -5).attr('text-anchor', 'end')
+    .attr('fill', '#fbbf24').attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+    .text('mask edge');
+
+  // Draw each profile
+  allDataSets.forEach((ds, di) => {
+    const allPts = ds.pts;
+    const clipSolidId = `clip-solid-${di}`;
+    const clipDotId   = `clip-dot-${di}`;
+
+    // Add clip path defs for solid and dotted regions
+    const defs = svg.select('defs').empty() ? svg.append('defs') : svg.select('defs');
+
+    // Solid region: 0 → BZ/2
+    defs.append('clipPath').attr('id', clipSolidId)
+      .append('rect')
+        .attr('x', m.left).attr('y', 0)
+        .attr('width', x(ds.a) + 1)
+        .attr('height', H);
+
+    // Dotted region: BZ/2 → mask edge (with a small overlap for smooth join)
+    defs.append('clipPath').attr('id', clipDotId)
+      .append('rect')
+        .attr('x', m.left + x(ds.a) - 1).attr('y', 0)
+        .attr('width', iW - x(ds.a) + 2)
+        .attr('height', H);
+
+    const pathGen = d3.line()
+      .x(p => x(p.s))
+      .y(p => y(p.gap))
+      .curve(d3.curveCatmullRom.alpha(0.5));
+
+    const pathD = pathGen(allPts);
+
+    // Draw full smooth curve clipped to solid zone (thick, opaque)
+    g.append('path')
+      .attr('d', pathD)
+      .attr('fill', 'none')
+      .attr('stroke', ds.color)
+      .attr('stroke-width', 2.5)
+      .attr('clip-path', `url(#${clipSolidId})`);
+
+    // Draw same full smooth curve clipped to dotted zone (dashed, slightly lighter)
+    g.append('path')
+      .attr('d', pathD)
+      .attr('fill', 'none')
+      .attr('stroke', ds.color)
+      .attr('stroke-width', 2)
+      .attr('stroke-dasharray', '5 4')
+      .attr('opacity', 0.85)
+      .attr('clip-path', `url(#${clipDotId})`);
+
+    // BZ transition marker (vertical tick on x-axis)
+    g.append('line')
+      .attr('x1', x(ds.a)).attr('x2', x(ds.a))
+      .attr('y1', iH).attr('y2', iH + 6)
+      .attr('stroke', ds.color).attr('stroke-width', 2);
+
+    // End label
+    const endPt = allPts[allPts.length - 1];
+    g.append('text')
+      .attr('x', x(endPt.s) + 6).attr('y', y(endPt.gap) + 4)
+      .attr('fill', ds.color).attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+      .text(`${ds.label} ${endPt.gap.toFixed(0)}mm`);
+  });
+
+  // BZ transition zone annotation
+  const bzMin = d3.min(allDataSets, d => d.a);
+  const bzMax = d3.max(allDataSets, d => d.a);
+  g.append('rect').attr('x', x(bzMin)).attr('y', 0)
+    .attr('width', x(bzMax) - x(bzMin)).attr('height', iH)
+    .attr('fill', '#ffffff06');
+  g.append('text').attr('x', (x(bzMin) + x(bzMax)) / 2).attr('y', iH + 38)
+    .attr('text-anchor', 'middle').attr('fill', '#64748b')
+    .attr('font-size', 8.5).attr('font-family', "'DM Mono',monospace")
+    .text('← BZ/2 range (cheekbone) →');
+
+  // Zone labels
+  g.append('text').attr('x', x(bzMin) / 2).attr('y', 12)
+    .attr('text-anchor', 'middle').attr('fill', '#4ade8060')
+    .attr('font-size', 9).attr('font-family', "'DM Mono',monospace").text('face contact zone');
+  g.append('text').attr('x', (x(bzMax) + iW) / 2).attr('y', 12)
+    .attr('text-anchor', 'middle').attr('fill', '#ef444460')
+    .attr('font-size', 9).attr('font-family', "'DM Mono',monospace").text('wing / temporal zone ···');
+
+  // Axes
+  const xG = g.append('g').attr('class', 'axis').attr('transform', `translate(0,${iH})`).call(
+    d3.axisBottom(x).ticks(10).tickFormat(d => `${d.toFixed(1)}cm`));
+  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  xG.select('.domain').attr('stroke', 'var(--border)'); xG.selectAll('.tick line').attr('stroke', 'var(--border)');
+  g.append('text').attr('x', iW / 2).attr('y', iH + 44).attr('text-anchor', 'middle')
+    .attr('fill', 'var(--muted)').attr('font-size', 10).attr('font-family', "'DM Sans',sans-serif")
+    .text('Arc position from mask center (cm) →  nose ← center — cheek — wing → edge');
+
+  const yG = g.append('g').attr('class', 'axis').call(
+    d3.axisLeft(y).ticks(5).tickFormat(d => `${d.toFixed(0)}mm`));
+  yG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  yG.select('.domain').attr('stroke', 'var(--border)'); yG.selectAll('.tick line').attr('stroke', 'var(--border)');
+  // Cheek seal threshold
+  const thresh3 = mg.flexThresh;
+  if (thresh3 <= y.domain()[1]) {
+    g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(thresh3)).attr('y2', y(thresh3))
+      .attr('stroke', '#ef4444').attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
+    g.append('text').attr('x', 4).attr('y', y(thresh3) - 4)
+      .attr('fill', '#ef4444').attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+      .text(`Cheek seal: ${thresh3}mm`);
+  }
+  // Temporal reference
+  const tempRef3 = mg.gapThresh;
+  if (tempRef3 <= y.domain()[1]) {
+    g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(tempRef3)).attr('y2', y(tempRef3))
+      .attr('stroke', '#818cf8').attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
+    g.append('text').attr('x', iW - 4).attr('y', y(tempRef3) - 4)
+      .attr('text-anchor', 'end').attr('fill', '#818cf8').attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+      .text(`Temporal ref: ${tempRef3}mm`);
+  }
+
+  // BZ/2 inspect cursor on arc position axis
+  const bzHalf = mg.bzInspect / 2;
+  if (bzHalf < mg.width / 2) {
+    g.append('line').attr('x1', x(bzHalf)).attr('x2', x(bzHalf)).attr('y1', 0).attr('y2', iH)
+      .attr('stroke', '#f59e0b').attr('stroke-width', 2).attr('stroke-dasharray', '5 3');
+    g.append('text').attr('x', x(bzHalf) + 4).attr('y', 12)
+      .attr('fill', '#f59e0b').attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+      .text(`BZ/2=${bzHalf.toFixed(2)}cm`);
+  }
+}
+
+function redrawMaskGeo() {
+  const mg = getMaskGeoState();
+  drawMgArcChart(mg);
+  drawMgGapChart(mg);
+  drawMgWingChart(mg);
+  drawMgCrossChart(mg);
+  updateFlexFitPanel();
+}
+
+['mg_width','mg_nose','mg_maxflex','mg_sensor','mg_g1','mg_g2','mg_g3'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', redrawMaskGeo);
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+buildMgControls();
+buildInputs();
+buildCharts();
+buildWeightInputs();
+redrawAll();
+redrawMaskGeo();
+</script>
+</body>
+</html>
