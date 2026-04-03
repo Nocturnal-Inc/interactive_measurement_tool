@@ -8,9 +8,9 @@ h2 { color: var(--female); font-size: 14px; letter-spacing: 0.1em; }
 .controls-wrap { display: flex; flex-direction: column; gap: 12px; width: 640px; }
 .ctrl-group { background: var(--card); border-radius: 10px; padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; }
 .ctrl-group-title { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--border-dim); }
-.ctrl { display: flex; align-items: center; gap: 10px; font-size: 11px; }
-.ctrl-label { width: 148px; text-align: right; color: var(--muted); }
-.ctrl-val { width: 64px; color: var(--female); font-size: 11px; font-weight: bold; }
+.ctrl { display: flex; align-items: center; gap: 10px; font-size: 11px; min-width: 0; }
+.ctrl-label { flex-shrink: 0; white-space: nowrap; text-align: right; color: var(--muted); }
+.ctrl-val { flex-shrink: 0; white-space: nowrap; color: var(--female); font-size: 11px; font-weight: bold; }
 input[type=range] { flex: 1; accent-color: var(--female); }
 
 .ctrl-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 28px; }
@@ -23,7 +23,7 @@ input[type=range] { flex: 1; accent-color: var(--female); }
 
 /* lock toggle */
 .lock-row { display: flex; align-items: center; gap: 8px; font-size: 10px; color: var(--muted-dim); }
-.lock-btn { background: var(--border-subtle); border: 1px solid var(--border-dim); border-radius: 4px; color: var(--muted); font-size: 10px; font-family: monospace; padding: 2px 10px; cursor: pointer; letter-spacing: 0.05em; transition: all 0.12s; }
+.lock-btn { background: var(--border-subtle); border: 1px solid var(--border-dim); border-radius: 4px; color: var(--muted); font-size: 10px; font-family: 'Poppins', monospace; padding: 2px 10px; cursor: pointer; letter-spacing: 0.05em; transition: all 0.12s; }
 .lock-btn.active { background: color-mix(in srgb, var(--female) 13%, transparent); border-color: var(--female); color: var(--female); }
 .lock-hint { color: color-mix(in srgb, var(--cyan) 53%, transparent); font-size: 10px; margin-left: 6px; }
 
@@ -314,9 +314,9 @@ function renderGeom(svg, g, sc, ox, oy, col, opts={}) {
 
   if (opts.axisLabels) {
     svg.append('text').attr('x',ox+a*sc+8).attr('y',bzY+4)
-      .attr('fill',cyan).attr('font-size',10).attr('font-family','monospace').attr('opacity',0.85).text('BZ');
+      .attr('fill',cyan).attr('font-size',10).attr('font-family',"'Poppins',monospace").attr('opacity',0.85).text('BZ');
     svg.append('text').attr('x',ox+skullXatMastoid*sc+8).attr('y',mastY+4)
-      .attr('fill',tv('--female')).attr('font-size',10).attr('font-family','monospace').attr('opacity',0.85).text('mastoid');
+      .attr('fill',tv('--female')).attr('font-size',10).attr('font-family',"'Poppins',monospace").attr('opacity',0.85).text('mastoid');
   }
 
   // Groove panels
@@ -334,7 +334,7 @@ function renderGeom(svg, g, sc, ox, oy, col, opts={}) {
       .attr('stroke',tv('--product')).attr('stroke-width',opts.small?2:2.5).attr('stroke-dasharray','7 3');
     if (!opts.small)
       svg.append('text').attr('x',(x1+x2)/2+s*4).attr('y',(y1+y2)/2-5)
-        .attr('fill',tv('--product')).attr('font-size',8).attr('font-family','monospace')
+        .attr('fill',tv('--product')).attr('font-size',8).attr('font-family',"'Poppins',monospace")
         .attr('text-anchor',s>0?'start':'end').text('6.5cm');
   });
 
@@ -350,7 +350,7 @@ function renderGeom(svg, g, sc, ox, oy, col, opts={}) {
     const distMm = (Math.hypot(wingTip[0]-skullXatMastoid, wingTip[1]-mastoidY)*10).toFixed(1);
     svg.append('text')
       .attr('x', (wx+skx)/2 + s*8).attr('y', (wy+sky)/2 + 4)
-      .attr('fill',tv('--gap')).attr('font-size',opts.small?8:9).attr('font-family','monospace')
+      .attr('fill',tv('--gap')).attr('font-size',opts.small?8:9).attr('font-family',"'Poppins',monospace")
       .attr('text-anchor', s>0?'start':'end').text(distMm+'mm');
   });
 
@@ -384,7 +384,7 @@ function drawInteractive(changed) {
   renderGeom(svg, g, sc, ox, oy, tv('--male'), {axisLabels:true});
 
   svg.append('text').attr('x',0).attr('y',-14).attr('text-anchor','middle')
-    .attr('fill',tv('--muted')).attr('font-size',9).attr('font-family','monospace')
+    .attr('fill',tv('--muted')).attr('font-size',9).attr('font-family',"'Poppins',monospace")
     .text(`C=${C.toFixed(1)}cm  BZ=${bz.toFixed(2)}cm  depth=${depth.toFixed(1)}cm  mastoid=${(g.skullXatMastoid*2).toFixed(1)}cm  gap=${g.gap.toFixed(1)}mm`);
 }
 
@@ -406,10 +406,10 @@ function drawStatic() {
     const svg = d3.select(svgEl);
     renderGeom(svg, g, sc, 0, 0, prof.color, {small:true});
     svg.append('text').attr('x',0).attr('y',-padTop+11).attr('text-anchor','middle')
-      .attr('fill',prof.color).attr('font-size',10).attr('font-family','monospace').attr('font-weight','bold')
+      .attr('fill',prof.color).attr('font-size',10).attr('font-family',"'Poppins',monospace").attr('font-weight','bold')
       .text(prof.label+' · BZ='+prof.bz+'cm');
     svg.append('text').attr('x',0).attr('y',-padTop+20).attr('text-anchor','middle')
-      .attr('fill',tv('--muted-dim')).attr('font-size',7).attr('font-family','monospace')
+      .attr('fill',tv('--muted-dim')).attr('font-size',7).attr('font-family',"'Poppins',monospace")
       .text('mastoid='+(g.skullXatMastoid*2).toFixed(1)+'cm · gap='+g.gap.toFixed(1)+'mm');
     container.appendChild(svgEl);
   });

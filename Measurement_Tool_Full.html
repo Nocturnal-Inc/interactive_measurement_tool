@@ -1102,12 +1102,12 @@ function buildInputs() {
     g.style.cssText = 'display:flex; flex-direction:column; gap:5px;';
     const labelColor = m.isNiosh ? 'var(--niosh)' : 'var(--muted)';
     g.innerHTML = `
-      <label style="font-size:11px; font-family:'DM Mono',monospace; color:${labelColor}; text-transform:uppercase; letter-spacing:0.05em;">${m.name.split('(')[0].trim()}${m.isNiosh ? ' ✦' : ''}</label>
+      <label style="font-size:11px; font-family:'Poppins',monospace; color:${labelColor}; text-transform:uppercase; letter-spacing:0.05em;">${m.name.split('(')[0].trim()}${m.isNiosh ? ' ✦' : ''}</label>
       <div style="display:flex; gap:8px; align-items:center;">
-        <input type="number" step="0.1" value="${m.productDefault.min}" id="min_${m.id}" style="background:var(--surface); border:1px solid ${m.isNiosh ? 'color-mix(in srgb, var(--niosh) 25%, transparent)' : 'var(--border)'}; border-radius:6px; color:var(--product); font-family:'DM Mono',monospace; font-size:12px; padding:6px 8px; width:70px; outline:none;">
+        <input type="number" step="0.1" value="${m.productDefault.min}" id="min_${m.id}" style="background:var(--surface); border:1px solid ${m.isNiosh ? 'color-mix(in srgb, var(--niosh) 25%, transparent)' : 'var(--border)'}; border-radius:6px; color:var(--product); font-family:'Poppins',monospace; font-size:12px; padding:6px 8px; width:70px; outline:none;">
         <span style="color:var(--muted); font-size:12px;">→</span>
-        <input type="number" step="0.1" value="${m.productDefault.max}" id="max_${m.id}" style="background:var(--surface); border:1px solid ${m.isNiosh ? 'color-mix(in srgb, var(--niosh) 25%, transparent)' : 'var(--border)'}; border-radius:6px; color:var(--product); font-family:'DM Mono',monospace; font-size:12px; padding:6px 8px; width:70px; outline:none;">
-        <span style="color:var(--muted); font-size:10px; font-family:'DM Mono',monospace;">cm</span>
+        <input type="number" step="0.1" value="${m.productDefault.max}" id="max_${m.id}" style="background:var(--surface); border:1px solid ${m.isNiosh ? 'color-mix(in srgb, var(--niosh) 25%, transparent)' : 'var(--border)'}; border-radius:6px; color:var(--product); font-family:'Poppins',monospace; font-size:12px; padding:6px 8px; width:70px; outline:none;">
+        <span style="color:var(--muted); font-size:10px; font-family:'Poppins',monospace;">cm</span>
       </div>`;
     container.appendChild(g);
     ['min', 'max'].forEach(t => {
@@ -1255,13 +1255,13 @@ function drawChart(m) {
     g.append('text')
       .attr('x', x(midProd)).attr('y', 12).attr('text-anchor', 'middle')
       .attr('fill', 'var(--product)').attr('font-size', 9)
-      .attr('font-family', "'DM Mono',monospace").text('PRODUCT');
+      .attr('font-family', "'Poppins',monospace").text('PRODUCT');
   }
 
   // x-axis
   const xAxis = d3.axisBottom(x).ticks(7).tickFormat(d => `${d}`);
   const xG = g.append('g').attr('class', 'axis').attr('transform', `translate(0,${iH})`).call(xAxis);
-  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'Poppins',monospace");
   xG.select('.domain').attr('stroke', 'var(--border)');
   xG.selectAll('.tick line').attr('stroke', 'var(--border)');
   g.append('text').attr('class', 'axis-label')
@@ -1487,7 +1487,7 @@ function drawGauge(pct) {
     svg.append('text').attr('x', lx).attr('y', ly)
       .attr('text-anchor', anchor).attr('dominant-baseline', 'middle')
       .attr('fill', tv('--muted')).attr('font-size', 10)
-      .attr('font-family', "'DM Mono',monospace").text(`${v}%`);
+      .attr('font-family', "'Poppins',monospace").text(`${v}%`);
   });
 
   // Needle
@@ -1717,7 +1717,7 @@ function updateFlexFitPanel() {
     g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(flexThresh)).attr('y2', y(flexThresh))
       .attr('stroke', tv('--gap')).attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
     g.append('text').attr('x', 4).attr('y', y(flexThresh) - 3)
-      .attr('fill', tv('--gap')).attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+      .attr('fill', tv('--gap')).attr('font-size', 8).attr('font-family', "'Poppins',monospace")
       .text(`cheek seal threshold ${flexThresh}mm`);
   }
 
@@ -1726,7 +1726,7 @@ function updateFlexFitPanel() {
     g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(tempRef)).attr('y2', y(tempRef))
       .attr('stroke', tv('--indigo')).attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
     g.append('text').attr('x', iW - 4).attr('y', y(tempRef) - 3)
-      .attr('text-anchor', 'end').attr('fill', tv('--indigo')).attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+      .attr('text-anchor', 'end').attr('fill', tv('--indigo')).attr('font-size', 8).attr('font-family', "'Poppins',monospace")
       .text(`temporal ref ${tempRef}mm`);
   }
 
@@ -1754,13 +1754,13 @@ function updateFlexFitPanel() {
     g.append('text').attr('x', bx + bw / 2).attr('y', y(p.total) - 3)
       .attr('text-anchor', 'middle')
       .attr('fill', sealOk ? tv('--good') : tv('--gap'))
-      .attr('font-size', 7.5).attr('font-family', "'DM Mono',monospace")
+      .attr('font-size', 7.5).attr('font-family', "'Poppins',monospace")
       .text(p.flexLift > 0.05 ? `+${p.flexLift.toFixed(1)}` : '✓');
 
     // Temporal label inside bar
     g.append('text').attr('x', bx + bw / 2).attr('y', y(p.temporal / 2))
       .attr('text-anchor', 'middle').attr('fill', tv('--indigo-light'))
-      .attr('font-size', 6.5).attr('font-family', "'DM Mono',monospace")
+      .attr('font-size', 6.5).attr('font-family', "'Poppins',monospace")
       .text(p.temporal.toFixed(0) + 'mm');
   });
 
@@ -1773,16 +1773,16 @@ function updateFlexFitPanel() {
   leg.forEach((l, i) => {
     g.append('rect').attr('x', iW - 200).attr('y', i * 14).attr('width', 10).attr('height', 8).attr('fill', l.color).attr('rx', 1);
     g.append('text').attr('x', iW - 186).attr('y', i * 14 + 7)
-      .attr('fill', tv('--muted')).attr('font-size', 7.5).attr('font-family', "'DM Mono',monospace").text(l.label);
+      .attr('fill', tv('--muted')).attr('font-size', 7.5).attr('font-family', "'Poppins',monospace").text(l.label);
   });
 
   // Axes
   const xA = g.append('g').attr('transform', `translate(0,${iH})`).call(d3.axisBottom(x).tickSize(2));
-  xA.selectAll('text').attr('fill', tv('--muted')).style('font-size', '8px').style('font-family', "'DM Mono',monospace");
+  xA.selectAll('text').attr('fill', tv('--muted')).style('font-size', '8px').style('font-family', "'Poppins',monospace");
   xA.select('.domain').attr('stroke', tv('--border-subtle')); xA.selectAll('.tick line').attr('stroke', tv('--border-subtle'));
 
   const yA = g.append('g').call(d3.axisLeft(y).ticks(4).tickFormat(d => d + 'mm'));
-  yA.selectAll('text').attr('fill', tv('--muted')).style('font-size', '8px').style('font-family', "'DM Mono',monospace");
+  yA.selectAll('text').attr('fill', tv('--muted')).style('font-size', '8px').style('font-family', "'Poppins',monospace");
   yA.select('.domain').attr('stroke', tv('--border-subtle')); yA.selectAll('.tick line').attr('stroke', tv('--border-subtle'));
 }
 
@@ -1809,7 +1809,7 @@ function drawMgArcChart(mg) {
   g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', capY).attr('y2', capY)
     .attr('stroke', tv('--good')).attr('stroke-width', 1.5).attr('stroke-dasharray', '6 3');
   g.append('text').attr('x', iW - 4).attr('y', capY - 5).attr('text-anchor', 'end')
-    .attr('fill', tv('--good')).attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+    .attr('fill', tv('--good')).attr('font-size', 9).attr('font-family', "'Poppins',monospace")
     .text('Groove capacity: ' + (mg.maxflex * 3).toFixed(0) + '\u00b0');
 
   const area = d3.area().x(d => x(d.bz)).y0(d => Math.min(y(d.thetaReqDeg), capY)).y1(capY).curve(d3.curveCatmullRom);
@@ -1832,17 +1832,17 @@ function drawMgArcChart(mg) {
     g.append('line').attr('x1', x(mk.bz)).attr('x2', x(mk.bz)).attr('y1', 0).attr('y2', iH)
       .attr('stroke', tv('--muted')).attr('stroke-width', 1).attr('stroke-dasharray', '3 3');
     g.append('text').attr('x', x(mk.bz)).attr('y', iH + 30).attr('text-anchor', 'middle')
-      .attr('fill', tv('--muted')).attr('font-size', 8).attr('font-family', "'DM Mono',monospace").text(mk.t);
+      .attr('fill', tv('--muted')).attr('font-size', 8).attr('font-family', "'Poppins',monospace").text(mk.t);
   });
 
   const xG = g.append('g').attr('class', 'axis').attr('transform', `translate(0,${iH})`).call(d3.axisBottom(x).ticks(6).tickFormat(d => d + 'cm'));
-  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'Poppins',monospace");
   xG.select('.domain').attr('stroke', 'var(--border)'); xG.selectAll('.tick line').attr('stroke', 'var(--border)');
   g.append('text').attr('x', iW/2).attr('y', iH + 44).attr('text-anchor', 'middle')
-    .attr('fill', 'var(--muted)').attr('font-size', 10).attr('font-family', "'DM Sans',sans-serif").text('Bizygomatic Breadth (cm)');
+    .attr('fill', 'var(--muted)').attr('font-size', 10).attr('font-family', "'Poppins',sans-serif").text('Bizygomatic Breadth (cm)');
 
   const yG = g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(5).tickFormat(d => d + '\u00b0'));
-  yG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  yG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'Poppins',monospace");
   yG.select('.domain').attr('stroke', 'var(--border)'); yG.selectAll('.tick line').attr('stroke', 'var(--border)');
   // BZ inspect cursor
   const bzX = x(mg.bzInspect);
@@ -1857,7 +1857,7 @@ function drawMgArcChart(mg) {
   const inspAnchor = bzX > iW * 0.6 ? 'end' : 'start';
   g.append('text').attr('x', inspX).attr('y', y(inspFlex.thetaReqDeg) - 10)
     .attr('text-anchor', inspAnchor).attr('fill', tv('--inspect'))
-    .attr('font-size', 9).attr('font-family', "'DM Mono',monospace").text(inspLabel);
+    .attr('font-size', 9).attr('font-family', "'Poppins',monospace").text(inspLabel);
 }
 function drawMgGapChart(mg) {
   const svg = d3.select('#mg-gap-svg');
@@ -1878,7 +1878,7 @@ function drawMgGapChart(mg) {
   g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(0)).attr('y2', y(0))
     .attr('stroke', tv('--good')).attr('stroke-width', 1).attr('stroke-dasharray', '4 3');
   g.append('text').attr('x', 4).attr('y', y(0) - 4)
-    .attr('fill', tv('--good')).attr('font-size', 9).attr('font-family', "'DM Mono',monospace").text('Full conformance \u2713');
+    .attr('fill', tv('--good')).attr('font-size', 9).attr('font-family', "'Poppins',monospace").text('Full conformance \u2713');
 
   g.append('path').datum(data).attr('d', d3.area().x(d => x(d.bz)).y0(iH).y1(d => y(d.lift)).curve(d3.curveCatmullRom))
     .attr('fill', tv('--gap')).attr('opacity', 0.10);
@@ -1890,7 +1890,7 @@ function drawMgGapChart(mg) {
       .attr('fill', d.color).attr('stroke', tv('--card')).attr('stroke-width', 1.5);
     if (d.lift > 0.2) {
       g.append('text').attr('x', x(d.bz)).attr('y', y(d.lift) - 8).attr('text-anchor', 'middle')
-        .attr('fill', d.color).attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+        .attr('fill', d.color).attr('font-size', 8).attr('font-family', "'Poppins',monospace")
         .text(d.lift.toFixed(1) + 'mm');
     }
   });
@@ -1899,17 +1899,17 @@ function drawMgGapChart(mg) {
     g.append('line').attr('x1', x(mk.bz)).attr('x2', x(mk.bz)).attr('y1', 0).attr('y2', iH)
       .attr('stroke', tv('--muted')).attr('stroke-width', 1).attr('stroke-dasharray', '3 3');
     g.append('text').attr('x', x(mk.bz)).attr('y', iH + 30).attr('text-anchor', 'middle')
-      .attr('fill', tv('--muted')).attr('font-size', 8).attr('font-family', "'DM Mono',monospace").text(mk.t);
+      .attr('fill', tv('--muted')).attr('font-size', 8).attr('font-family', "'Poppins',monospace").text(mk.t);
   });
 
   const xG = g.append('g').attr('class', 'axis').attr('transform', `translate(0,${iH})`).call(d3.axisBottom(x).ticks(6).tickFormat(d => d + 'cm'));
-  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'Poppins',monospace");
   xG.select('.domain').attr('stroke', 'var(--border)'); xG.selectAll('.tick line').attr('stroke', 'var(--border)');
   g.append('text').attr('x', iW/2).attr('y', iH + 44).attr('text-anchor', 'middle')
-    .attr('fill', 'var(--muted)').attr('font-size', 10).attr('font-family', "'DM Sans',sans-serif").text('Bizygomatic Breadth (cm)');
+    .attr('fill', 'var(--muted)').attr('font-size', 10).attr('font-family', "'Poppins',sans-serif").text('Bizygomatic Breadth (cm)');
 
   const yG = g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(5).tickFormat(d => d.toFixed(1) + 'mm'));
-  yG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  yG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'Poppins',monospace");
   yG.select('.domain').attr('stroke', 'var(--border)'); yG.selectAll('.tick line').attr('stroke', 'var(--border)');
   g.append('text').attr('transform', 'rotate(-90)').attr('x', -iH/2).attr('y', -38)
     .attr('text-anchor', 'middle').attr('fill', 'var(--muted)').attr('font-size', 10).text('Outer Panel Lift Gap (mm)');
@@ -1919,7 +1919,7 @@ function drawMgGapChart(mg) {
   g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(thresh)).attr('y2', y(thresh))
     .attr('stroke', tv('--gap')).attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
   g.append('text').attr('x', 4).attr('y', y(thresh) - 4)
-    .attr('fill', tv('--gap')).attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+    .attr('fill', tv('--gap')).attr('font-size', 9).attr('font-family', "'Poppins',monospace")
     .text(`Cheek seal threshold: ${thresh}mm`);
 
   // BZ inspect cursor
@@ -1935,7 +1935,7 @@ function drawMgGapChart(mg) {
   const iPass = inspLift <= mg.flexThresh;
   g.append('text').attr('x', iX2).attr('y', y(inspLift) - 10)
     .attr('text-anchor', iA2).attr('fill', iPass ? tv('--good') : tv('--gap'))
-    .attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+    .attr('font-size', 9).attr('font-family', "'Poppins',monospace")
     .text(`BZ ${mg.bzInspect.toFixed(2)} → cheek lift ${inspLift.toFixed(1)}mm ${iPass ? '✓ seal ok' : '✗ seal fail'} + ${inspComps.temporal.toFixed(1)}mm temporal`);
 }
 // ── Chart 4: Cross-section by BZ ─────────────────────────────────────────────
@@ -2026,7 +2026,7 @@ function drawMgCrossChart(mg) {
       });
     });
     svg.append('text').attr('x', wingTip[0]+6).attr('y', (faceEnd[1]+wingTip[1])/2+4)
-      .attr('fill',tv('--gap')).attr('font-size',9).attr('font-family',"'DM Mono',monospace")
+      .attr('fill',tv('--gap')).attr('font-size',9).attr('font-family',"'Poppins',monospace")
       .text(comps.total.toFixed(1)+'mm');
 
     // 5. Groove dots
@@ -2040,9 +2040,9 @@ function drawMgCrossChart(mg) {
 
     // 6. Labels
     svg.append('text').attr('x',cx).attr('y',16).attr('text-anchor','middle')
-      .attr('fill',col).attr('font-family',"'DM Serif Display',serif").attr('font-size',13).text(prof.label);
+      .attr('fill',col).attr('font-family',"'Poppins',serif").attr('font-size',13).text(prof.label);
     svg.append('text').attr('x',cx).attr('y',28).attr('text-anchor','middle')
-      .attr('fill','var(--muted)').attr('font-family',"'DM Mono',monospace").attr('font-size',8)
+      .attr('fill','var(--muted)').attr('font-family',"'Poppins',monospace").attr('font-size',8)
       .text(`BZ=${bz}cm · R=${R.toFixed(1)}cm · gap=${comps.total.toFixed(1)}mm`);
 
     // 7. Divider
@@ -2156,7 +2156,7 @@ function drawMgWingChart(mg) {
     g.append('line').attr('x1', x(gv)).attr('x2', x(gv)).attr('y1', 0).attr('y2', iH)
       .attr('stroke', 'color-mix(in srgb, ' + tv('--indigo') + ' 38%, transparent)').attr('stroke-width', 1).attr('stroke-dasharray', '3 3');
     g.append('text').attr('x', x(gv)).attr('y', -5).attr('text-anchor', 'middle')
-      .attr('fill', tv('--indigo')).attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+      .attr('fill', tv('--indigo')).attr('font-size', 8).attr('font-family', "'Poppins',monospace")
       .text(`G${gi + 1}`);
   });
 
@@ -2165,7 +2165,7 @@ function drawMgWingChart(mg) {
     .attr('y1', 0).attr('y2', iH)
     .attr('stroke', 'color-mix(in srgb, ' + tv('--product') + ' 50%, transparent)').attr('stroke-width', 1).attr('stroke-dasharray', '4 2');
   g.append('text').attr('x', x(mg.width / 2) - 3).attr('y', -5).attr('text-anchor', 'end')
-    .attr('fill', tv('--product')).attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+    .attr('fill', tv('--product')).attr('font-size', 8).attr('font-family', "'Poppins',monospace")
     .text('mask edge');
 
   // Draw each profile
@@ -2226,7 +2226,7 @@ function drawMgWingChart(mg) {
     const endPt = allPts[allPts.length - 1];
     g.append('text')
       .attr('x', x(endPt.s) + 6).attr('y', y(endPt.gap) + 4)
-      .attr('fill', ds.color).attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+      .attr('fill', ds.color).attr('font-size', 9).attr('font-family', "'Poppins',monospace")
       .text(`${ds.label} ${endPt.gap.toFixed(0)}mm`);
   });
 
@@ -2238,29 +2238,29 @@ function drawMgWingChart(mg) {
     .attr('fill', 'color-mix(in srgb, white 2%, transparent)');
   g.append('text').attr('x', (x(bzMin) + x(bzMax)) / 2).attr('y', iH + 38)
     .attr('text-anchor', 'middle').attr('fill', tv('--muted'))
-    .attr('font-size', 8.5).attr('font-family', "'DM Mono',monospace")
+    .attr('font-size', 8.5).attr('font-family', "'Poppins',monospace")
     .text('← BZ/2 range (cheekbone) →');
 
   // Zone labels
   g.append('text').attr('x', x(bzMin) / 2).attr('y', 12)
     .attr('text-anchor', 'middle').attr('fill', 'color-mix(in srgb, ' + tv('--good') + ' 38%, transparent)')
-    .attr('font-size', 9).attr('font-family', "'DM Mono',monospace").text('face contact zone');
+    .attr('font-size', 9).attr('font-family', "'Poppins',monospace").text('face contact zone');
   g.append('text').attr('x', (x(bzMax) + iW) / 2).attr('y', 12)
     .attr('text-anchor', 'middle').attr('fill', 'color-mix(in srgb, ' + tv('--gap') + ' 38%, transparent)')
-    .attr('font-size', 9).attr('font-family', "'DM Mono',monospace").text('wing / temporal zone ···');
+    .attr('font-size', 9).attr('font-family', "'Poppins',monospace").text('wing / temporal zone ···');
 
   // Axes
   const xG = g.append('g').attr('class', 'axis').attr('transform', `translate(0,${iH})`).call(
     d3.axisBottom(x).ticks(10).tickFormat(d => `${d.toFixed(1)}cm`));
-  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'Poppins',monospace");
   xG.select('.domain').attr('stroke', 'var(--border)'); xG.selectAll('.tick line').attr('stroke', 'var(--border)');
   g.append('text').attr('x', iW / 2).attr('y', iH + 44).attr('text-anchor', 'middle')
-    .attr('fill', 'var(--muted)').attr('font-size', 10).attr('font-family', "'DM Sans',sans-serif")
+    .attr('fill', 'var(--muted)').attr('font-size', 10).attr('font-family', "'Poppins',sans-serif")
     .text('Arc position from mask center (cm) →  nose ← center — cheek — wing → edge');
 
   const yG = g.append('g').attr('class', 'axis').call(
     d3.axisLeft(y).ticks(5).tickFormat(d => `${d.toFixed(0)}mm`));
-  yG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  yG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'Poppins',monospace");
   yG.select('.domain').attr('stroke', 'var(--border)'); yG.selectAll('.tick line').attr('stroke', 'var(--border)');
   // Cheek seal threshold
   const thresh3 = mg.flexThresh;
@@ -2268,7 +2268,7 @@ function drawMgWingChart(mg) {
     g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(thresh3)).attr('y2', y(thresh3))
       .attr('stroke', tv('--gap')).attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
     g.append('text').attr('x', 4).attr('y', y(thresh3) - 4)
-      .attr('fill', tv('--gap')).attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+      .attr('fill', tv('--gap')).attr('font-size', 9).attr('font-family', "'Poppins',monospace")
       .text(`Cheek seal: ${thresh3}mm`);
   }
   // Temporal reference
@@ -2277,7 +2277,7 @@ function drawMgWingChart(mg) {
     g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(tempRef3)).attr('y2', y(tempRef3))
       .attr('stroke', tv('--indigo')).attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
     g.append('text').attr('x', iW - 4).attr('y', y(tempRef3) - 4)
-      .attr('text-anchor', 'end').attr('fill', tv('--indigo')).attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+      .attr('text-anchor', 'end').attr('fill', tv('--indigo')).attr('font-size', 9).attr('font-family', "'Poppins',monospace")
       .text(`Temporal ref: ${tempRef3}mm`);
   }
 
@@ -2287,7 +2287,7 @@ function drawMgWingChart(mg) {
     g.append('line').attr('x1', x(bzHalf)).attr('x2', x(bzHalf)).attr('y1', 0).attr('y2', iH)
       .attr('stroke', tv('--inspect')).attr('stroke-width', 2).attr('stroke-dasharray', '5 3');
     g.append('text').attr('x', x(bzHalf) + 4).attr('y', 12)
-      .attr('fill', tv('--inspect')).attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+      .attr('fill', tv('--inspect')).attr('font-size', 8).attr('font-family', "'Poppins',monospace")
       .text(`BZ/2=${bzHalf.toFixed(2)}cm`);
   }
 }
