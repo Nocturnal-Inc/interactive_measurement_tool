@@ -829,6 +829,40 @@
   .bin-pill:hover { border-color: var(--accent); color: var(--text); }
   .bin-pill.active { background: var(--accent); border-color: var(--accent); color: #0d1117; font-weight: 600; }
   .bin-divider { width: 1px; height: 22px; background: var(--border); }
+
+  /* ── Export bar ── */
+  .export-bar {
+    position: absolute;
+    top: 24px; right: 48px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .export-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .export-btn:hover { border-color: var(--accent); color: var(--text); }
+  .export-btn svg { flex-shrink: 0; }
+
+  @media print {
+    .export-bar, .bin-filter-bar, .controls-bar, .mg-controls-bar,
+    .weight-controls, #tooltip { display: none !important; }
+    body { background: #fff; color: #000; }
+    .chart-card, .mask-geo-card, .overall-fit-section,
+    .summary-strip { break-inside: avoid; }
+  }
 </style>
 </head>
 <body>
@@ -837,6 +871,16 @@
   <div class="header-eyebrow">U.S. Adult Population · Anthropometric Analysis</div>
   <h1>Head &amp; Ear Measurement<br>Distribution &amp; Product Fit Coverage</h1>
   <p class="header-sub">Bell curves show estimated normal distributions across the adult population. Enter your product's design dimensions to visualize fit coverage and identify uncovered ranges. Bizygomatic breadth added from NIOSH 2005 survey (N=3,997) as the primary mask-fit reference dimension.</p>
+  <div class="export-bar">
+    <button class="export-btn" onclick="exportCSV()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export CSV
+    </button>
+    <button class="export-btn" onclick="printReport()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print / PDF
+    </button>
+  </div>
 </header>
 
 <div class="legend-strip">
@@ -2518,6 +2562,56 @@ buildCharts();
 buildWeightInputs();
 redrawAll();
 redrawMaskGeo();
+
+// ── Export functions ──────────────────────────────────────────────────────────
+function exportCSV() {
+  const activeSel = [
+    activeBins.gender.size ? [...activeBins.gender].join('+') : 'all genders',
+    activeBins.age.size    ? [...activeBins.age].join('+')    : 'all ages',
+    activeBins.ethnicity.size ? [...activeBins.ethnicity].join('+') : 'all ethnicities',
+  ].join(' | ');
+
+  const rows = [
+    ['Head & Ear Measurement — Population Fit Coverage Export'],
+    [`Selection: ${activeSel}`],
+    [`Generated: ${new Date().toLocaleDateString()}`],
+    [],
+    ['Measurement', 'Group', 'Mean (cm)', 'Std Dev (cm)', 'P5 (cm)', 'P50 (cm)', 'P95 (cm)', 'Product Min (cm)', 'Product Max (cm)', 'Coverage (%)'],
+  ];
+
+  MEASUREMENTS.forEach(m => {
+    const curves = getActiveCurves(m);
+    const prod = productState[m.id];
+    curves.forEach(c => {
+      rows.push([
+        m.name,
+        c.label,
+        c.params.mu.toFixed(2),
+        c.params.sigma.toFixed(2),
+        c.data.p5,
+        c.data.p50,
+        c.data.p95,
+        prod.min,
+        prod.max,
+        (coverage(c.params, prod.min, prod.max) * 100).toFixed(1),
+      ]);
+    });
+  });
+
+  rows.push([]);
+  rows.push(['Overall Weighted Fit', document.getElementById('overall-big-pct')?.textContent ?? '—']);
+
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = `measurement_fit_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function printReport() {
+  window.print();
+}
 </script>
 </body>
 </html>
