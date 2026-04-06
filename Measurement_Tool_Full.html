@@ -789,6 +789,46 @@
   .mask-profile-stat .sv.warn { color: var(--warn); }
   .mask-profile-stat .sv.bad  { color: var(--bad); }
   .mask-geo-full { grid-column: 1 / -1; }
+
+  /* ── Demographic bin filter bar ── */
+  .bin-filter-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 12px 48px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .bin-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .bin-group-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-right: 2px;
+    white-space: nowrap;
+  }
+  .bin-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 4px 11px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .bin-pill:hover { border-color: var(--accent); color: var(--text); }
+  .bin-pill.active { background: var(--accent); border-color: var(--accent); color: #0d1117; font-weight: 600; }
+  .bin-divider { width: 1px; height: 22px; background: var(--border); }
 </style>
 </head>
 <body>
@@ -827,6 +867,35 @@
   <div class="legend-item">
     <div style="width:10px;height:10px;border-radius:2px;background:var(--niosh);opacity:0.7;"></div>
     <span style="color:var(--niosh);">NIOSH 2005 direct measurement</span>
+  </div>
+</div>
+
+<div class="bin-filter-bar">
+  <div class="bin-group">
+    <span class="bin-group-label">View</span>
+    <button class="bin-pill active" data-action="total" onclick="clearAllBins()">Total</button>
+  </div>
+  <div class="bin-divider"></div>
+  <div class="bin-group">
+    <span class="bin-group-label">Gender</span>
+    <button class="bin-pill" data-cat="gender" data-val="male"    onclick="toggleBin('gender','male')">Male</button>
+    <button class="bin-pill" data-cat="gender" data-val="female"  onclick="toggleBin('gender','female')">Female</button>
+  </div>
+  <div class="bin-divider"></div>
+  <div class="bin-group">
+    <span class="bin-group-label">Age</span>
+    <button class="bin-pill" data-cat="age" data-val="18-30" onclick="toggleBin('age','18-30')">18–30</button>
+    <button class="bin-pill" data-cat="age" data-val="31-45" onclick="toggleBin('age','31-45')">31–45</button>
+    <button class="bin-pill" data-cat="age" data-val="46-60" onclick="toggleBin('age','46-60')">46–60</button>
+    <button class="bin-pill" data-cat="age" data-val="60+"   onclick="toggleBin('age','60+')">60+</button>
+  </div>
+  <div class="bin-divider"></div>
+  <div class="bin-group">
+    <span class="bin-group-label">Ethnicity</span>
+    <button class="bin-pill" data-cat="ethnicity" data-val="white"    onclick="toggleBin('ethnicity','white')">White</button>
+    <button class="bin-pill" data-cat="ethnicity" data-val="black"    onclick="toggleBin('ethnicity','black')">Black</button>
+    <button class="bin-pill" data-cat="ethnicity" data-val="hispanic" onclick="toggleBin('ethnicity','hispanic')">Hispanic</button>
+    <button class="bin-pill" data-cat="ethnicity" data-val="asian"    onclick="toggleBin('ethnicity','asian')">Asian</button>
   </div>
 </div>
 
@@ -1064,6 +1133,146 @@ const MEASUREMENTS = [
   },
 ];
 
+// ── Demographic breakdown data ────────────────────────────────────────────────
+// Estimates derived from NIOSH 2005, FAA AM-93-10, and published anthropometric literature.
+// Age and ethnicity sub-group values are approximations — verify against primary sources for clinical use.
+const DEMOG_DATA = {
+  age: {
+    '18-30': {
+      cranial:     { male: { p5: 53.5, p50: 56.5, p95: 59.5 }, female: { p5: 51.5, p50: 54.5, p95: 57.5 } },
+      ear:         { male: { p5: 5.5,  p50: 6.1,  p95: 7.0  }, female: { p5: 5.0,  p50: 5.7,  p95: 6.5  } },
+      tragus:      { male: { p5: 25.5, p50: 28.0, p95: 30.0 }, female: { p5: 24.0, p50: 26.5, p95: 28.5 } },
+      mastoid:     { male: { p5: 26.5, p50: 29.0, p95: 31.5 }, female: { p5: 25.0, p50: 27.5, p95: 30.0 } },
+      bizygomatic: { male: { p5: 13.0, p50: 14.1, p95: 15.2 }, female: { p5: 12.2, p50: 13.3, p95: 14.4 } },
+      maskarcflex: { male: { p5: 7.80, p50: 8.95, p95: 9.80 }, female: { p5: 7.70, p50: 8.45, p95: 9.20 } },
+    },
+    '31-45': {
+      cranial:     { male: { p5: 54.0, p50: 57.0, p95: 60.0 }, female: { p5: 52.0, p50: 55.0, p95: 58.0 } },
+      ear:         { male: { p5: 5.7,  p50: 6.3,  p95: 7.2  }, female: { p5: 5.2,  p50: 5.9,  p95: 6.8  } },
+      tragus:      { male: { p5: 26.0, p50: 28.5, p95: 30.5 }, female: { p5: 24.5, p50: 27.0, p95: 29.0 } },
+      mastoid:     { male: { p5: 27.0, p50: 29.5, p95: 32.0 }, female: { p5: 25.5, p50: 28.0, p95: 30.5 } },
+      bizygomatic: { male: { p5: 13.2, p50: 14.35, p95: 15.5 }, female: { p5: 12.4, p50: 13.51, p95: 14.6 } },
+      maskarcflex: { male: { p5: 8.04, p50: 9.20, p95: 10.04 }, female: { p5: 7.91, p50: 8.64, p95: 9.38 } },
+    },
+    '46-60': {
+      cranial:     { male: { p5: 54.5, p50: 57.5, p95: 60.5 }, female: { p5: 52.5, p50: 55.5, p95: 58.5 } },
+      ear:         { male: { p5: 5.8,  p50: 6.5,  p95: 7.5  }, female: { p5: 5.3,  p50: 6.1,  p95: 7.0  } },
+      tragus:      { male: { p5: 26.5, p50: 29.0, p95: 31.0 }, female: { p5: 25.0, p50: 27.5, p95: 29.5 } },
+      mastoid:     { male: { p5: 27.5, p50: 30.0, p95: 32.5 }, female: { p5: 26.0, p50: 28.5, p95: 31.0 } },
+      bizygomatic: { male: { p5: 13.3, p50: 14.5, p95: 15.7 }, female: { p5: 12.5, p50: 13.65, p95: 14.8 } },
+      maskarcflex: { male: { p5: 8.15, p50: 9.35, p95: 10.25 }, female: { p5: 8.00, p50: 8.80, p95: 9.60 } },
+    },
+    '60+': {
+      cranial:     { male: { p5: 54.0, p50: 57.2, p95: 60.3 }, female: { p5: 52.0, p50: 55.2, p95: 58.3 } },
+      ear:         { male: { p5: 5.9,  p50: 6.7,  p95: 7.7  }, female: { p5: 5.4,  p50: 6.2,  p95: 7.1  } },
+      tragus:      { male: { p5: 26.0, p50: 28.8, p95: 30.8 }, female: { p5: 24.5, p50: 27.3, p95: 29.3 } },
+      mastoid:     { male: { p5: 27.0, p50: 29.8, p95: 32.3 }, female: { p5: 25.5, p50: 28.3, p95: 30.8 } },
+      bizygomatic: { male: { p5: 13.1, p50: 14.4, p95: 15.6 }, female: { p5: 12.3, p50: 13.6, p95: 14.75 } },
+      maskarcflex: { male: { p5: 8.00, p50: 9.25, p95: 10.15 }, female: { p5: 7.90, p50: 8.75, p95: 9.55 } },
+    },
+  },
+  ethnicity: {
+    white: {
+      cranial:     { male: { p5: 54.0, p50: 57.0, p95: 60.0 }, female: { p5: 52.0, p50: 55.0, p95: 58.0 } },
+      ear:         { male: { p5: 5.7,  p50: 6.3,  p95: 7.2  }, female: { p5: 5.2,  p50: 5.9,  p95: 6.8  } },
+      tragus:      { male: { p5: 26.0, p50: 28.5, p95: 30.5 }, female: { p5: 24.5, p50: 27.0, p95: 29.0 } },
+      mastoid:     { male: { p5: 27.0, p50: 29.5, p95: 32.0 }, female: { p5: 25.5, p50: 28.0, p95: 30.5 } },
+      bizygomatic: { male: { p5: 13.1, p50: 14.3, p95: 15.4 }, female: { p5: 12.4, p50: 13.5, p95: 14.6 } },
+      maskarcflex: { male: { p5: 7.95, p50: 9.10, p95: 9.95 }, female: { p5: 7.85, p50: 8.60, p95: 9.34 } },
+    },
+    black: {
+      cranial:     { male: { p5: 54.5, p50: 57.6, p95: 60.7 }, female: { p5: 52.5, p50: 55.6, p95: 58.6 } },
+      ear:         { male: { p5: 5.7,  p50: 6.4,  p95: 7.3  }, female: { p5: 5.2,  p50: 6.0,  p95: 6.9  } },
+      tragus:      { male: { p5: 26.3, p50: 28.9, p95: 31.0 }, female: { p5: 24.8, p50: 27.4, p95: 29.4 } },
+      mastoid:     { male: { p5: 27.3, p50: 30.0, p95: 32.5 }, female: { p5: 25.8, p50: 28.5, p95: 31.0 } },
+      bizygomatic: { male: { p5: 13.4, p50: 14.6, p95: 16.0 }, female: { p5: 12.7, p50: 13.8, p95: 15.0 } },
+      maskarcflex: { male: { p5: 8.20, p50: 9.45, p95: 10.40 }, female: { p5: 8.05, p50: 8.90, p95: 9.70 } },
+    },
+    hispanic: {
+      cranial:     { male: { p5: 53.5, p50: 56.5, p95: 59.5 }, female: { p5: 51.5, p50: 54.5, p95: 57.5 } },
+      ear:         { male: { p5: 5.6,  p50: 6.2,  p95: 7.1  }, female: { p5: 5.1,  p50: 5.8,  p95: 6.7  } },
+      tragus:      { male: { p5: 25.5, p50: 28.0, p95: 30.0 }, female: { p5: 24.0, p50: 26.5, p95: 28.5 } },
+      mastoid:     { male: { p5: 26.5, p50: 29.0, p95: 31.5 }, female: { p5: 25.0, p50: 27.5, p95: 30.0 } },
+      bizygomatic: { male: { p5: 13.0, p50: 14.2, p95: 15.3 }, female: { p5: 12.3, p50: 13.4, p95: 14.4 } },
+      maskarcflex: { male: { p5: 7.85, p50: 9.05, p95: 9.90 }, female: { p5: 7.75, p50: 8.55, p95: 9.30 } },
+    },
+    asian: {
+      cranial:     { male: { p5: 53.0, p50: 56.0, p95: 58.8 }, female: { p5: 51.0, p50: 53.9, p95: 56.8 } },
+      ear:         { male: { p5: 5.4,  p50: 6.1,  p95: 6.9  }, female: { p5: 5.0,  p50: 5.7,  p95: 6.5  } },
+      tragus:      { male: { p5: 25.0, p50: 27.5, p95: 29.5 }, female: { p5: 23.5, p50: 26.0, p95: 28.0 } },
+      mastoid:     { male: { p5: 26.0, p50: 28.5, p95: 31.0 }, female: { p5: 24.5, p50: 27.0, p95: 29.5 } },
+      bizygomatic: { male: { p5: 12.7, p50: 13.8, p95: 14.9 }, female: { p5: 11.9, p50: 13.0, p95: 14.0 } },
+      maskarcflex: { male: { p5: 7.65, p50: 8.75, p95: 9.55 }, female: { p5: 7.55, p50: 8.25, p95: 8.95 } },
+    },
+  },
+};
+
+// ── Multi-select demographic bins ────────────────────────────────────────────
+const activeBins = { gender: new Set(), age: new Set(), ethnicity: new Set() };
+
+// Colors per group (male = solid, female = lighter dashed variant)
+const GROUP_COLORS = {
+  total:    { male: '#38bdf8', female: '#f472b6' },
+  '18-30':  { male: '#c084fc', female: '#e879f9' },
+  '31-45':  { male: '#34d399', female: '#6ee7b7' },
+  '46-60':  { male: '#fbbf24', female: '#fde68a' },
+  '60+':    { male: '#fb923c', female: '#fed7aa' },
+  white:    { male: '#94a3b8', female: '#cbd5e1' },
+  black:    { male: '#818cf8', female: '#a5b4fc' },
+  hispanic: { male: '#f87171', female: '#fca5a5' },
+  asian:    { male: '#4ade80', female: '#86efac' },
+};
+
+function toggleBin(cat, val) {
+  if (activeBins[cat].has(val)) activeBins[cat].delete(val);
+  else activeBins[cat].add(val);
+  updatePillStates();
+  redrawAll();
+}
+
+function clearAllBins() {
+  activeBins.gender.clear(); activeBins.age.clear(); activeBins.ethnicity.clear();
+  updatePillStates();
+  redrawAll();
+}
+
+function updatePillStates() {
+  const allEmpty = activeBins.gender.size === 0 && activeBins.age.size === 0 && activeBins.ethnicity.size === 0;
+  document.querySelector('[data-action="total"]')?.classList.toggle('active', allEmpty);
+  document.querySelectorAll('.bin-pill[data-cat]').forEach(el => {
+    el.classList.toggle('active', activeBins[el.dataset.cat]?.has(el.dataset.val));
+  });
+}
+
+function getActiveCurves(m) {
+  // Which genders to include
+  const genders = activeBins.gender.size > 0 ? [...activeBins.gender] : ['male', 'female'];
+
+  // Which subgroups (age / ethnicity / total)
+  const subgroups = [];
+  activeBins.age.forEach(v => subgroups.push({ key: v, type: 'age' }));
+  activeBins.ethnicity.forEach(v => subgroups.push({ key: v, type: 'ethnicity' }));
+  if (subgroups.length === 0) subgroups.push({ key: 'total', type: 'total' });
+
+  const curves = [];
+  subgroups.forEach(sub => {
+    genders.forEach(gender => {
+      let data;
+      if (sub.type === 'total') {
+        data = m[gender];
+      } else {
+        data = DEMOG_DATA[sub.type]?.[sub.key]?.[m.id]?.[gender];
+      }
+      if (!data) return;
+      const col = (GROUP_COLORS[sub.key] ?? GROUP_COLORS.total)[gender];
+      const sexSym = gender === 'male' ? '♂' : '♀';
+      const groupLabel = sub.key === 'total' ? '' : sub.key + ' ';
+      curves.push({ label: `${groupLabel}${sexSym}`, color: col, gender, group: sub.key, params: getGaussParams(data), data });
+    });
+  });
+  return curves;
+}
+
 // product state
 const productState = {};
 MEASUREMENTS.forEach(m => {
@@ -1171,11 +1380,11 @@ function drawChart(m) {
   const [xMin, xMax] = m.xRange;
   const x = d3.scaleLinear().domain([xMin, xMax]).range([0, iW]);
 
-  const mParams = getGaussParams(m.male);
-  const fParams = getGaussParams(m.female);
+  const curves = getActiveCurves(m);
+  if (!curves.length) return;
 
   const points = d3.range(xMin, xMax, (xMax - xMin) / 400);
-  const yMax = d3.max(points, v => Math.max(gaussPDF(v, mParams.mu, mParams.sigma), gaussPDF(v, fParams.mu, fParams.sigma)));
+  const yMax = d3.max(points, v => d3.max(curves, c => gaussPDF(v, c.params.mu, c.params.sigma)));
   const y = d3.scaleLinear().domain([0, yMax * 1.12]).range([iH, 0]);
 
   // grid lines
@@ -1185,13 +1394,11 @@ function drawChart(m) {
     .attr('y1', 0).attr('y2', iH)
     .attr('stroke', 'color-mix(in srgb, ' + tv('--border') + ' 25%, transparent)').attr('stroke-width', 1);
 
-  // percentile span bands
-  [{ p: m.male, color: 'var(--male)' }, { p: m.female, color: 'var(--female)' }].forEach(s => {
-    g.append('rect')
-      .attr('x', x(s.p.p5)).attr('y', 0)
-      .attr('width', x(s.p.p95) - x(s.p.p5))
-      .attr('height', iH)
-      .attr('fill', s.color).attr('opacity', 0.07);
+  // percentile span bands — subtle per-curve shading
+  curves.forEach(c => {
+    g.append('rect').attr('x', x(c.data.p5)).attr('y', 0)
+      .attr('width', x(c.data.p95) - x(c.data.p5)).attr('height', iH)
+      .attr('fill', c.color).attr('opacity', 0.05);
   });
 
   // product range
@@ -1205,8 +1412,8 @@ function drawChart(m) {
   }
 
   // gap regions
-  const combinedP5  = Math.min(m.male.p5,  m.female.p5);
-  const combinedP95 = Math.max(m.male.p95, m.female.p95);
+  const combinedP5  = Math.min(...curves.map(c => c.data.p5));
+  const combinedP95 = Math.max(...curves.map(c => c.data.p95));
   [[combinedP5, prod.min], [prod.max, combinedP95]].forEach(([a, b]) => {
     if (b > a) {
       const gx1 = Math.max(x(a), 0), gx2 = Math.min(x(b), iW);
@@ -1218,29 +1425,27 @@ function drawChart(m) {
     }
   });
 
-  // area fills & curves
+  // area fills & distribution curves (female = dashed)
   const pts = d3.range(xMin, xMax, (xMax - xMin) / 600);
-  const areaGen = (params) => d3.area()
-    .x(d => x(d)).y0(iH).y1(d => y(gaussPDF(d, params.mu, params.sigma))).curve(d3.curveBasis);
-  const lineGen = (params) => d3.line()
-    .x(d => x(d)).y(d => y(gaussPDF(d, params.mu, params.sigma))).curve(d3.curveBasis);
+  curves.forEach(c => {
+    g.append('path').datum(pts)
+      .attr('d', d3.area().x(d => x(d)).y0(iH).y1(d => y(gaussPDF(d, c.params.mu, c.params.sigma))).curve(d3.curveBasis))
+      .attr('fill', c.color).attr('opacity', 0.08);
+    g.append('path').datum(pts)
+      .attr('d', d3.line().x(d => x(d)).y(d => y(gaussPDF(d, c.params.mu, c.params.sigma))).curve(d3.curveBasis))
+      .attr('fill', 'none').attr('stroke', c.color)
+      .attr('stroke-width', c.gender === 'female' ? 1.5 : 2)
+      .attr('stroke-dasharray', c.gender === 'female' ? '5 3' : null)
+      .attr('opacity', 0.9);
+  });
 
-  g.append('path').datum(pts).attr('class', 'area-male').attr('d', areaGen(mParams));
-  g.append('path').datum(pts).attr('class', 'area-female').attr('d', areaGen(fParams));
-  g.append('path').datum(pts).attr('class', 'curve-male').attr('d', lineGen(mParams));
-  g.append('path').datum(pts).attr('class', 'curve-female').attr('d', lineGen(fParams));
-
-  // percentile tick marks
-  [
-    { v: m.male.p5,    cls: 'pct-male',   label: 'M 5th'  },
-    { v: m.male.p50,   cls: 'pct-male',   label: 'M 50th' },
-    { v: m.male.p95,   cls: 'pct-male',   label: 'M 95th' },
-    { v: m.female.p5,  cls: 'pct-female', label: 'F 5th'  },
-    { v: m.female.p50, cls: 'pct-female', label: 'F 50th' },
-    { v: m.female.p95, cls: 'pct-female', label: 'F 95th' },
-  ].forEach(mk => {
-    g.append('line').attr('class', `pct-line ${mk.cls}`)
-      .attr('x1', x(mk.v)).attr('x2', x(mk.v)).attr('y1', 0).attr('y2', iH);
+  // percentile tick marks per curve
+  curves.forEach(c => {
+    [c.data.p5, c.data.p50, c.data.p95].forEach(v => {
+      g.append('line').attr('x1', x(v)).attr('x2', x(v)).attr('y1', 0).attr('y2', iH)
+        .attr('stroke', c.color).attr('stroke-width', 1).attr('opacity', 0.4)
+        .attr('stroke-dasharray', '3 3');
+    });
   });
 
   // product boundary lines + label
@@ -1280,37 +1485,36 @@ function drawChart(m) {
       const val = x.invert(mx);
       if (val < xMin || val > xMax) return;
       vLine.attr('x1', mx).attr('x2', mx).attr('opacity', 1);
-      const mCdf = gaussCDF(val, mParams.mu, mParams.sigma);
-      const fCdf = gaussCDF(val, fParams.mu, fParams.sigma);
+      const tipLines = [`<b style="color:#f1f5f9">${val.toFixed(2)} cm</b>`];
+      curves.forEach(c => tipLines.push(
+        `<span style="color:${c.color}">${c.label}: ${(gaussCDF(val, c.params.mu, c.params.sigma)*100).toFixed(1)}%</span>`
+      ));
       tip.style.opacity = '1';
       tip.style.left = (event.clientX + 14) + 'px';
       tip.style.top  = (event.clientY - 10) + 'px';
-      tip.innerHTML = `<b style="color:var(--text-bright)">${val.toFixed(2)} cm</b><br>
-        <span style="color:var(--male)">♂ pctile: ${(mCdf*100).toFixed(1)}%</span><br>
-        <span style="color:var(--female)">♀ pctile: ${(fCdf*100).toFixed(1)}%</span>`;
+      tip.innerHTML = tipLines.join('<br>');
     })
     .on('mouseleave', () => { vLine.attr('opacity', 0); tip.style.opacity = '0'; });
 
   // stats row
   const statsEl = document.getElementById(`stats_${m.id}`);
   const nioshTag = m.isNiosh ? `<div class="stat-badge niosh">✦ NIOSH 2005 N=3,997</div>` : '';
-  statsEl.innerHTML = `
-    <div class="stat-badge male">♂ μ=${m.male.p50} | σ≈${mParams.sigma.toFixed(2)}</div>
-    <div class="stat-badge female">♀ μ=${m.female.p50} | σ≈${fParams.sigma.toFixed(2)}</div>
-    <div class="stat-badge product">Product: ${prod.min}–${prod.max} cm</div>
-    ${nioshTag}`;
+  const curveStats = curves.map(c =>
+    `<div class="stat-badge" style="color:${c.color};border-color:${c.color}50">${c.label} μ=${c.data.p50} | σ≈${c.params.sigma.toFixed(2)}</div>`
+  ).join('');
+  statsEl.innerHTML = `${curveStats}<div class="stat-badge product">Product: ${prod.min}–${prod.max} cm</div>${nioshTag}`;
 
-  // coverage
-  const mCov = coverage(mParams, prod.min, prod.max);
-  const fCov = coverage(fParams, prod.min, prod.max);
-  const combined = (mCov + fCov) / 2;
+  // coverage — average across all active curves
+  const covVals = curves.map(c => coverage(c.params, prod.min, prod.max));
+  const combined = covVals.reduce((a, b) => a + b, 0) / covVals.length;
   const pct = (combined * 100).toFixed(1);
   const covBar = document.getElementById(`covbar_${m.id}`);
   const covPct = document.getElementById(`covpct_${m.id}`);
   const gapCall = document.getElementById(`gapcall_${m.id}`);
   covBar.style.width = `${Math.min(combined * 100, 100)}%`;
-  covBar.style.background = combined > 0.8 ? 'var(--product)' : combined > 0.6 ? tv('--warn-alt') : 'var(--gap)';
-  covPct.textContent = `${pct}% combined covered  (♂ ${(mCov*100).toFixed(1)}% · ♀ ${(fCov*100).toFixed(1)}%)`;
+  covBar.style.background = combined > 0.8 ? 'var(--product)' : combined > 0.6 ? '#fb923c' : 'var(--gap)';
+  const covParts = curves.map(c => `${c.label} ${(coverage(c.params, prod.min, prod.max)*100).toFixed(1)}%`);
+  covPct.textContent = `${pct}% avg covered  (${covParts.join(' · ')})`;
   const gaps = [];
   if (prod.min > combinedP5)  gaps.push(`Small end gap: ${combinedP5.toFixed(2)}–${prod.min.toFixed(2)} cm uncovered`);
   if (prod.max < combinedP95) gaps.push(`Large end gap: ${prod.max.toFixed(2)}–${combinedP95.toFixed(2)} cm uncovered`);
@@ -1326,27 +1530,26 @@ function buildSummary() {
   const sg = document.getElementById('summary-grid');
   sg.innerHTML = '';
   MEASUREMENTS.forEach(m => {
-    const mP = getGaussParams(m.male);
-    const fP = getGaussParams(m.female);
+    const curves = getActiveCurves(m);
     const prod = productState[m.id];
-    const mCov = (coverage(mP, prod.min, prod.max) * 100).toFixed(1);
-    const fCov = (coverage(fP, prod.min, prod.max) * 100).toFixed(1);
-    const combined = ((coverage(mP, prod.min, prod.max) + coverage(fP, prod.min, prod.max)) / 2 * 100).toFixed(1);
+    const covs = curves.map(c => coverage(c.params, prod.min, prod.max));
+    const combinedN = covs.length ? covs.reduce((a,b)=>a+b,0)/covs.length : 0;
     const card = document.createElement('div');
     card.className = 'summary-card' + (m.isNiosh ? ' niosh-summary' : '');
+    const curveRows = curves.map(c =>
+      `<div class="summary-row">
+        <span class="label" style="color:${c.color}">${c.label}</span>
+        <span style="color:${c.color}">${c.data.p5}–${c.data.p95} cm · median ${c.data.p50} · cov ${(coverage(c.params,prod.min,prod.max)*100).toFixed(1)}%</span>
+      </div>`
+    ).join('');
     card.innerHTML = `
       <div class="summary-card-title" style="color:${m.isNiosh ? 'var(--niosh)' : 'var(--muted)'}">
         ${m.name.replace('(', '<br>(').replace('Bizygomatic', 'Bizygomatic ✦')}
       </div>
-      <div class="summary-row"><span class="label">♂ 5–95th</span><span class="val-m">${m.male.p5}–${m.male.p95} cm</span></div>
-      <div class="summary-row"><span class="label">♀ 5–95th</span><span class="val-f">${m.female.p5}–${m.female.p95} cm</span></div>
-      <div class="summary-row"><span class="label">♂ median</span><span class="val-m">${m.male.p50} cm</span></div>
-      <div class="summary-row"><span class="label">♀ median</span><span class="val-f">${m.female.p50} cm</span></div>
+      ${curveRows}
       <div class="summary-row"><span class="label">Product</span><span style="color:var(--product)">${prod.min}–${prod.max} cm</span></div>
-      <div class="summary-row"><span class="label">♂ coverage</span><span class="val-m">${mCov}%</span></div>
-      <div class="summary-row"><span class="label">♀ coverage</span><span class="val-f">${fCov}%</span></div>
-      <div class="summary-row"><span class="label">Combined</span>
-        <span style="color:${combined > 80 ? 'var(--product)' : 'var(--gap)'}">${combined}%</span></div>`;
+      <div class="summary-row"><span class="label">Avg coverage</span>
+        <span style="color:${combinedN > 0.8 ? 'var(--product)' : 'var(--gap)'}">${(combinedN*100).toFixed(1)}%</span></div>`;
     sg.appendChild(card);
   });
 }
@@ -1393,12 +1596,11 @@ function buildWeightInputs() {
 }
 
 function getCoverageForDim(m) {
-  const mP = getGaussParams(m.male);
-  const fP = getGaussParams(m.female);
+  const curves = getActiveCurves(m);
+  if (!curves.length) return 0;
   const prod = productState[m.id];
-  const mCov = coverage(mP, prod.min, prod.max);
-  const fCov = coverage(fP, prod.min, prod.max);
-  return (mCov + fCov) / 2;
+  const covs = curves.map(c => coverage(c.params, prod.min, prod.max));
+  return covs.reduce((a, b) => a + b, 0) / covs.length;
 }
 
 function drawGauge(pct) {
@@ -1530,8 +1732,11 @@ function updateOverallFit() {
     const barColor = cov > 0.8 ? 'var(--product)' : cov > 0.6 ? tv('--warn-alt') : 'var(--gap)';
     const wt = dimWeights[m.id];
     const contrib = totalWeight > 0 ? ((cov * wt / totalWeight) * 100).toFixed(1) : '0.0';
-    const mCov = (coverage(getGaussParams(m.male), productState[m.id].min, productState[m.id].max) * 100).toFixed(1);
-    const fCov = (coverage(getGaussParams(m.female), productState[m.id].min, productState[m.id].max) * 100).toFixed(1);
+    const _curves = getActiveCurves(m);
+    const _prod = productState[m.id];
+    const subParts = _curves.map(c =>
+      `<span style="color:${c.color}">${c.label} ${(coverage(c.params,_prod.min,_prod.max)*100).toFixed(1)}%</span>`
+    );
     const nioshMark = m.isNiosh ? ' <span style="color:var(--niosh)">✦</span>' : '';
     const row = document.createElement('div');
     row.className = 'overall-dim-row';
@@ -1543,7 +1748,7 @@ function updateOverallFit() {
       <div class="overall-dim-bar-bg">
         <div class="overall-dim-bar-fill" style="width:${Math.min(cov*100,100)}%; background:${barColor};"></div>
       </div>
-      <div class="overall-dim-sub">♂ ${mCov}% · ♀ ${fCov}% · weight ${wt.toFixed(1)} · contributes ${contrib}% to overall</div>`;
+      <div class="overall-dim-sub">${subParts.join(' · ')} · weight ${wt.toFixed(1)} · contributes ${contrib}% to overall</div>`;
     breakEl.appendChild(row);
   });
   updateFlexFitPanel();
