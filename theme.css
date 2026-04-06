@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
+:root {
+  /* ── Backgrounds ── */
+  --bg:            #0d1117;
+  --surface:       #161b22;
+  --card:          #1c2230;
+  --overlay-dark:  #0f172a;
+  --tooltip-bg:    #1e2a3a;
+
+  /* ── Borders ── */
+  --border:        #2d3748;
+  --border-subtle: #1e293b;
+  --border-dim:    #334155;
+
+  /* ── Text ── */
+  --text:          #e2e8f0;
+  --text-bright:   #f1f5f9;
+  --muted:         #64748b;
+  --muted-dim:     #475569;
+
+  /* ── Data colors ── */
+  --male:          #38bdf8;
+  --male-glow:     #0ea5e940;
+  --female:        #f472b6;
+  --female-glow:   #ec489940;
+  --product:       #fbbf24;
+  --gap:           #ef4444;
+  --niosh:         #34d399;
+  --accent:        #a78bfa;
+  --indigo:        #818cf8;
+  --indigo-light:  #c7d2fe;
+  --cyan:          #22d3ee;
+
+  /* ── Status ── */
+  --good:          #4ade80;
+  --warn:          #fbbf24;
+  --warn-alt:      #fb923c;
+  --bad:           #ef4444;
+  --inspect:       #f59e0b;
+  --lime:          #a3e635;
+
+  /* ── Fonts ── */
+  --font-display:  'Poppins', serif;
+  --font-body:     'Poppins', sans-serif;
+  --font-mono:     'Poppins', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }

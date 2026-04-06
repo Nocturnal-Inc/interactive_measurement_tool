@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Measurement Tools</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 48px 24px;
+    gap: 40px;
+  }
+
+  header {
+    text-align: center;
+    max-width: 600px;
+  }
+
+  header h1 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  header p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .cards {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 860px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px;
+    width: 400px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 10%, transparent);
+    transform: translateY(-2px);
+  }
+
+  .card-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--female);
+    margin-bottom: 10px;
+  }
+
+  .card h2 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+
+  .card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .card-features {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .card-features span {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 8px;
+    color: var(--cyan);
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <h1>Interactive Measurement Tools</h1>
+    <p>Design and engineering tools for head anthropometry analysis and mask fit evaluation across diverse populations.</p>
+  </header>
+
+  <div class="cards">
+
+    <a class="card" href="Measurement_Tool_Full.html">
+      <div class="card-tag">Comprehensive Analysis</div>
+      <h2>Population Distribution & Product Fit</h2>
+      <p>Visualize population distributions across 6 head measurement dimensions with interactive D3.js charts. Input your product's design ranges to calculate weighted fit coverage, identify uncovered population gaps, and validate against NIOSH 2005 survey data.</p>
+      <div class="card-features">
+        <span>Bell Curves</span>
+        <span>Fit Coverage</span>
+        <span>Male / Female</span>
+        <span>NIOSH Data</span>
+        <span>Gap Analysis</span>
+      </div>
+    </a>
+
+    <a class="card" href="Measurement_Tool_Flex.html">
+      <div class="card-tag">Geometric Explorer</div>
+      <h2>Face Cross-Section & Mask Flexibility</h2>
+      <p>Explore the geometric relationship between skull shape and mask dimensions with an interactive top-down cross-section view. Adjust cranial circumference, bizygomatic width, mask flex angles, and visualize wing panel gaps across population percentiles.</p>
+      <div class="card-features">
+        <span>Cross-Section SVG</span>
+        <span>Flex Angles</span>
+        <span>Gap Measurements</span>
+        <span>Percentiles</span>
+      </div>
+    </a>
+
+  </div>
+
+</body>
+</html>

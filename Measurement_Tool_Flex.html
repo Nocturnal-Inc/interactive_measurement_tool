@@ -1,32 +1,33 @@
 <!DOCTYPE html>
-<html><head><style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #0f1624; color: #94a3b8; font-family: 'DM Mono', monospace; display: flex; flex-direction: column; align-items: center; padding: 24px 16px; gap: 20px; min-width: 900px; }
-h2 { color: #f472b6; font-size: 14px; letter-spacing: 0.1em; }
+<html><head>
+<link rel="stylesheet" href="theme.css">
+<style>
+body { background: var(--overlay-dark); color: var(--muted); font-family: var(--font-mono); display: flex; flex-direction: column; align-items: center; padding: 24px 16px; gap: 20px; min-width: 900px; }
+h2 { color: var(--female); font-size: 14px; letter-spacing: 0.1em; }
 
 .controls-wrap { display: flex; flex-direction: column; gap: 12px; width: 640px; }
-.ctrl-group { background: #131c2e; border-radius: 10px; padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; }
-.ctrl-group-title { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: #334155; }
-.ctrl { display: flex; align-items: center; gap: 10px; font-size: 11px; }
-.ctrl-label { width: 148px; text-align: right; color: #64748b; }
-.ctrl-val { width: 64px; color: #f472b6; font-size: 11px; font-weight: bold; }
-input[type=range] { flex: 1; accent-color: #f472b6; }
+.ctrl-group { background: var(--card); border-radius: 10px; padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; }
+.ctrl-group-title { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--border-dim); }
+.ctrl { display: flex; align-items: center; gap: 10px; font-size: 11px; min-width: 0; }
+.ctrl-label { flex-shrink: 0; white-space: nowrap; text-align: right; color: var(--muted); }
+.ctrl-val { flex-shrink: 0; white-space: nowrap; color: var(--female); font-size: 11px; font-weight: bold; }
+input[type=range] { flex: 1; accent-color: var(--female); }
 
 .ctrl-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 28px; }
 
 /* derived outputs */
-.derived-row { display: flex; gap: 20px; flex-wrap: wrap; padding: 4px 0 0 0; border-top: 1px solid #1e293b; margin-top: 2px; }
+.derived-row { display: flex; gap: 20px; flex-wrap: wrap; padding: 4px 0 0 0; border-top: 1px solid var(--border-subtle); margin-top: 2px; }
 .derived-item { display: flex; align-items: center; gap: 6px; font-size: 11px; }
-.derived-label { color: #475569; }
-.derived-val { color: #22d3ee; font-weight: bold; min-width: 52px; }
+.derived-label { color: var(--muted-dim); }
+.derived-val { color: var(--cyan); font-weight: bold; min-width: 52px; }
 
 /* lock toggle */
-.lock-row { display: flex; align-items: center; gap: 8px; font-size: 10px; color: #475569; }
-.lock-btn { background: #1e293b; border: 1px solid #334155; border-radius: 4px; color: #94a3b8; font-size: 10px; font-family: monospace; padding: 2px 10px; cursor: pointer; letter-spacing: 0.05em; transition: all 0.12s; }
-.lock-btn.active { background: #f472b620; border-color: #f472b6; color: #f472b6; }
-.lock-hint { color: #22d3ee88; font-size: 10px; margin-left: 6px; }
+.lock-row { display: flex; align-items: center; gap: 8px; font-size: 10px; color: var(--muted-dim); }
+.lock-btn { background: var(--border-subtle); border: 1px solid var(--border-dim); border-radius: 4px; color: var(--muted); font-size: 10px; font-family: 'Poppins', monospace; padding: 2px 10px; cursor: pointer; letter-spacing: 0.05em; transition: all 0.12s; }
+.lock-btn.active { background: color-mix(in srgb, var(--female) 13%, transparent); border-color: var(--female); color: var(--female); }
+.lock-hint { color: color-mix(in srgb, var(--cyan) 53%, transparent); font-size: 10px; margin-left: 6px; }
 
-.section-title { font-size: 10px; color: #334155; letter-spacing: 0.12em; text-transform: uppercase; align-self: flex-start; margin-left: 20px; }
+.section-title { font-size: 10px; color: var(--border-dim); letter-spacing: 0.12em; text-transform: uppercase; align-self: flex-start; margin-left: 20px; }
 .static-row { display: flex; gap: 12px; justify-content: center; overflow-x: auto; width: 100%; padding: 0 12px; }
 </style></head>
 <body>
@@ -94,20 +95,23 @@ input[type=range] { flex: 1; accent-color: #f472b6; }
 
 </div>
 
-<svg id="interactive" style="width:100%;max-width:640px;background:#131c2e;border-radius:12px;display:block;"></svg>
+<svg id="interactive" style="width:100%;max-width:640px;background:var(--card);border-radius:12px;display:block;"></svg>
 
 <div class="section-title">── population percentiles ──</div>
 <div class="static-row" id="static-row"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script>
+const cs = getComputedStyle(document.documentElement);
+const tv = (name) => cs.getPropertyValue(name).trim();
+
 const PROFILES = [
-  {label:'P5',  bz:12.4,  color:'#f472b6'},
-  {label:'P35', bz:13.4,  color:'#fbbf24'},
-  {label:'P65', bz:14.35, color:'#34d399'},
-  {label:'P95', bz:15.5,  color:'#818cf8'},
+  {label:'P5',  bz:12.4,  color:tv('--female')},
+  {label:'P35', bz:13.4,  color:tv('--product')},
+  {label:'P65', bz:14.35, color:tv('--niosh')},
+  {label:'P95', bz:15.5,  color:tv('--indigo')},
 ];
-const panColors = ['#fbbf24','#a78bfa','#34d399','#38bdf8'];
+const panColors = [tv('--product'),tv('--accent'),tv('--niosh'),tv('--male')];
 const nosePr = 3.0;
 const wingLen = 6.5;
 
@@ -279,7 +283,7 @@ function renderGeom(svg, g, sc, ox, oy, col, opts={}) {
     ...frontR.slice().reverse().map(([x,y])=>[-x,y])];
   svg.append('path')
     .attr('d','M '+outline.map(p=>toS(p).join(',')).join(' L ')+' Z')
-    .attr('fill','#1e3a5c').attr('opacity',0.55);
+    .attr('fill',tv('--border-subtle')).attr('opacity',0.55);
 
   // Skull outline
   ['R','L'].forEach(side => {
@@ -289,7 +293,7 @@ function renderGeom(svg, g, sc, ox, oy, col, opts={}) {
   });
   svg.append('path').attr('d',dPath(backArc,false)).attr('fill','none').attr('stroke',col).attr('stroke-width',2).attr('opacity',0.9);
 
-  const cyan = '#22d3ee', dash = '7 4';
+  const cyan = tv('--cyan'), dash = '7 4';
   // Vertical axis
   svg.append('line').attr('x1',ox).attr('y1',oy-12).attr('x2',ox).attr('y2',oy+headDepth*sc+8)
     .attr('stroke',cyan).attr('stroke-width',1.2).attr('stroke-dasharray',dash).attr('opacity',0.45);
@@ -305,14 +309,14 @@ function renderGeom(svg, g, sc, ox, oy, col, opts={}) {
   const mastY = oy+mastoidY*sc;
   svg.append('line')
     .attr('x1',ox-skullXatMastoid*sc-6).attr('y1',mastY).attr('x2',ox+skullXatMastoid*sc+6).attr('y2',mastY)
-    .attr('stroke','#f472b6').attr('stroke-width',1.2).attr('stroke-dasharray',dash).attr('opacity',0.7);
-  [-1,1].forEach(s => svg.append('line').attr('x1',ox+s*skullXatMastoid*sc).attr('y1',mastY-5).attr('x2',ox+s*skullXatMastoid*sc).attr('y2',mastY+5).attr('stroke','#f472b6').attr('stroke-width',1.8).attr('opacity',0.9));
+    .attr('stroke',tv('--female')).attr('stroke-width',1.2).attr('stroke-dasharray',dash).attr('opacity',0.7);
+  [-1,1].forEach(s => svg.append('line').attr('x1',ox+s*skullXatMastoid*sc).attr('y1',mastY-5).attr('x2',ox+s*skullXatMastoid*sc).attr('y2',mastY+5).attr('stroke',tv('--female')).attr('stroke-width',1.8).attr('opacity',0.9));
 
   if (opts.axisLabels) {
     svg.append('text').attr('x',ox+a*sc+8).attr('y',bzY+4)
-      .attr('fill',cyan).attr('font-size',10).attr('font-family','monospace').attr('opacity',0.85).text('BZ');
+      .attr('fill',cyan).attr('font-size',10).attr('font-family',"'Poppins',monospace").attr('opacity',0.85).text('BZ');
     svg.append('text').attr('x',ox+skullXatMastoid*sc+8).attr('y',mastY+4)
-      .attr('fill','#f472b6').attr('font-size',10).attr('font-family','monospace').attr('opacity',0.85).text('mastoid');
+      .attr('fill',tv('--female')).attr('font-size',10).attr('font-family',"'Poppins',monospace").attr('opacity',0.85).text('mastoid');
   }
 
   // Groove panels
@@ -327,10 +331,10 @@ function renderGeom(svg, g, sc, ox, oy, col, opts={}) {
   [1,-1].forEach(s => {
     const [x1,y1]=toS([s*g3x,g3y]), [x2,y2]=toS([s*wingTip[0],wingTip[1]]);
     svg.append('line').attr('x1',x1).attr('y1',y1).attr('x2',x2).attr('y2',y2)
-      .attr('stroke','#fbbf24').attr('stroke-width',opts.small?2:2.5).attr('stroke-dasharray','7 3');
+      .attr('stroke',tv('--product')).attr('stroke-width',opts.small?2:2.5).attr('stroke-dasharray','7 3');
     if (!opts.small)
       svg.append('text').attr('x',(x1+x2)/2+s*4).attr('y',(y1+y2)/2-5)
-        .attr('fill','#fbbf24').attr('font-size',8).attr('font-family','monospace')
+        .attr('fill',tv('--product')).attr('font-size',8).attr('font-family',"'Poppins',monospace")
         .attr('text-anchor',s>0?'start':'end').text('6.5cm');
   });
 
@@ -339,14 +343,14 @@ function renderGeom(svg, g, sc, ox, oy, col, opts={}) {
     const [wx,wy]   = toS([s*wingTip[0], wingTip[1]]);
     const [skx,sky] = toS([s*skullXatMastoid, mastoidY]);
     svg.append('line').attr('x1',wx).attr('y1',wy).attr('x2',skx).attr('y2',sky)
-      .attr('stroke','#ef4444').attr('stroke-width',1.8).attr('stroke-dasharray','5 3');
+      .attr('stroke',tv('--gap')).attr('stroke-width',1.8).attr('stroke-dasharray','5 3');
     [[wx,wy],[skx,sky]].forEach(([px,py]) =>
-      svg.append('line').attr('x1',px-3).attr('y1',py).attr('x2',px+3).attr('y2',py).attr('stroke','#ef4444').attr('stroke-width',1.5)
+      svg.append('line').attr('x1',px-3).attr('y1',py).attr('x2',px+3).attr('y2',py).attr('stroke',tv('--gap')).attr('stroke-width',1.5)
     );
     const distMm = (Math.hypot(wingTip[0]-skullXatMastoid, wingTip[1]-mastoidY)*10).toFixed(1);
     svg.append('text')
       .attr('x', (wx+skx)/2 + s*8).attr('y', (wy+sky)/2 + 4)
-      .attr('fill','#ef4444').attr('font-size',opts.small?8:9).attr('font-family','monospace')
+      .attr('fill',tv('--gap')).attr('font-size',opts.small?8:9).attr('font-family',"'Poppins',monospace")
       .attr('text-anchor', s>0?'start':'end').text(distMm+'mm');
   });
 
@@ -355,7 +359,7 @@ function renderGeom(svg, g, sc, ox, oy, col, opts={}) {
     const [px,py] = toS(fPt(ang));
     [1,-1].forEach(s =>
       svg.append('circle').attr('cx',s>0?px:2*ox-px).attr('cy',py).attr('r',opts.small?3:4)
-        .attr('fill','#818cf8').attr('stroke','#0f1624').attr('stroke-width',1)
+        .attr('fill',tv('--indigo')).attr('stroke',tv('--overlay-dark')).attr('stroke-width',1)
     );
   });
 }
@@ -377,10 +381,10 @@ function drawInteractive(changed) {
   document.getElementById('interactive')
     .setAttribute('viewBox', `${-halfW} -28 ${halfW*2} ${totalH}`);
 
-  renderGeom(svg, g, sc, ox, oy, '#3b82f6', {axisLabels:true});
+  renderGeom(svg, g, sc, ox, oy, tv('--male'), {axisLabels:true});
 
   svg.append('text').attr('x',0).attr('y',-14).attr('text-anchor','middle')
-    .attr('fill','#94a3b8').attr('font-size',9).attr('font-family','monospace')
+    .attr('fill',tv('--muted')).attr('font-size',9).attr('font-family',"'Poppins',monospace")
     .text(`C=${C.toFixed(1)}cm  BZ=${bz.toFixed(2)}cm  depth=${depth.toFixed(1)}cm  mastoid=${(g.skullXatMastoid*2).toFixed(1)}cm  gap=${g.gap.toFixed(1)}mm`);
 }
 
@@ -398,14 +402,14 @@ function drawStatic() {
     const svgEl = document.createElementNS('http://www.w3.org/2000/svg','svg');
     svgEl.setAttribute('viewBox',`${-halfW} ${-padTop} ${halfW*2} ${totalH}`);
     svgEl.setAttribute('width',halfW*2); svgEl.setAttribute('height',totalH);
-    svgEl.style.cssText = 'background:#131c2e;border-radius:8px;display:block;';
+    svgEl.style.cssText = 'background:var(--card);border-radius:8px;display:block;';
     const svg = d3.select(svgEl);
     renderGeom(svg, g, sc, 0, 0, prof.color, {small:true});
     svg.append('text').attr('x',0).attr('y',-padTop+11).attr('text-anchor','middle')
-      .attr('fill',prof.color).attr('font-size',10).attr('font-family','monospace').attr('font-weight','bold')
+      .attr('fill',prof.color).attr('font-size',10).attr('font-family',"'Poppins',monospace").attr('font-weight','bold')
       .text(prof.label+' · BZ='+prof.bz+'cm');
     svg.append('text').attr('x',0).attr('y',-padTop+20).attr('text-anchor','middle')
-      .attr('fill','#475569').attr('font-size',7).attr('font-family','monospace')
+      .attr('fill',tv('--muted-dim')).attr('font-size',7).attr('font-family',"'Poppins',monospace")
       .text('mastoid='+(g.skullXatMastoid*2).toFixed(1)+'cm · gap='+g.gap.toFixed(1)+'mm');
     container.appendChild(svgEl);
   });

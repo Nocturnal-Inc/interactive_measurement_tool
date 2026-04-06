@@ -5,39 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Head Anthropometry — Population Distribution & Product Fit</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<link rel="stylesheet" href="theme.css">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
-
-  :root {
-    --bg:        #0d1117;
-    --surface:   #161b22;
-    --card:      #1c2230;
-    --border:    #2d3748;
-    --male:      #38bdf8;
-    --male-glow: #0ea5e940;
-    --female:    #f472b6;
-    --female-glow:#ec489940;
-    --product:   #fbbf24;
-    --gap:       #ef4444;
-    --text:      #e2e8f0;
-    --muted:     #64748b;
-    --accent:    #a78bfa;
-    --niosh:     #34d399;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-body);
     min-height: 100vh;
     padding: 0 0 60px;
   }
 
   /* ── Header ── */
   header {
-    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+    background: linear-gradient(135deg, var(--bg) 0%, var(--surface) 100%);
     border-bottom: 1px solid var(--border);
     padding: 36px 48px 28px;
     position: relative;
@@ -48,7 +29,7 @@
     position: absolute;
     top: -80px; right: -80px;
     width: 320px; height: 320px;
-    background: radial-gradient(circle, #38bdf820 0%, transparent 70%);
+    background: radial-gradient(circle, color-mix(in srgb, var(--male) 13%, transparent) 0%, transparent 70%);
     pointer-events: none;
   }
   header::after {
@@ -56,11 +37,11 @@
     position: absolute;
     bottom: -60px; left: 40%;
     width: 240px; height: 240px;
-    background: radial-gradient(circle, #f472b615 0%, transparent 70%);
+    background: radial-gradient(circle, color-mix(in srgb, var(--female) 8%, transparent) 0%, transparent 70%);
     pointer-events: none;
   }
   .header-eyebrow {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.2em;
     color: var(--accent);
@@ -68,11 +49,11 @@
     margin-bottom: 10px;
   }
   h1 {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--font-display);
     font-size: clamp(22px, 3vw, 36px);
     font-weight: 400;
     line-height: 1.2;
-    color: #f1f5f9;
+    color: var(--text-bright);
     margin-bottom: 8px;
   }
   .header-sub {
@@ -168,28 +149,28 @@
   }
 
   .chart-title {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--font-display);
     font-size: 17px;
-    color: #f1f5f9;
+    color: var(--text-bright);
     margin-bottom: 2px;
   }
   .chart-subtitle {
     font-size: 11px;
     color: var(--muted);
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     margin-bottom: 10px;
   }
   .niosh-badge {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--niosh);
-    background: #34d39918;
-    border: 1px solid #34d39930;
+    background: color-mix(in srgb, var(--niosh) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--niosh) 19%, transparent);
     border-radius: 4px;
     padding: 2px 8px;
     margin-bottom: 12px;
@@ -214,8 +195,8 @@
 
   /* axis */
   .axis path, .axis line { stroke: var(--border); }
-  .axis text { fill: var(--muted); font-size: 10px; font-family: 'DM Mono', monospace; }
-  .axis-label { fill: var(--muted); font-size: 11px; font-family: 'DM Sans', sans-serif; }
+  .axis text { fill: var(--muted); font-size: 10px; font-family: var(--font-mono); }
+  .axis-label { fill: var(--muted); font-size: 11px; font-family: var(--font-body); }
 
   /* stat badges */
   .stat-row {
@@ -225,7 +206,7 @@
     margin-top: 12px;
   }
   .stat-badge {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     padding: 3px 8px;
     border-radius: 4px;
@@ -233,9 +214,9 @@
   }
   .stat-badge.male    { color: var(--male);    border-color: var(--male);    background: var(--male-glow); }
   .stat-badge.female  { color: var(--female);  border-color: var(--female);  background: var(--female-glow); }
-  .stat-badge.product { color: var(--product); border-color: var(--product); background: #fbbf2420; }
-  .stat-badge.gap     { color: var(--gap);     border-color: var(--gap);     background: #ef444420; }
-  .stat-badge.niosh   { color: var(--niosh);   border-color: var(--niosh);   background: #34d39918; }
+  .stat-badge.product { color: var(--product); border-color: var(--product); background: color-mix(in srgb, var(--product) 13%, transparent); }
+  .stat-badge.gap     { color: var(--gap);     border-color: var(--gap);     background: color-mix(in srgb, var(--gap) 13%, transparent); }
+  .stat-badge.niosh   { color: var(--niosh);   border-color: var(--niosh);   background: color-mix(in srgb, var(--niosh) 10%, transparent); }
 
   /* coverage bar */
   .coverage-section {
@@ -245,7 +226,7 @@
   }
   .coverage-label {
     font-size: 10px;
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     color: var(--muted);
     margin-bottom: 5px;
     text-transform: uppercase;
@@ -263,7 +244,7 @@
     transition: width 0.6s ease;
   }
   .coverage-pct {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--product);
     margin-top: 4px;
@@ -272,19 +253,19 @@
     margin-top: 8px;
     font-size: 10px;
     color: var(--gap);
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     flex-wrap: wrap;
   }
 
   /* tooltip */
   #tooltip {
     position: fixed;
-    background: #1e2a3a;
+    background: var(--tooltip-bg);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 10px 14px;
     font-size: 12px;
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     color: var(--text);
     pointer-events: none;
     opacity: 0;
@@ -301,9 +282,9 @@
     border-top: 1px solid var(--border);
   }
   .summary-title {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--font-display);
     font-size: 20px;
-    color: #f1f5f9;
+    color: var(--text-bright);
     margin-bottom: 16px;
   }
   .summary-grid {
@@ -320,11 +301,11 @@
     padding: 16px 18px;
   }
   .summary-card.niosh-summary {
-    border-color: #34d39940;
+    border-color: color-mix(in srgb, var(--niosh) 25%, transparent);
   }
   .summary-card-title {
     font-size: 11px;
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -335,9 +316,9 @@
     justify-content: space-between;
     align-items: center;
     font-size: 11px;
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     padding: 3px 0;
-    border-bottom: 1px solid #2d374840;
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 25%, transparent);
   }
   .summary-row:last-child { border-bottom: none; }
   .summary-row .label { color: var(--muted); }
@@ -346,7 +327,7 @@
 
   .note-strip {
     padding: 12px 48px;
-    background: #161b22;
+    background: var(--surface);
     font-size: 11px;
     color: var(--muted);
     font-style: italic;
@@ -367,19 +348,19 @@
     position: absolute;
     top: -80px; right: -80px;
     width: 280px; height: 280px;
-    background: radial-gradient(circle, #a78bfa12 0%, transparent 70%);
+    background: radial-gradient(circle, color-mix(in srgb, var(--accent) 7%, transparent) 0%, transparent 70%);
     pointer-events: none;
   }
   .overall-fit-title {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--font-display);
     font-size: 22px;
-    color: #f1f5f9;
+    color: var(--text-bright);
     margin-bottom: 4px;
   }
   .overall-fit-subtitle {
     font-size: 12px;
     color: var(--muted);
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     margin-bottom: 24px;
   }
   .overall-fit-grid {
@@ -403,14 +384,14 @@
     max-width: 280px;
   }
   .overall-big-pct {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--font-display);
     font-size: 52px;
     text-align: center;
     line-height: 1;
     transition: color 0.4s;
   }
   .overall-pct-label {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--muted);
     text-transform: uppercase;
@@ -433,12 +414,12 @@
     align-items: center;
   }
   .overall-dim-name {
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 12px;
     color: var(--text);
   }
   .overall-dim-pct {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 600;
   }
@@ -454,7 +435,7 @@
     transition: width 0.5s ease;
   }
   .overall-dim-sub {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--muted);
   }
@@ -464,7 +445,7 @@
     background: var(--surface);
     border-radius: 8px;
     border: 1px solid var(--border);
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--muted);
     line-height: 1.7;
@@ -480,7 +461,7 @@
     border: 1px solid var(--border);
   }
   .weight-controls-title {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--accent);
     text-transform: uppercase;
@@ -494,7 +475,7 @@
     margin-bottom: 8px;
   }
   .weight-label {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--muted);
     width: 160px;
@@ -505,7 +486,7 @@
     border: 1px solid var(--border);
     border-radius: 4px;
     color: var(--accent);
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     padding: 3px 7px;
     width: 52px;
@@ -526,7 +507,7 @@
     transition: width 0.3s;
   }
   .weight-total {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--muted);
     margin-top: 6px;
@@ -537,18 +518,18 @@
 
   /* ── Mask Geometry Section ── */
   .flex-fit-panel {
-    background: #0f172a;
-    border: 1px solid #1e293b;
-    border-left: 3px solid #ef4444;
+    background: var(--overlay-dark);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--gap);
     border-radius: 8px;
     padding: 14px 16px;
     margin-bottom: 14px;
   }
   .flex-fit-title {
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 13px;
     font-weight: 600;
-    color: #f1f5f9;
+    color: var(--text-bright);
     margin-bottom: 4px;
     display: flex;
     align-items: center;
@@ -556,10 +537,10 @@
   }
   .flex-fit-badge {
     font-size: 9px;
-    font-family: 'DM Mono', monospace;
-    background: #ef444422;
-    color: #ef4444;
-    border: 1px solid #ef444440;
+    font-family: var(--font-mono);
+    background: color-mix(in srgb, var(--gap) 13%, transparent);
+    color: var(--bad);
+    border: 1px solid color-mix(in srgb, var(--gap) 25%, transparent);
     border-radius: 4px;
     padding: 1px 6px;
     letter-spacing: 0.05em;
@@ -567,7 +548,7 @@
   .flex-fit-subtitle {
     font-size: 10px;
     color: var(--muted);
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     margin-bottom: 10px;
   }
   .flex-fit-coverage-row {
@@ -579,15 +560,15 @@
   .flex-fit-cov-label {
     font-size: 11px;
     color: var(--muted);
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
   }
   .flex-fit-cov-pct {
     font-size: 18px;
     font-weight: 700;
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--font-display);
   }
   .flex-fit-bar-bg {
-    background: #1e293b;
+    background: var(--border-subtle);
     border-radius: 4px;
     height: 6px;
     width: 100%;
@@ -601,12 +582,12 @@
   .flex-fit-sub {
     font-size: 10px;
     color: var(--muted);
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
   }
 
     padding: 32px 48px 40px;
     background: var(--surface);
-    border-top: 2px solid #818cf8;
+    border-top: 2px solid var(--indigo);
     position: relative;
     overflow: hidden;
   }
@@ -615,20 +596,20 @@
     position: absolute;
     top: -60px; left: -60px;
     width: 240px; height: 240px;
-    background: radial-gradient(circle, #818cf812 0%, transparent 70%);
+    background: radial-gradient(circle, color-mix(in srgb, var(--indigo) 7%, transparent) 0%, transparent 70%);
     pointer-events: none;
   }
   @media (max-width: 900px) { .mask-geo-section { padding-left: 20px; padding-right: 20px; } }
   .mask-geo-title {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--font-display);
     font-size: 22px;
-    color: #f1f5f9;
+    color: var(--text-bright);
     margin-bottom: 4px;
   }
   .mask-geo-subtitle {
     font-size: 12px;
     color: var(--muted);
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     margin-bottom: 24px;
   }
   .mask-geo-grid {
@@ -644,15 +625,15 @@
     padding: 20px 22px;
   }
   .mask-geo-card-title {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--font-display);
     font-size: 15px;
-    color: #f1f5f9;
+    color: var(--text-bright);
     margin-bottom: 4px;
   }
   .mask-geo-card-sub {
     font-size: 10px;
     color: var(--muted);
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     margin-bottom: 14px;
   }
   .mg-controls-bar {
@@ -682,8 +663,8 @@
   }
   .mg-ctrl-label {
     font-size: 10px;
-    font-family: 'DM Mono', monospace;
-    color: #818cf8;
+    font-family: var(--font-mono);
+    color: var(--indigo);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     display: flex;
@@ -710,15 +691,15 @@
     -webkit-appearance: none;
     width: 14px; height: 14px;
     border-radius: 50%;
-    background: #818cf8;
+    background: var(--indigo);
     cursor: pointer;
     border: 2px solid var(--card);
-    box-shadow: 0 0 0 1px #818cf8;
+    box-shadow: 0 0 0 1px var(--indigo);
   }
   .mg-ctrl-slider::-moz-range-thumb {
     width: 14px; height: 14px;
     border-radius: 50%;
-    background: #818cf8;
+    background: var(--indigo);
     cursor: pointer;
     border: 2px solid var(--card);
   }
@@ -730,7 +711,7 @@
   }
   .mg-ctrl-section-label {
     font-size: 10px;
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     color: var(--product);
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -756,18 +737,18 @@
     gap: 4px;
   }
   .mask-geo-input-label {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
-    color: #818cf8;
+    color: var(--indigo);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
   .mask-geo-input {
     background: var(--card);
-    border: 1px solid #818cf840;
+    border: 1px solid color-mix(in srgb, var(--indigo) 25%, transparent);
     border-radius: 5px;
-    color: #c7d2fe;
-    font-family: 'DM Mono', monospace;
+    color: var(--indigo-light);
+    font-family: var(--font-mono);
     font-size: 11px;
     padding: 5px 8px;
     width: 72px;
@@ -786,7 +767,7 @@
     border: 1px solid var(--border);
   }
   .mask-profile-name {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     color: var(--muted);
     text-transform: uppercase;
@@ -796,17 +777,17 @@
   .mask-profile-stat {
     display: flex;
     justify-content: space-between;
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     padding: 1px 0;
-    border-bottom: 1px solid #2d374840;
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 25%, transparent);
   }
   .mask-profile-stat:last-child { border: none; }
   .mask-profile-stat .sk { color: var(--muted); }
-  .mask-profile-stat .sv { color: #c7d2fe; }
-  .mask-profile-stat .sv.good { color: #4ade80; }
-  .mask-profile-stat .sv.warn { color: #fbbf24; }
-  .mask-profile-stat .sv.bad  { color: #ef4444; }
+  .mask-profile-stat .sv { color: var(--indigo-light); }
+  .mask-profile-stat .sv.good { color: var(--good); }
+  .mask-profile-stat .sv.warn { color: var(--warn); }
+  .mask-profile-stat .sv.bad  { color: var(--bad); }
   .mask-geo-full { grid-column: 1 / -1; }
 
   /* ── Demographic bin filter bar ── */
@@ -927,7 +908,7 @@
 
 <div class="mask-geo-section">
   <div class="mask-geo-title">Mask Flex Demand &amp; Lift Gap by Face Width</div>
-  <div class="mask-geo-subtitle">The critical variable is <strong style="color:#34d399">bizygomatic breadth (BZ)</strong> — face width at cheekbone level — not head circumference. Narrow faces demand more total groove flex; when grooves reach their limit, the outer panels lift at the cheeks and temples.</div>
+  <div class="mask-geo-subtitle">The critical variable is <strong style="color:var(--niosh)">bizygomatic breadth (BZ)</strong> — face width at cheekbone level — not head circumference. Narrow faces demand more total groove flex; when grooves reach their limit, the outer panels lift at the cheeks and temples.</div>
 
   <div class="mg-controls-bar" id="mg-controls-bar"></div>
 
@@ -947,35 +928,35 @@
     <!-- Chart 3: Gap profile + flex population panel -->
     <div class="mask-geo-card mask-geo-full">
       <div class="mask-geo-card-title">Gap Profile Along Mask Arc — Face Contact to Wing</div>
-      <div class="mask-geo-card-sub">Gap between mask surface and face at every point from center (nose) to outer edge (wing tip), for each BZ percentile. <strong style="color:#f1f5f9">Solid line</strong> = face contact zone (groove flex model). <strong style="color:#f1f5f9">Dotted extension</strong> = wing zone beyond the cheekbone, where the face curves posteriorly and the mask lifts away. The transition point shifts rightward on wider faces.</div>
+      <div class="mask-geo-card-sub">Gap between mask surface and face at every point from center (nose) to outer edge (wing tip), for each BZ percentile. <strong style="color:var(--text-bright)">Solid line</strong> = face contact zone (groove flex model). <strong style="color:var(--text-bright)">Dotted extension</strong> = wing zone beyond the cheekbone, where the face curves posteriorly and the mask lifts away. The transition point shifts rightward on wider faces.</div>
       <svg id="mg-wing-svg" viewBox="0 0 860 260" style="width:100%;display:block;overflow:visible;"></svg>
       <!-- Mask Arc Flex population pass/fail — directly under gap profile -->
       <div class="flex-fit-panel" id="flex-fit-panel" style="margin-top:16px;">
         <div class="flex-fit-title">
           Mask Arc Flex — Population Analysis <span class="flex-fit-badge">PRIMARY FIT CONSTRAINT</span>
         </div>
-        <div class="flex-fit-subtitle">Two independent gap sources. <strong style="color:#ef4444">Groove flex lift</strong> = seal-critical cheek gap from insufficient groove bend. <strong style="color:#818cf8">Temporal recession</strong> = inherent geometric gap as the flat wing panel cannot follow the face curving posteriorly — present for all faces, not a defect.</div>
+        <div class="flex-fit-subtitle">Two independent gap sources. <strong style="color:var(--gap)">Groove flex lift</strong> = seal-critical cheek gap from insufficient groove bend. <strong style="color:var(--indigo)">Temporal recession</strong> = inherent geometric gap as the flat wing panel cannot follow the face curving posteriorly — present for all faces, not a defect.</div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0 8px;">
           <!-- Cheek seal metric -->
           <div>
             <div class="flex-fit-coverage-row">
-              <span class="flex-fit-cov-label" style="color:#ef4444">⬤ Cheek Seal Pass <span style="font-size:9px;opacity:0.7">(groove flex lift ≤ threshold)</span></span>
-              <span class="flex-fit-cov-pct" id="flex-seal-pct" style="color:#ef4444">—</span>
+              <span class="flex-fit-cov-label" style="color:var(--gap)">⬤ Cheek Seal Pass <span style="font-size:9px;opacity:0.7">(groove flex lift ≤ threshold)</span></span>
+              <span class="flex-fit-cov-pct" id="flex-seal-pct" style="color:var(--gap)">—</span>
             </div>
             <div class="flex-fit-bar-bg">
-              <div class="flex-fit-bar-fill" id="flex-seal-bar" style="background:#ef4444"></div>
+              <div class="flex-fit-bar-fill" id="flex-seal-bar" style="background:var(--gap)"></div>
             </div>
             <div class="flex-fit-sub" id="flex-seal-sub"></div>
           </div>
           <!-- Temporal info metric -->
           <div>
             <div class="flex-fit-coverage-row">
-              <span class="flex-fit-cov-label" style="color:#818cf8">⬤ Temporal Gap Range <span style="font-size:9px;opacity:0.7">(inherent — wing design)</span></span>
-              <span class="flex-fit-cov-pct" id="flex-temp-range" style="color:#818cf8">—</span>
+              <span class="flex-fit-cov-label" style="color:var(--indigo)">⬤ Temporal Gap Range <span style="font-size:9px;opacity:0.7">(inherent — wing design)</span></span>
+              <span class="flex-fit-cov-pct" id="flex-temp-range" style="color:var(--indigo)">—</span>
             </div>
             <div class="flex-fit-bar-bg">
-              <div class="flex-fit-bar-fill" id="flex-temp-bar" style="background:#818cf8;width:100%"></div>
+              <div class="flex-fit-bar-fill" id="flex-temp-bar" style="background:var(--indigo);width:100%"></div>
             </div>
             <div class="flex-fit-sub" id="flex-temp-sub"></div>
           </div>
@@ -987,7 +968,7 @@
     <!-- Chart 4: Cross-section curvature diagram (full width) -->
     <div class="mask-geo-card mask-geo-full">
       <div class="mask-geo-card-title">Face Cross-Section — Mask Conformance at BZ P5, P35, P65, P95</div>
-      <div class="mask-geo-card-sub">Top-down view. <strong style="color:#94a3b8">Colored arcs</strong> = face contact zone (grooved mask panels). <strong style="color:#fbbf24">Yellow dashed</strong> = flat mask wing panel (extends tangentially from last groove — cannot curve). <strong style="color:#3b82f6">Blue solid</strong> = face/temporal curvature (face curves posteriorly away from the wing). <strong style="color:#ef4444">Red</strong> = gap between wing tip and face surface = seal gap.</div>
+      <div class="mask-geo-card-sub">Top-down view. <strong style="color:var(--muted)">Colored arcs</strong> = face contact zone (grooved mask panels). <strong style="color:var(--product)">Yellow dashed</strong> = flat mask wing panel (extends tangentially from last groove — cannot curve). <strong style="color:var(--male)">Blue solid</strong> = face/temporal curvature (face curves posteriorly away from the wing). <strong style="color:var(--gap)">Red</strong> = gap between wing tip and face surface = seal gap.</div>
       <svg id="mg-cross-svg" viewBox="0 0 1200 160" style="width:100%;display:block;overflow:visible;"></svg>
       <div class="mask-profile-row" id="mg-profile-stats"></div>
     </div>
@@ -1037,19 +1018,21 @@
 <div id="tooltip"></div>
 
 <script>
+const cs = getComputedStyle(document.documentElement);
+const tv = (name) => cs.getPropertyValue(name).trim();
 // ── Data ────────────────────────────────────────────────────────────────────
 
 // BZ population data from NIOSH (combined M+F distribution)
 const BZ_PROFILES = [
-  { label: 'P5',  bz: 12.4,  color: '#f472b6' },
-  { label: 'P15', bz: 12.8,  color: '#fb923c' },
-  { label: 'P25', bz: 13.1,  color: '#fbbf24' },
-  { label: 'P35', bz: 13.4,  color: '#a3e635' },
-  { label: 'P50', bz: 13.9,  color: '#4ade80' },
-  { label: 'P65', bz: 14.35, color: '#34d399' },
-  { label: 'P75', bz: 14.7,  color: '#22d3ee' },
-  { label: 'P85', bz: 15.0,  color: '#38bdf8' },
-  { label: 'P95', bz: 15.5,  color: '#818cf8' },
+  { label: 'P5',  bz: 12.4,  color: tv('--female') },
+  { label: 'P15', bz: 12.8,  color: tv('--warn-alt') },
+  { label: 'P25', bz: 13.1,  color: tv('--product') },
+  { label: 'P35', bz: 13.4,  color: tv('--lime') },
+  { label: 'P50', bz: 13.9,  color: tv('--good') },
+  { label: 'P65', bz: 14.35, color: tv('--niosh') },
+  { label: 'P75', bz: 14.7,  color: tv('--cyan') },
+  { label: 'P85', bz: 15.0,  color: tv('--male') },
+  { label: 'P95', bz: 15.5,  color: tv('--indigo') },
 ];
 
 const BZ_CROSS = [
@@ -1328,12 +1311,12 @@ function buildInputs() {
     g.style.cssText = 'display:flex; flex-direction:column; gap:5px;';
     const labelColor = m.isNiosh ? 'var(--niosh)' : 'var(--muted)';
     g.innerHTML = `
-      <label style="font-size:11px; font-family:'DM Mono',monospace; color:${labelColor}; text-transform:uppercase; letter-spacing:0.05em;">${m.name.split('(')[0].trim()}${m.isNiosh ? ' ✦' : ''}</label>
+      <label style="font-size:11px; font-family:'Poppins',monospace; color:${labelColor}; text-transform:uppercase; letter-spacing:0.05em;">${m.name.split('(')[0].trim()}${m.isNiosh ? ' ✦' : ''}</label>
       <div style="display:flex; gap:8px; align-items:center;">
-        <input type="number" step="0.1" value="${m.productDefault.min}" id="min_${m.id}" style="background:var(--surface); border:1px solid ${m.isNiosh ? '#34d39940' : 'var(--border)'}; border-radius:6px; color:var(--product); font-family:'DM Mono',monospace; font-size:12px; padding:6px 8px; width:70px; outline:none;">
+        <input type="number" step="0.1" value="${m.productDefault.min}" id="min_${m.id}" style="background:var(--surface); border:1px solid ${m.isNiosh ? 'color-mix(in srgb, var(--niosh) 25%, transparent)' : 'var(--border)'}; border-radius:6px; color:var(--product); font-family:'Poppins',monospace; font-size:12px; padding:6px 8px; width:70px; outline:none;">
         <span style="color:var(--muted); font-size:12px;">→</span>
-        <input type="number" step="0.1" value="${m.productDefault.max}" id="max_${m.id}" style="background:var(--surface); border:1px solid ${m.isNiosh ? '#34d39940' : 'var(--border)'}; border-radius:6px; color:var(--product); font-family:'DM Mono',monospace; font-size:12px; padding:6px 8px; width:70px; outline:none;">
-        <span style="color:var(--muted); font-size:10px; font-family:'DM Mono',monospace;">cm</span>
+        <input type="number" step="0.1" value="${m.productDefault.max}" id="max_${m.id}" style="background:var(--surface); border:1px solid ${m.isNiosh ? 'color-mix(in srgb, var(--niosh) 25%, transparent)' : 'var(--border)'}; border-radius:6px; color:var(--product); font-family:'Poppins',monospace; font-size:12px; padding:6px 8px; width:70px; outline:none;">
+        <span style="color:var(--muted); font-size:10px; font-family:'Poppins',monospace;">cm</span>
       </div>`;
     container.appendChild(g);
     ['min', 'max'].forEach(t => {
@@ -1360,11 +1343,11 @@ function buildCharts() {
     card.className = 'chart-card' + extraClass;
     card.id = `card_${m.id}`;
 
-    const accentColor = m.isMaskFlex ? '#ef4444' : '#34d399';
+    const accentColor = m.isMaskFlex ? tv('--gap') : tv('--niosh');
     const badge = m.isNiosh
       ? `<div class="niosh-badge">✦ NIOSH 2005 — Direct Caliper Measurement — N=3,997 U.S. Workers — Primary Mask-Fit Dimension</div>`
       : m.isMaskFlex
-      ? `<div class="niosh-badge" style="border-color:#ef444440;color:#ef4444;background:#ef444410;">⚠ PRIMARY FIT CONSTRAINT — Face radius derived from BZ via R=(BZ²/4+nose²)/(2·nose). Smaller R = higher curvature = more groove flex demand. Product range = BZ range the mask grooves fully accommodate.</div>`
+      ? `<div class="niosh-badge" style="border-color:color-mix(in srgb, var(--gap) 25%, transparent);color:var(--gap);background:color-mix(in srgb, var(--gap) 6%, transparent);">⚠ PRIMARY FIT CONSTRAINT — Face radius derived from BZ via R=(BZ²/4+nose²)/(2·nose). Smaller R = higher curvature = more groove flex demand. Product range = BZ range the mask grooves fully accommodate.</div>`
       : '';
 
     const innerOpen  = (m.isNiosh || m.isMaskFlex) ? '<div class="inner">' : '';
@@ -1372,7 +1355,7 @@ function buildCharts() {
 
     card.innerHTML = `
       ${innerOpen}
-      <div class="chart-title" style="${m.isMaskFlex ? 'color:#ef4444' : ''}">${m.name}</div>
+      <div class="chart-title" style="${m.isMaskFlex ? 'color:var(--gap)' : ''}">${m.name}</div>
       <div class="chart-subtitle">${m.desc}</div>
       ${badge}
       <svg id="svg_${m.id}" viewBox="0 0 ${W} ${H}"></svg>
@@ -1409,7 +1392,7 @@ function drawChart(m) {
     .selectAll('line').data(x.ticks(8)).enter().append('line')
     .attr('x1', d => x(d)).attr('x2', d => x(d))
     .attr('y1', 0).attr('y2', iH)
-    .attr('stroke', '#2d374840').attr('stroke-width', 1);
+    .attr('stroke', 'color-mix(in srgb, ' + tv('--border') + ' 25%, transparent)').attr('stroke-width', 1);
 
   // percentile span bands — subtle per-curve shading
   curves.forEach(c => {
@@ -1477,13 +1460,13 @@ function drawChart(m) {
     g.append('text')
       .attr('x', x(midProd)).attr('y', 12).attr('text-anchor', 'middle')
       .attr('fill', 'var(--product)').attr('font-size', 9)
-      .attr('font-family', "'DM Mono',monospace").text('PRODUCT');
+      .attr('font-family', "'Poppins',monospace").text('PRODUCT');
   }
 
   // x-axis
   const xAxis = d3.axisBottom(x).ticks(7).tickFormat(d => `${d}`);
   const xG = g.append('g').attr('class', 'axis').attr('transform', `translate(0,${iH})`).call(xAxis);
-  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'Poppins',monospace");
   xG.select('.domain').attr('stroke', 'var(--border)');
   xG.selectAll('.tick line').attr('stroke', 'var(--border)');
   g.append('text').attr('class', 'axis-label')
@@ -1493,7 +1476,7 @@ function drawChart(m) {
   // hover overlay + tooltip
   const tip = document.getElementById('tooltip');
   const vLine = g.append('line')
-    .attr('stroke', '#ffffff30').attr('stroke-width', 1)
+    .attr('stroke', 'color-mix(in srgb, white 19%, transparent)').attr('stroke-width', 1)
     .attr('y1', 0).attr('y2', iH).attr('opacity', 0);
   g.append('rect')
     .attr('width', iW).attr('height', iH).attr('fill', 'transparent').attr('cursor', 'crosshair')
@@ -1536,7 +1519,7 @@ function drawChart(m) {
   if (prod.min > combinedP5)  gaps.push(`Small end gap: ${combinedP5.toFixed(2)}–${prod.min.toFixed(2)} cm uncovered`);
   if (prod.max < combinedP95) gaps.push(`Large end gap: ${prod.max.toFixed(2)}–${combinedP95.toFixed(2)} cm uncovered`);
   if (gaps.length === 0 && combined > 0.9) {
-    gapCall.innerHTML = `<span style="color:#4ade80">✓ No significant gaps — product covers population well</span>`;
+    gapCall.innerHTML = `<span style="color:var(--good)">✓ No significant gaps — product covers population well</span>`;
   } else {
     gapCall.innerHTML = gaps.map(g => `⚠ ${g}`).join('<br>');
   }
@@ -1594,14 +1577,14 @@ function buildWeightInputs() {
   MEASUREMENTS.forEach(m => {
     const row = document.createElement('div');
     row.className = 'weight-row';
-    const accent = m.isMaskFlex ? '#ef4444' : m.isNiosh ? 'var(--niosh)' : 'var(--muted)';
+    const accent = m.isMaskFlex ? tv('--gap') : m.isNiosh ? 'var(--niosh)' : 'var(--muted)';
     const mark = m.isMaskFlex ? ' ⚠' : m.isNiosh ? ' ✦' : '';
     row.innerHTML = `
       <span class="weight-label" style="color:${accent}">${m.name.split('(')[0].trim()}${mark}</span>
       <input class="weight-input" type="number" min="0" max="10" step="0.1"
              id="w_${m.id}" value="${dimWeights[m.id]}">
       <div class="weight-bar-bg">
-        <div class="weight-bar-fill" id="wb_${m.id}" style="width:${dimWeights[m.id]/5*100}%;${m.isMaskFlex ? 'background:#ef4444;' : ''}"></div>
+        <div class="weight-bar-fill" id="wb_${m.id}" style="width:${dimWeights[m.id]/5*100}%;${m.isMaskFlex ? 'background:var(--gap);' : ''}"></div>
       </div>`;
     container.appendChild(row);
     document.getElementById(`w_${m.id}`).addEventListener('input', e => {
@@ -1676,12 +1659,12 @@ function drawGauge(pct) {
   const sA = -Math.PI / 2;   // left  (9 o'clock)
   const eA =  Math.PI / 2;   // right (3 o'clock)
 
-  const color = pct > 80 ? '#4ade80' : pct > 60 ? '#fbbf24' : pct > 40 ? '#fb923c' : '#ef4444';
+  const color = pct > 80 ? tv('--good') : pct > 60 ? tv('--product') : pct > 40 ? tv('--warn-alt') : tv('--gap');
 
   // Background arc
   svg.append('path')
     .attr('d', d3.arc().innerRadius(rInner).outerRadius(r).startAngle(sA).endAngle(eA)())
-    .attr('transform', `translate(${cx},${cy})`).attr('fill', '#1e293b');
+    .attr('transform', `translate(${cx},${cy})`).attr('fill', tv('--border-subtle'));
 
   // Fill arc
   const fillEnd = sA + (eA - sA) * (pct / 100);
@@ -1697,7 +1680,7 @@ function drawGauge(pct) {
     const x1 = cx + (r + 2)  * sinθ, y1 = cy - (r + 2)  * cosθ;
     const x2 = cx + (r + 12) * sinθ, y2 = cy - (r + 12) * cosθ;
     svg.append('line').attr('x1', x1).attr('y1', y1).attr('x2', x2).attr('y2', y2)
-      .attr('stroke', '#475569').attr('stroke-width', 1.5);
+      .attr('stroke', tv('--muted-dim')).attr('stroke-width', 1.5);
 
     // Label at r+24, anchor adjusted by position
     const lx = cx + (r + 24) * sinθ;
@@ -1705,8 +1688,8 @@ function drawGauge(pct) {
     const anchor = v === 0 ? 'end' : v === 100 ? 'start' : 'middle';
     svg.append('text').attr('x', lx).attr('y', ly)
       .attr('text-anchor', anchor).attr('dominant-baseline', 'middle')
-      .attr('fill', '#94a3b8').attr('font-size', 10)
-      .attr('font-family', "'DM Mono',monospace").text(`${v}%`);
+      .attr('fill', tv('--muted')).attr('font-size', 10)
+      .attr('font-family', "'Poppins',monospace").text(`${v}%`);
   });
 
   // Needle
@@ -1735,7 +1718,7 @@ function updateOverallFit() {
   // Update big number
   const bigEl = document.getElementById('overall-big-pct');
   bigEl.textContent = `${overallPct.toFixed(1)}%`;
-  bigEl.style.color = overallPct > 80 ? '#4ade80' : overallPct > 60 ? '#fbbf24' : overallPct > 40 ? '#fb923c' : '#ef4444';
+  bigEl.style.color = overallPct > 80 ? tv('--good') : overallPct > 60 ? tv('--product') : overallPct > 40 ? tv('--warn-alt') : tv('--gap');
 
   // Draw gauge
   drawGauge(overallPct);
@@ -1746,7 +1729,7 @@ function updateOverallFit() {
   MEASUREMENTS.forEach(m => {
     const cov = dimCovs[m.id];
     const pct = (cov * 100).toFixed(1);
-    const barColor = cov > 0.8 ? 'var(--product)' : cov > 0.6 ? '#fb923c' : 'var(--gap)';
+    const barColor = cov > 0.8 ? 'var(--product)' : cov > 0.6 ? tv('--warn-alt') : 'var(--gap)';
     const wt = dimWeights[m.id];
     const contrib = totalWeight > 0 ? ((cov * wt / totalWeight) * 100).toFixed(1) : '0.0';
     const _curves = getActiveCurves(m);
@@ -1901,7 +1884,7 @@ function updateFlexFitPanel() {
   const sealPctEl  = document.getElementById('flex-seal-pct');
   const sealBarEl  = document.getElementById('flex-seal-bar');
   const sealSubEl  = document.getElementById('flex-seal-sub');
-  const sealColor  = sealPct > 80 ? '#4ade80' : sealPct > 55 ? '#fbbf24' : sealPct > 35 ? '#fb923c' : '#ef4444';
+  const sealColor  = sealPct > 80 ? tv('--good') : sealPct > 55 ? tv('--product') : sealPct > 35 ? tv('--warn-alt') : tv('--gap');
   sealPctEl.textContent = sealPct.toFixed(1) + '% pass';
   sealPctEl.style.color = sealColor;
   sealBarEl.style.width = sealPct + '%';
@@ -1915,7 +1898,7 @@ function updateFlexFitPanel() {
   const tempSubEl   = document.getElementById('flex-temp-sub');
   tempRangeEl.textContent = `${tempMin.toFixed(0)}–${tempMax.toFixed(0)}mm`;
   tempSubEl.textContent   = `P95 (widest): ${tempMin.toFixed(1)}mm · P5 (narrowest): ${tempMax.toFixed(1)}mm · inherent wing geometry`;
-  tempSubEl.style.color   = '#818cf8';
+  tempSubEl.style.color   = tv('--indigo');
 
   // ── Stacked bar chart ──
   const svg = d3.select('#flex-pop-svg');
@@ -1932,23 +1915,23 @@ function updateFlexFitPanel() {
   // Grid
   g.append('g').selectAll('line').data(y.ticks(4)).enter().append('line')
     .attr('x1', 0).attr('x2', iW).attr('y1', d => y(d)).attr('y2', d => y(d))
-    .attr('stroke', '#2d374840').attr('stroke-width', 1);
+    .attr('stroke', 'color-mix(in srgb, ' + tv('--border') + ' 25%, transparent)').attr('stroke-width', 1);
 
   // Cheek seal threshold line
   if (flexThresh >= 0 && flexThresh <= maxVal) {
     g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(flexThresh)).attr('y2', y(flexThresh))
-      .attr('stroke', '#ef4444').attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
+      .attr('stroke', tv('--gap')).attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
     g.append('text').attr('x', 4).attr('y', y(flexThresh) - 3)
-      .attr('fill', '#ef4444').attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+      .attr('fill', tv('--gap')).attr('font-size', 8).attr('font-family', "'Poppins',monospace")
       .text(`cheek seal threshold ${flexThresh}mm`);
   }
 
   // Temporal reference line
   if (tempRef <= maxVal) {
     g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(tempRef)).attr('y2', y(tempRef))
-      .attr('stroke', '#818cf8').attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
+      .attr('stroke', tv('--indigo')).attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
     g.append('text').attr('x', iW - 4).attr('y', y(tempRef) - 3)
-      .attr('text-anchor', 'end').attr('fill', '#818cf8').attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+      .attr('text-anchor', 'end').attr('fill', tv('--indigo')).attr('font-size', 8).attr('font-family', "'Poppins',monospace")
       .text(`temporal ref ${tempRef}mm`);
   }
 
@@ -1962,50 +1945,50 @@ function updateFlexFitPanel() {
     g.append('rect')
       .attr('x', bx).attr('y', y(p.temporal))
       .attr('width', bw).attr('height', iH - y(p.temporal))
-      .attr('fill', '#818cf8').attr('opacity', 0.55).attr('rx', 2);
+      .attr('fill', tv('--indigo')).attr('opacity', 0.55).attr('rx', 2);
 
     // Flex lift segment (on top of temporal) — seal-critical
     if (p.flexLift > 0.05) {
       g.append('rect')
         .attr('x', bx).attr('y', y(p.total))
         .attr('width', bw).attr('height', y(p.temporal) - y(p.total))
-        .attr('fill', sealOk ? '#4ade80' : '#ef4444').attr('opacity', 0.85).attr('rx', 2);
+        .attr('fill', sealOk ? tv('--good') : tv('--gap')).attr('opacity', 0.85).attr('rx', 2);
     }
 
     // Total value label
     g.append('text').attr('x', bx + bw / 2).attr('y', y(p.total) - 3)
       .attr('text-anchor', 'middle')
-      .attr('fill', sealOk ? '#4ade80' : '#ef4444')
-      .attr('font-size', 7.5).attr('font-family', "'DM Mono',monospace")
+      .attr('fill', sealOk ? tv('--good') : tv('--gap'))
+      .attr('font-size', 7.5).attr('font-family', "'Poppins',monospace")
       .text(p.flexLift > 0.05 ? `+${p.flexLift.toFixed(1)}` : '✓');
 
     // Temporal label inside bar
     g.append('text').attr('x', bx + bw / 2).attr('y', y(p.temporal / 2))
-      .attr('text-anchor', 'middle').attr('fill', '#c7d2fe')
-      .attr('font-size', 6.5).attr('font-family', "'DM Mono',monospace")
+      .attr('text-anchor', 'middle').attr('fill', tv('--indigo-light'))
+      .attr('font-size', 6.5).attr('font-family', "'Poppins',monospace")
       .text(p.temporal.toFixed(0) + 'mm');
   });
 
   // Legend
   const leg = [
-    { color: '#ef4444', label: 'Cheek lift (seal fail)' },
-    { color: '#4ade80', label: 'Cheek lift (seal ok)'   },
-    { color: '#818cf8', label: 'Temporal recession (inherent)' },
+    { color: tv('--gap'), label: 'Cheek lift (seal fail)' },
+    { color: tv('--good'), label: 'Cheek lift (seal ok)'   },
+    { color: tv('--indigo'), label: 'Temporal recession (inherent)' },
   ];
   leg.forEach((l, i) => {
     g.append('rect').attr('x', iW - 200).attr('y', i * 14).attr('width', 10).attr('height', 8).attr('fill', l.color).attr('rx', 1);
     g.append('text').attr('x', iW - 186).attr('y', i * 14 + 7)
-      .attr('fill', '#94a3b8').attr('font-size', 7.5).attr('font-family', "'DM Mono',monospace").text(l.label);
+      .attr('fill', tv('--muted')).attr('font-size', 7.5).attr('font-family', "'Poppins',monospace").text(l.label);
   });
 
   // Axes
   const xA = g.append('g').attr('transform', `translate(0,${iH})`).call(d3.axisBottom(x).tickSize(2));
-  xA.selectAll('text').attr('fill', '#64748b').style('font-size', '8px').style('font-family', "'DM Mono',monospace");
-  xA.select('.domain').attr('stroke', '#1e293b'); xA.selectAll('.tick line').attr('stroke', '#1e293b');
+  xA.selectAll('text').attr('fill', tv('--muted')).style('font-size', '8px').style('font-family', "'Poppins',monospace");
+  xA.select('.domain').attr('stroke', tv('--border-subtle')); xA.selectAll('.tick line').attr('stroke', tv('--border-subtle'));
 
   const yA = g.append('g').call(d3.axisLeft(y).ticks(4).tickFormat(d => d + 'mm'));
-  yA.selectAll('text').attr('fill', '#64748b').style('font-size', '8px').style('font-family', "'DM Mono',monospace");
-  yA.select('.domain').attr('stroke', '#1e293b'); yA.selectAll('.tick line').attr('stroke', '#1e293b');
+  yA.selectAll('text').attr('fill', tv('--muted')).style('font-size', '8px').style('font-family', "'Poppins',monospace");
+  yA.select('.domain').attr('stroke', tv('--border-subtle')); yA.selectAll('.tick line').attr('stroke', tv('--border-subtle'));
 }
 
 // ── Chart 1: Total flex demand vs BZ ─────────────────────────────────────────
@@ -2024,62 +2007,62 @@ function drawMgArcChart(mg) {
 
   g.append('g').selectAll('line').data(y.ticks(5)).enter().append('line')
     .attr('x1', 0).attr('x2', iW).attr('y1', d => y(d)).attr('y2', d => y(d))
-    .attr('stroke', '#2d374840').attr('stroke-width', 1);
+    .attr('stroke', 'color-mix(in srgb, ' + tv('--border') + ' 25%, transparent)').attr('stroke-width', 1);
 
   const capY = y(mg.maxflex * 3);
-  g.append('rect').attr('x', 0).attr('y', 0).attr('width', iW).attr('height', capY).attr('fill', '#4ade8008');
+  g.append('rect').attr('x', 0).attr('y', 0).attr('width', iW).attr('height', capY).attr('fill', 'color-mix(in srgb, ' + tv('--good') + ' 3%, transparent)');
   g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', capY).attr('y2', capY)
-    .attr('stroke', '#4ade80').attr('stroke-width', 1.5).attr('stroke-dasharray', '6 3');
+    .attr('stroke', tv('--good')).attr('stroke-width', 1.5).attr('stroke-dasharray', '6 3');
   g.append('text').attr('x', iW - 4).attr('y', capY - 5).attr('text-anchor', 'end')
-    .attr('fill', '#4ade80').attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+    .attr('fill', tv('--good')).attr('font-size', 9).attr('font-family', "'Poppins',monospace")
     .text('Groove capacity: ' + (mg.maxflex * 3).toFixed(0) + '\u00b0');
 
   const area = d3.area().x(d => x(d.bz)).y0(d => Math.min(y(d.thetaReqDeg), capY)).y1(capY).curve(d3.curveCatmullRom);
   const defData = data.filter(d => d.thetaReqDeg > mg.maxflex * 3);
   if (defData.length) {
     const defArea = d3.area().x(d => x(d.bz)).y0(capY).y1(d => y(d.thetaReqDeg)).curve(d3.curveCatmullRom);
-    g.append('path').datum(data).attr('d', defArea).attr('fill', '#ef4444').attr('opacity', 0.12);
+    g.append('path').datum(data).attr('d', defArea).attr('fill', tv('--gap')).attr('opacity', 0.12);
   }
 
   const line = d3.line().x(d => x(d.bz)).y(d => y(d.thetaReqDeg)).curve(d3.curveCatmullRom);
-  g.append('path').datum(data).attr('d', line).attr('fill', 'none').attr('stroke', '#818cf8').attr('stroke-width', 2.5);
+  g.append('path').datum(data).attr('d', line).attr('fill', 'none').attr('stroke', tv('--indigo')).attr('stroke-width', 2.5);
 
   data.forEach(d => {
     const over = d.thetaReqDeg > mg.maxflex * 3;
     g.append('circle').attr('cx', x(d.bz)).attr('cy', y(d.thetaReqDeg)).attr('r', 4)
-      .attr('fill', over ? '#ef4444' : d.color).attr('stroke', '#1c2230').attr('stroke-width', 1.5);
+      .attr('fill', over ? tv('--gap') : d.color).attr('stroke', tv('--card')).attr('stroke-width', 1.5);
   });
 
   [{ bz: 12.4, t: 'F P5' }, { bz: 13.51, t: 'F P50' }, { bz: 14.35, t: 'M P50' }, { bz: 15.5, t: 'M P95' }].forEach(mk => {
     g.append('line').attr('x1', x(mk.bz)).attr('x2', x(mk.bz)).attr('y1', 0).attr('y2', iH)
-      .attr('stroke', '#64748b').attr('stroke-width', 1).attr('stroke-dasharray', '3 3');
+      .attr('stroke', tv('--muted')).attr('stroke-width', 1).attr('stroke-dasharray', '3 3');
     g.append('text').attr('x', x(mk.bz)).attr('y', iH + 30).attr('text-anchor', 'middle')
-      .attr('fill', '#64748b').attr('font-size', 8).attr('font-family', "'DM Mono',monospace").text(mk.t);
+      .attr('fill', tv('--muted')).attr('font-size', 8).attr('font-family', "'Poppins',monospace").text(mk.t);
   });
 
   const xG = g.append('g').attr('class', 'axis').attr('transform', `translate(0,${iH})`).call(d3.axisBottom(x).ticks(6).tickFormat(d => d + 'cm'));
-  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'Poppins',monospace");
   xG.select('.domain').attr('stroke', 'var(--border)'); xG.selectAll('.tick line').attr('stroke', 'var(--border)');
   g.append('text').attr('x', iW/2).attr('y', iH + 44).attr('text-anchor', 'middle')
-    .attr('fill', 'var(--muted)').attr('font-size', 10).attr('font-family', "'DM Sans',sans-serif").text('Bizygomatic Breadth (cm)');
+    .attr('fill', 'var(--muted)').attr('font-size', 10).attr('font-family', "'Poppins',sans-serif").text('Bizygomatic Breadth (cm)');
 
   const yG = g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(5).tickFormat(d => d + '\u00b0'));
-  yG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  yG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'Poppins',monospace");
   yG.select('.domain').attr('stroke', 'var(--border)'); yG.selectAll('.tick line').attr('stroke', 'var(--border)');
   // BZ inspect cursor
   const bzX = x(mg.bzInspect);
   const inspFlex = getMaskFlexForBZ(mg.bzInspect, mg);
   g.append('line').attr('x1', bzX).attr('x2', bzX).attr('y1', 0).attr('y2', iH)
-    .attr('stroke', '#f59e0b').attr('stroke-width', 2).attr('stroke-dasharray', '5 3');
+    .attr('stroke', tv('--inspect')).attr('stroke-width', 2).attr('stroke-dasharray', '5 3');
   g.append('circle').attr('cx', bzX).attr('cy', y(inspFlex.thetaReqDeg)).attr('r', 6)
-    .attr('fill', '#f59e0b').attr('stroke', '#1c2230').attr('stroke-width', 2);
+    .attr('fill', tv('--inspect')).attr('stroke', tv('--card')).attr('stroke-width', 2);
   const inspOver = inspFlex.thetaReqDeg > mg.maxflex * 3;
   const inspLabel = `BZ ${mg.bzInspect.toFixed(2)}cm → ${inspFlex.thetaReqDeg.toFixed(1)}° ${inspOver ? '⚠ over by ' + (inspFlex.thetaReqDeg - mg.maxflex*3).toFixed(1) + '°' : '✓ within cap'}`;
   const inspX = bzX > iW * 0.6 ? bzX - 6 : bzX + 6;
   const inspAnchor = bzX > iW * 0.6 ? 'end' : 'start';
   g.append('text').attr('x', inspX).attr('y', y(inspFlex.thetaReqDeg) - 10)
-    .attr('text-anchor', inspAnchor).attr('fill', '#f59e0b')
-    .attr('font-size', 9).attr('font-family', "'DM Mono',monospace").text(inspLabel);
+    .attr('text-anchor', inspAnchor).attr('fill', tv('--inspect'))
+    .attr('font-size', 9).attr('font-family', "'Poppins',monospace").text(inspLabel);
 }
 function drawMgGapChart(mg) {
   const svg = d3.select('#mg-gap-svg');
@@ -2095,43 +2078,43 @@ function drawMgGapChart(mg) {
 
   g.append('g').selectAll('line').data(y.ticks(5)).enter().append('line')
     .attr('x1', 0).attr('x2', iW).attr('y1', d => y(d)).attr('y2', d => y(d))
-    .attr('stroke', '#2d374840').attr('stroke-width', 1);
+    .attr('stroke', 'color-mix(in srgb, ' + tv('--border') + ' 25%, transparent)').attr('stroke-width', 1);
 
   g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(0)).attr('y2', y(0))
-    .attr('stroke', '#4ade80').attr('stroke-width', 1).attr('stroke-dasharray', '4 3');
+    .attr('stroke', tv('--good')).attr('stroke-width', 1).attr('stroke-dasharray', '4 3');
   g.append('text').attr('x', 4).attr('y', y(0) - 4)
-    .attr('fill', '#4ade80').attr('font-size', 9).attr('font-family', "'DM Mono',monospace").text('Full conformance \u2713');
+    .attr('fill', tv('--good')).attr('font-size', 9).attr('font-family', "'Poppins',monospace").text('Full conformance \u2713');
 
   g.append('path').datum(data).attr('d', d3.area().x(d => x(d.bz)).y0(iH).y1(d => y(d.lift)).curve(d3.curveCatmullRom))
-    .attr('fill', '#ef4444').attr('opacity', 0.10);
+    .attr('fill', tv('--gap')).attr('opacity', 0.10);
   g.append('path').datum(data).attr('d', d3.line().x(d => x(d.bz)).y(d => y(d.lift)).curve(d3.curveCatmullRom))
-    .attr('fill', 'none').attr('stroke', '#ef4444').attr('stroke-width', 2.5);
+    .attr('fill', 'none').attr('stroke', tv('--gap')).attr('stroke-width', 2.5);
 
   data.forEach(d => {
     g.append('circle').attr('cx', x(d.bz)).attr('cy', y(d.lift)).attr('r', 4)
-      .attr('fill', d.color).attr('stroke', '#1c2230').attr('stroke-width', 1.5);
+      .attr('fill', d.color).attr('stroke', tv('--card')).attr('stroke-width', 1.5);
     if (d.lift > 0.2) {
       g.append('text').attr('x', x(d.bz)).attr('y', y(d.lift) - 8).attr('text-anchor', 'middle')
-        .attr('fill', d.color).attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+        .attr('fill', d.color).attr('font-size', 8).attr('font-family', "'Poppins',monospace")
         .text(d.lift.toFixed(1) + 'mm');
     }
   });
 
   [{ bz: 12.4, t: 'F P5' }, { bz: 13.51, t: 'F P50' }, { bz: 14.35, t: 'M P50' }, { bz: 15.5, t: 'M P95' }].forEach(mk => {
     g.append('line').attr('x1', x(mk.bz)).attr('x2', x(mk.bz)).attr('y1', 0).attr('y2', iH)
-      .attr('stroke', '#64748b').attr('stroke-width', 1).attr('stroke-dasharray', '3 3');
+      .attr('stroke', tv('--muted')).attr('stroke-width', 1).attr('stroke-dasharray', '3 3');
     g.append('text').attr('x', x(mk.bz)).attr('y', iH + 30).attr('text-anchor', 'middle')
-      .attr('fill', '#64748b').attr('font-size', 8).attr('font-family', "'DM Mono',monospace").text(mk.t);
+      .attr('fill', tv('--muted')).attr('font-size', 8).attr('font-family', "'Poppins',monospace").text(mk.t);
   });
 
   const xG = g.append('g').attr('class', 'axis').attr('transform', `translate(0,${iH})`).call(d3.axisBottom(x).ticks(6).tickFormat(d => d + 'cm'));
-  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'Poppins',monospace");
   xG.select('.domain').attr('stroke', 'var(--border)'); xG.selectAll('.tick line').attr('stroke', 'var(--border)');
   g.append('text').attr('x', iW/2).attr('y', iH + 44).attr('text-anchor', 'middle')
-    .attr('fill', 'var(--muted)').attr('font-size', 10).attr('font-family', "'DM Sans',sans-serif").text('Bizygomatic Breadth (cm)');
+    .attr('fill', 'var(--muted)').attr('font-size', 10).attr('font-family', "'Poppins',sans-serif").text('Bizygomatic Breadth (cm)');
 
   const yG = g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(5).tickFormat(d => d.toFixed(1) + 'mm'));
-  yG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  yG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'Poppins',monospace");
   yG.select('.domain').attr('stroke', 'var(--border)'); yG.selectAll('.tick line').attr('stroke', 'var(--border)');
   g.append('text').attr('transform', 'rotate(-90)').attr('x', -iH/2).attr('y', -38)
     .attr('text-anchor', 'middle').attr('fill', 'var(--muted)').attr('font-size', 10).text('Outer Panel Lift Gap (mm)');
@@ -2139,9 +2122,9 @@ function drawMgGapChart(mg) {
   // Cheek seal threshold line (flex lift only — not total gap)
   const thresh = mg.flexThresh;
   g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(thresh)).attr('y2', y(thresh))
-    .attr('stroke', '#ef4444').attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
+    .attr('stroke', tv('--gap')).attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
   g.append('text').attr('x', 4).attr('y', y(thresh) - 4)
-    .attr('fill', '#ef4444').attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+    .attr('fill', tv('--gap')).attr('font-size', 9).attr('font-family', "'Poppins',monospace")
     .text(`Cheek seal threshold: ${thresh}mm`);
 
   // BZ inspect cursor
@@ -2149,15 +2132,15 @@ function drawMgGapChart(mg) {
   const inspComps = getGapComponents(mg.bzInspect, mg);
   const inspLift  = inspComps.flexLift;
   g.append('line').attr('x1', bzX2).attr('x2', bzX2).attr('y1', 0).attr('y2', iH)
-    .attr('stroke', '#f59e0b').attr('stroke-width', 2).attr('stroke-dasharray', '5 3');
+    .attr('stroke', tv('--inspect')).attr('stroke-width', 2).attr('stroke-dasharray', '5 3');
   g.append('circle').attr('cx', bzX2).attr('cy', y(inspLift)).attr('r', 6)
-    .attr('fill', '#f59e0b').attr('stroke', '#1c2230').attr('stroke-width', 2);
+    .attr('fill', tv('--inspect')).attr('stroke', tv('--card')).attr('stroke-width', 2);
   const iX2 = bzX2 > iW * 0.6 ? bzX2 - 6 : bzX2 + 6;
   const iA2 = bzX2 > iW * 0.6 ? 'end' : 'start';
   const iPass = inspLift <= mg.flexThresh;
   g.append('text').attr('x', iX2).attr('y', y(inspLift) - 10)
-    .attr('text-anchor', iA2).attr('fill', iPass ? '#4ade80' : '#ef4444')
-    .attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+    .attr('text-anchor', iA2).attr('fill', iPass ? tv('--good') : tv('--gap'))
+    .attr('font-size', 9).attr('font-family', "'Poppins',monospace")
     .text(`BZ ${mg.bzInspect.toFixed(2)} → cheek lift ${inspLift.toFixed(1)}mm ${iPass ? '✓ seal ok' : '✗ seal fail'} + ${inspComps.temporal.toFixed(1)}mm temporal`);
 }
 // ── Chart 4: Cross-section by BZ ─────────────────────────────────────────────
@@ -2165,8 +2148,8 @@ function drawMgCrossChart(mg) {
   const svg = d3.select('#mg-cross-svg');
   svg.selectAll('*').remove();
   const W = 1200, H = 160;
-  const colors    = ['#f472b6', '#fbbf24', '#34d399', '#818cf8'];
-  const panColors = ['#fbbf24', '#a78bfa', '#34d399', '#38bdf8'];
+  const colors    = [tv('--female'), tv('--product'), tv('--niosh'), tv('--indigo')];
+  const panColors = [tv('--product'), tv('--accent'), tv('--niosh'), tv('--male')];
   const panelW    = W / BZ_CROSS.length;
   const sc = 11, noseY = 44;
   const wingLen = mg.width / 2 - mg.g3;
@@ -2218,9 +2201,9 @@ function drawMgCrossChart(mg) {
     [false, true].forEach(left => {
       const m = left ? (([x,y]) => [mir(x),y]) : (p=>p);
       svg.append('path').attr('d', 'M ' + frontPts.map(m).map(p=>p.join(',')).join(' L '))
-        .attr('fill','none').attr('stroke','#3b82f6').attr('stroke-width',3).attr('opacity',0.85);
+        .attr('fill','none').attr('stroke',tv('--male')).attr('stroke-width',3).attr('opacity',0.85);
       svg.append('path').attr('d', 'M ' + tempArc.map(m).map(p=>p.join(',')).join(' L '))
-        .attr('fill','none').attr('stroke','#3b82f6').attr('stroke-width',3).attr('opacity',0.85);
+        .attr('fill','none').attr('stroke',tv('--male')).attr('stroke-width',3).attr('opacity',0.85);
     });
 
     // 2. Colored grooved panels
@@ -2234,21 +2217,21 @@ function drawMgCrossChart(mg) {
 
     // 3. Yellow dashed wing from G3
     svg.append('line').attr('x1',g3[0]).attr('y1',g3[1]).attr('x2',wingTip[0]).attr('y2',wingTip[1])
-      .attr('stroke','#fbbf24').attr('stroke-width',3).attr('stroke-dasharray','8 4').attr('opacity',1);
+      .attr('stroke',tv('--product')).attr('stroke-width',3).attr('stroke-dasharray','8 4').attr('opacity',1);
     svg.append('line').attr('x1',mir(g3[0])).attr('y1',g3[1]).attr('x2',mir(wingTip[0])).attr('y2',wingTip[1])
-      .attr('stroke','#fbbf24').attr('stroke-width',3).attr('stroke-dasharray','8 4').attr('opacity',1);
+      .attr('stroke',tv('--product')).attr('stroke-width',3).attr('stroke-dasharray','8 4').attr('opacity',1);
 
     // 4. Red gap: face end → wing tip
     [[faceEnd[0], wingTip[0]], [mir(faceEnd[0]), mir(wingTip[0])]].forEach(([fx, wx]) => {
       svg.append('line').attr('x1',fx).attr('y1',faceEnd[1]).attr('x2',wx).attr('y2',wingTip[1])
-        .attr('stroke','#ef4444').attr('stroke-width',2).attr('stroke-dasharray','5 3');
+        .attr('stroke',tv('--gap')).attr('stroke-width',2).attr('stroke-dasharray','5 3');
       [[fx, faceEnd[1]], [wx, wingTip[1]]].forEach(([px,py]) => {
         svg.append('line').attr('x1',px+wDx*4).attr('y1',py+wDy*4).attr('x2',px-wDx*4).attr('y2',py-wDy*4)
-          .attr('stroke','#ef4444').attr('stroke-width',1.5);
+          .attr('stroke',tv('--gap')).attr('stroke-width',1.5);
       });
     });
     svg.append('text').attr('x', wingTip[0]+6).attr('y', (faceEnd[1]+wingTip[1])/2+4)
-      .attr('fill','#ef4444').attr('font-size',9).attr('font-family',"'DM Mono',monospace")
+      .attr('fill',tv('--gap')).attr('font-size',9).attr('font-family',"'Poppins',monospace")
       .text(comps.total.toFixed(1)+'mm');
 
     // 5. Groove dots
@@ -2256,22 +2239,22 @@ function drawMgCrossChart(mg) {
       [1,-1].forEach(s => {
         const [px,py] = faceArcPt(ang);
         svg.append('circle').attr('cx', s>0?px:mir(px)).attr('cy',py).attr('r',4)
-          .attr('fill','#818cf8').attr('stroke','#1c2230').attr('stroke-width',1);
+          .attr('fill',tv('--indigo')).attr('stroke',tv('--card')).attr('stroke-width',1);
       });
     });
 
     // 6. Labels
     svg.append('text').attr('x',cx).attr('y',16).attr('text-anchor','middle')
-      .attr('fill',col).attr('font-family',"'DM Serif Display',serif").attr('font-size',13).text(prof.label);
+      .attr('fill',col).attr('font-family',"'Poppins',serif").attr('font-size',13).text(prof.label);
     svg.append('text').attr('x',cx).attr('y',28).attr('text-anchor','middle')
-      .attr('fill','var(--muted)').attr('font-family',"'DM Mono',monospace").attr('font-size',8)
+      .attr('fill','var(--muted)').attr('font-family',"'Poppins',monospace").attr('font-size',8)
       .text(`BZ=${bz}cm · R=${R.toFixed(1)}cm · gap=${comps.total.toFixed(1)}mm`);
 
     // 7. Divider
     if (i < BZ_CROSS.length - 1) {
       const divX = panelW * (i + 1);
       svg.append('line').attr('x1',divX).attr('x2',divX).attr('y1',0).attr('y2',H)
-        .attr('stroke','#1e293b').attr('stroke-width',1);
+        .attr('stroke',tv('--border-subtle')).attr('stroke-width',1);
     }
   });
 
@@ -2313,10 +2296,10 @@ function drawMgWingChart(mg) {
 
   // Build gap profile for each BZ profile
   const profiles = [
-    { label: 'BZ P5',  bz: 12.4,  color: '#f472b6' },
-    { label: 'BZ P35', bz: 13.4,  color: '#fbbf24' },
-    { label: 'BZ P65', bz: 14.35, color: '#34d399' },
-    { label: 'BZ P95', bz: 15.5,  color: '#818cf8' },
+    { label: 'BZ P5',  bz: 12.4,  color: tv('--female') },
+    { label: 'BZ P35', bz: 13.4,  color: tv('--product') },
+    { label: 'BZ P65', bz: 14.35, color: tv('--niosh') },
+    { label: 'BZ P95', bz: 15.5,  color: tv('--indigo') },
   ];
 
   const allDataSets = profiles.map(prof => {
@@ -2367,27 +2350,27 @@ function drawMgWingChart(mg) {
   // Grid
   g.append('g').selectAll('line').data(y.ticks(5)).enter().append('line')
     .attr('x1', 0).attr('x2', iW).attr('y1', d => y(d)).attr('y2', d => y(d))
-    .attr('stroke', '#2d374840').attr('stroke-width', 1);
+    .attr('stroke', 'color-mix(in srgb, ' + tv('--border') + ' 25%, transparent)').attr('stroke-width', 1);
 
   // Zero / full contact line
   g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(0)).attr('y2', y(0))
-    .attr('stroke', '#4ade8060').attr('stroke-width', 1);
+    .attr('stroke', 'color-mix(in srgb, ' + tv('--good') + ' 38%, transparent)').attr('stroke-width', 1);
 
   // Groove position markers
   [mg.g1, mg.g2, mg.g3].forEach((gv, gi) => {
     g.append('line').attr('x1', x(gv)).attr('x2', x(gv)).attr('y1', 0).attr('y2', iH)
-      .attr('stroke', '#818cf860').attr('stroke-width', 1).attr('stroke-dasharray', '3 3');
+      .attr('stroke', 'color-mix(in srgb, ' + tv('--indigo') + ' 38%, transparent)').attr('stroke-width', 1).attr('stroke-dasharray', '3 3');
     g.append('text').attr('x', x(gv)).attr('y', -5).attr('text-anchor', 'middle')
-      .attr('fill', '#818cf8').attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+      .attr('fill', tv('--indigo')).attr('font-size', 8).attr('font-family', "'Poppins',monospace")
       .text(`G${gi + 1}`);
   });
 
   // Mask half-width marker
   g.append('line').attr('x1', x(mg.width / 2)).attr('x2', x(mg.width / 2))
     .attr('y1', 0).attr('y2', iH)
-    .attr('stroke', '#fbbf2480').attr('stroke-width', 1).attr('stroke-dasharray', '4 2');
+    .attr('stroke', 'color-mix(in srgb, ' + tv('--product') + ' 50%, transparent)').attr('stroke-width', 1).attr('stroke-dasharray', '4 2');
   g.append('text').attr('x', x(mg.width / 2) - 3).attr('y', -5).attr('text-anchor', 'end')
-    .attr('fill', '#fbbf24').attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+    .attr('fill', tv('--product')).attr('font-size', 8).attr('font-family', "'Poppins',monospace")
     .text('mask edge');
 
   // Draw each profile
@@ -2448,7 +2431,7 @@ function drawMgWingChart(mg) {
     const endPt = allPts[allPts.length - 1];
     g.append('text')
       .attr('x', x(endPt.s) + 6).attr('y', y(endPt.gap) + 4)
-      .attr('fill', ds.color).attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+      .attr('fill', ds.color).attr('font-size', 9).attr('font-family', "'Poppins',monospace")
       .text(`${ds.label} ${endPt.gap.toFixed(0)}mm`);
   });
 
@@ -2457,49 +2440,49 @@ function drawMgWingChart(mg) {
   const bzMax = d3.max(allDataSets, d => d.a);
   g.append('rect').attr('x', x(bzMin)).attr('y', 0)
     .attr('width', x(bzMax) - x(bzMin)).attr('height', iH)
-    .attr('fill', '#ffffff06');
+    .attr('fill', 'color-mix(in srgb, white 2%, transparent)');
   g.append('text').attr('x', (x(bzMin) + x(bzMax)) / 2).attr('y', iH + 38)
-    .attr('text-anchor', 'middle').attr('fill', '#64748b')
-    .attr('font-size', 8.5).attr('font-family', "'DM Mono',monospace")
+    .attr('text-anchor', 'middle').attr('fill', tv('--muted'))
+    .attr('font-size', 8.5).attr('font-family', "'Poppins',monospace")
     .text('← BZ/2 range (cheekbone) →');
 
   // Zone labels
   g.append('text').attr('x', x(bzMin) / 2).attr('y', 12)
-    .attr('text-anchor', 'middle').attr('fill', '#4ade8060')
-    .attr('font-size', 9).attr('font-family', "'DM Mono',monospace").text('face contact zone');
+    .attr('text-anchor', 'middle').attr('fill', 'color-mix(in srgb, ' + tv('--good') + ' 38%, transparent)')
+    .attr('font-size', 9).attr('font-family', "'Poppins',monospace").text('face contact zone');
   g.append('text').attr('x', (x(bzMax) + iW) / 2).attr('y', 12)
-    .attr('text-anchor', 'middle').attr('fill', '#ef444460')
-    .attr('font-size', 9).attr('font-family', "'DM Mono',monospace").text('wing / temporal zone ···');
+    .attr('text-anchor', 'middle').attr('fill', 'color-mix(in srgb, ' + tv('--gap') + ' 38%, transparent)')
+    .attr('font-size', 9).attr('font-family', "'Poppins',monospace").text('wing / temporal zone ···');
 
   // Axes
   const xG = g.append('g').attr('class', 'axis').attr('transform', `translate(0,${iH})`).call(
     d3.axisBottom(x).ticks(10).tickFormat(d => `${d.toFixed(1)}cm`));
-  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  xG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'Poppins',monospace");
   xG.select('.domain').attr('stroke', 'var(--border)'); xG.selectAll('.tick line').attr('stroke', 'var(--border)');
   g.append('text').attr('x', iW / 2).attr('y', iH + 44).attr('text-anchor', 'middle')
-    .attr('fill', 'var(--muted)').attr('font-size', 10).attr('font-family', "'DM Sans',sans-serif")
+    .attr('fill', 'var(--muted)').attr('font-size', 10).attr('font-family', "'Poppins',sans-serif")
     .text('Arc position from mask center (cm) →  nose ← center — cheek — wing → edge');
 
   const yG = g.append('g').attr('class', 'axis').call(
     d3.axisLeft(y).ticks(5).tickFormat(d => `${d.toFixed(0)}mm`));
-  yG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'DM Mono',monospace");
+  yG.selectAll('text').attr('fill', 'var(--muted)').style('font-size', '9px').style('font-family', "'Poppins',monospace");
   yG.select('.domain').attr('stroke', 'var(--border)'); yG.selectAll('.tick line').attr('stroke', 'var(--border)');
   // Cheek seal threshold
   const thresh3 = mg.flexThresh;
   if (thresh3 <= y.domain()[1]) {
     g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(thresh3)).attr('y2', y(thresh3))
-      .attr('stroke', '#ef4444').attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
+      .attr('stroke', tv('--gap')).attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
     g.append('text').attr('x', 4).attr('y', y(thresh3) - 4)
-      .attr('fill', '#ef4444').attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+      .attr('fill', tv('--gap')).attr('font-size', 9).attr('font-family', "'Poppins',monospace")
       .text(`Cheek seal: ${thresh3}mm`);
   }
   // Temporal reference
   const tempRef3 = mg.gapThresh;
   if (tempRef3 <= y.domain()[1]) {
     g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', y(tempRef3)).attr('y2', y(tempRef3))
-      .attr('stroke', '#818cf8').attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
+      .attr('stroke', tv('--indigo')).attr('stroke-width', 1.5).attr('stroke-dasharray', '5 3');
     g.append('text').attr('x', iW - 4).attr('y', y(tempRef3) - 4)
-      .attr('text-anchor', 'end').attr('fill', '#818cf8').attr('font-size', 9).attr('font-family', "'DM Mono',monospace")
+      .attr('text-anchor', 'end').attr('fill', tv('--indigo')).attr('font-size', 9).attr('font-family', "'Poppins',monospace")
       .text(`Temporal ref: ${tempRef3}mm`);
   }
 
@@ -2507,9 +2490,9 @@ function drawMgWingChart(mg) {
   const bzHalf = mg.bzInspect / 2;
   if (bzHalf < mg.width / 2) {
     g.append('line').attr('x1', x(bzHalf)).attr('x2', x(bzHalf)).attr('y1', 0).attr('y2', iH)
-      .attr('stroke', '#f59e0b').attr('stroke-width', 2).attr('stroke-dasharray', '5 3');
+      .attr('stroke', tv('--inspect')).attr('stroke-width', 2).attr('stroke-dasharray', '5 3');
     g.append('text').attr('x', x(bzHalf) + 4).attr('y', 12)
-      .attr('fill', '#f59e0b').attr('font-size', 8).attr('font-family', "'DM Mono',monospace")
+      .attr('fill', tv('--inspect')).attr('font-size', 8).attr('font-family', "'Poppins',monospace")
       .text(`BZ/2=${bzHalf.toFixed(2)}cm`);
   }
 }
