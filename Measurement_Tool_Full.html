@@ -832,6 +832,87 @@
             .bin-pill:hover { border-color: var(--accent); color: var(--text); }
             .bin-pill.active { background: var(--accent); border-color: var(--accent); color: #0d1117; font-weight: 600; }
             .bin-divider { width: 1px; height: 22px; background: var(--border); }
+            #age-pills { display: inline-flex; gap: 6px; }
+
+            /* Multi-select dropdown (used for Region) */
+            .multiselect { position: relative; display: inline-block; }
+            .multiselect-button {
+              font-family: 'DM Mono', monospace;
+              font-size: 11px;
+              padding: 4px 26px 4px 11px;
+              border-radius: 20px;
+              border: 1px solid var(--border);
+              background: var(--surface);
+              color: var(--text);
+              cursor: pointer;
+              transition: all 0.15s;
+              white-space: nowrap;
+              max-width: 240px;
+              text-align: left;
+              position: relative;
+            }
+            .multiselect-button::after {
+              content: '';
+              position: absolute;
+              right: 11px; top: 50%;
+              width: 0; height: 0;
+              border-left: 4px solid transparent;
+              border-right: 4px solid transparent;
+              border-top: 4px solid var(--muted);
+              transform: translateY(-50%);
+              transition: transform 0.15s;
+            }
+            .multiselect.open .multiselect-button::after { transform: translateY(-50%) rotate(180deg); }
+            .multiselect-button:hover, .multiselect.open .multiselect-button {
+              border-color: var(--accent); color: var(--text);
+            }
+            .multiselect-summary {
+              display: inline-block;
+              max-width: 200px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              vertical-align: bottom;
+            }
+            .multiselect-panel {
+              position: absolute;
+              top: calc(100% + 6px);
+              left: 0;
+              z-index: 200;
+              min-width: 100%;
+              max-width: 320px;
+              max-height: 320px;
+              overflow-y: auto;
+              background: var(--card);
+              border: 1px solid var(--border);
+              border-radius: 10px;
+              padding: 6px;
+              box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            }
+            .multiselect-option {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              padding: 6px 10px;
+              border-radius: 6px;
+              font-family: 'DM Mono', monospace;
+              font-size: 11px;
+              color: var(--text);
+              cursor: pointer;
+              user-select: none;
+              white-space: nowrap;
+            }
+            .multiselect-option:hover { background: var(--surface); }
+            .multiselect-option input[type="checkbox"] {
+              accent-color: var(--accent);
+              cursor: pointer;
+              flex-shrink: 0;
+            }
+            .multiselect-option.divider {
+              border-top: 1px solid var(--border);
+              margin-top: 4px;
+              padding-top: 8px;
+              padding-bottom: 8px;
+            }
 
             .sticky-bar {
               position: sticky;
@@ -957,74 +1038,17 @@
                 <div class="bin-divider"></div>
                 <div class="bin-group">
                     <span class="bin-group-label">Age</span>
-                    <button
-                        class="bin-pill"
-                        data-cat="age"
-                        data-val="18-30"
-                        onclick="toggleBin('age', '18-30')"
-                    >
-                        18–30
-                    </button>
-                    <button
-                        class="bin-pill"
-                        data-cat="age"
-                        data-val="31-45"
-                        onclick="toggleBin('age', '31-45')"
-                    >
-                        31–45
-                    </button>
-                    <button
-                        class="bin-pill"
-                        data-cat="age"
-                        data-val="46-60"
-                        onclick="toggleBin('age', '46-60')"
-                    >
-                        46–60
-                    </button>
-                    <button
-                        class="bin-pill"
-                        data-cat="age"
-                        data-val="60+"
-                        onclick="toggleBin('age', '60+')"
-                    >
-                        60+
-                    </button>
+                    <span id="age-pills"></span>
                 </div>
                 <div class="bin-divider"></div>
                 <div class="bin-group">
-                    <span class="bin-group-label">Ethnicity</span>
-                    <button
-                        class="bin-pill"
-                        data-cat="ethnicity"
-                        data-val="white"
-                        onclick="toggleBin('ethnicity', 'white')"
-                    >
-                        White
-                    </button>
-                    <button
-                        class="bin-pill"
-                        data-cat="ethnicity"
-                        data-val="black"
-                        onclick="toggleBin('ethnicity', 'black')"
-                    >
-                        Black
-                    </button>
-                    <button
-                        class="bin-pill"
-                        data-cat="ethnicity"
-                        data-val="hispanic"
-                        onclick="toggleBin('ethnicity', 'hispanic')"
-                    >
-                        Hispanic
-                    </button>
-                    <button
-                        class="bin-pill"
-                        data-cat="ethnicity"
-                        data-val="asian"
-                        onclick="toggleBin('ethnicity', 'asian')"
-                    >
-                        Asian
-                    </button>
+                    <span class="bin-group-label">Region</span>
+                    <div class="multiselect" id="region-multiselect">
+                        <button type="button" class="multiselect-button" id="region-button" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="multiselect-summary" id="region-summary">All</span>
+                        </button>
+                        <div class="multiselect-panel" id="region-panel" role="listbox" aria-multiselectable="true" hidden></div>
+                    </div>
                 </div>
             </div>
 
@@ -1341,87 +1365,248 @@
             const DEMOG_DATA = window.IMT_DATA.demographics;
             const GROUP_COLORS = window.IMT_DATA.groupColors;
 
-            // ── Multi-select demographic bins ────────────────────────────────────────────
-            const activeBins = {
-                gender: new Set(),
-                age: new Set(),
-                ethnicity: new Set(),
+            // ── Demographic filters (all multi-select) ───────────────────────────────
+            const REGIONS = window.IMT_DATA.regions;
+            const AGE_BINS = window.IMT_DATA.ageBins;
+            // Region names other than the "All" sentinel.
+            const REGION_OPTIONS = REGIONS.filter((r) => r !== "All");
+            const activeFilters = {
+                gender: new Set(),   // "male" / "female"; empty → combined curve
+                age: new Set(),      // age-bin labels; empty → no age subgroups
+                region: new Set(),   // region names; empty → All (single combined curve)
             };
 
             function toggleBin(cat, val) {
-                if (activeBins[cat].has(val)) activeBins[cat].delete(val);
-                else activeBins[cat].add(val);
+                const set = activeFilters[cat];
+                if (set.has(val)) set.delete(val);
+                else set.add(val);
                 updatePillStates();
                 redrawAll();
             }
 
             function clearAllBins() {
-                activeBins.gender.clear();
-                activeBins.age.clear();
-                activeBins.ethnicity.clear();
+                activeFilters.gender.clear();
+                activeFilters.age.clear();
+                activeFilters.region.clear();
+                renderRegionPanel();
+                updateRegionSummary();
                 updatePillStates();
                 redrawAll();
             }
 
+            function updateRegionSummary() {
+                const sumEl = document.getElementById("region-summary");
+                if (!sumEl) return;
+                const set = activeFilters.region;
+                if (set.size === 0) sumEl.textContent = "All";
+                else if (set.size === 1) sumEl.textContent = [...set][0];
+                else sumEl.textContent = `${set.size} regions`;
+            }
+
+            function renderRegionPanel() {
+                const panel = document.getElementById("region-panel");
+                if (!panel) return;
+                panel.innerHTML = "";
+                const allSelected = activeFilters.region.size === 0;
+
+                const allRow = document.createElement("label");
+                allRow.className = "multiselect-option divider";
+                allRow.innerHTML =
+                    `<input type="checkbox" ${allSelected ? "checked" : ""}><span>All</span>`;
+                allRow.querySelector("input").addEventListener("change", () => {
+                    activeFilters.region.clear();
+                    renderRegionPanel();
+                    updateRegionSummary();
+                    updatePillStates();
+                    redrawAll();
+                });
+                panel.appendChild(allRow);
+
+                REGION_OPTIONS.forEach((r) => {
+                    const row = document.createElement("label");
+                    row.className = "multiselect-option";
+                    const checked = activeFilters.region.has(r);
+                    row.innerHTML =
+                        `<input type="checkbox" ${checked ? "checked" : ""}><span></span>`;
+                    row.querySelector("span").textContent = r;
+                    row.querySelector("input").addEventListener("change", () => {
+                        if (activeFilters.region.has(r)) activeFilters.region.delete(r);
+                        else activeFilters.region.add(r);
+                        renderRegionPanel();
+                        updateRegionSummary();
+                        updatePillStates();
+                        redrawAll();
+                    });
+                    panel.appendChild(row);
+                });
+            }
+
+            function setupRegionMultiselect() {
+                const root = document.getElementById("region-multiselect");
+                const btn = document.getElementById("region-button");
+                const panel = document.getElementById("region-panel");
+                if (!root || !btn || !panel) return;
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const isOpen = root.classList.toggle("open");
+                    panel.hidden = !isOpen;
+                    btn.setAttribute("aria-expanded", String(isOpen));
+                });
+                document.addEventListener("click", (e) => {
+                    if (!root.contains(e.target)) {
+                        root.classList.remove("open");
+                        panel.hidden = true;
+                        btn.setAttribute("aria-expanded", "false");
+                    }
+                });
+            }
+
+            function buildFilterBar() {
+                const ageHost = document.getElementById("age-pills");
+                if (ageHost) {
+                    ageHost.innerHTML = "";
+                    AGE_BINS.forEach((bin) => {
+                        const btn = document.createElement("button");
+                        btn.className = "bin-pill";
+                        btn.dataset.cat = "age";
+                        btn.dataset.val = bin;
+                        btn.textContent = bin;
+                        btn.addEventListener("click", () => toggleBin("age", bin));
+                        ageHost.appendChild(btn);
+                    });
+                }
+                renderRegionPanel();
+                updateRegionSummary();
+                setupRegionMultiselect();
+            }
+
             function updatePillStates() {
-                const allEmpty =
-                    activeBins.gender.size === 0 &&
-                    activeBins.age.size === 0 &&
-                    activeBins.ethnicity.size === 0;
+                const allDefault =
+                    activeFilters.gender.size === 0 &&
+                    activeFilters.age.size === 0 &&
+                    activeFilters.region.size === 0;
                 document
                     .querySelector('[data-action="total"]')
-                    ?.classList.toggle("active", allEmpty);
+                    ?.classList.toggle("active", allDefault);
                 document
                     .querySelectorAll(".bin-pill[data-cat]")
                     .forEach((el) => {
+                        const set = activeFilters[el.dataset.cat];
                         el.classList.toggle(
                             "active",
-                            activeBins[el.dataset.cat]?.has(el.dataset.val),
+                            set instanceof Set && set.has(el.dataset.val),
                         );
                     });
             }
 
-            function getActiveCurves(m) {
-                // Which genders to include
-                const genders =
-                    activeBins.gender.size > 0
-                        ? [...activeBins.gender]
-                        : ["male", "female"];
+            // Look up the leaf {mean,sd,n,studies} for (region, ageBin?, measId, gender).
+            // region is a name or null. ageBin is a label or null. null = "All" (the top-level pool).
+            function lookupPool(m, region, ageBin, gender) {
+                if (!region && !ageBin) return m[gender];
+                if (!region && ageBin) return DEMOG_DATA.age?.[ageBin]?.[m.id]?.[gender];
+                if (region && !ageBin) return DEMOG_DATA.region?.[region]?.[m.id]?.[gender];
+                // Region+age intersection isn't precomputed; fall back to region-only.
+                return DEMOG_DATA.region?.[region]?.[m.id]?.[gender];
+            }
 
-                // Which subgroups (age / ethnicity / total)
-                const subgroups = [];
-                activeBins.age.forEach((v) =>
-                    subgroups.push({ key: v, type: "age" }),
+            // Cochran-style re-pool of already-pooled leaves. Mirrors scripts/build_data.py:pool().
+            function poolEntries(entries) {
+                if (!entries.length) return null;
+                if (entries.length === 1) return entries[0];
+                const totalN = entries.reduce((s, e) => s + e.n, 0);
+                if (totalN <= 1) return null;
+                const mean =
+                    entries.reduce((s, e) => s + e.mean * e.n, 0) / totalN;
+                const num = entries.reduce(
+                    (s, e) =>
+                        s +
+                        (e.n - 1) * e.sd * e.sd +
+                        e.n * (e.mean - mean) ** 2,
+                    0,
                 );
-                activeBins.ethnicity.forEach((v) =>
-                    subgroups.push({ key: v, type: "ethnicity" }),
+                const sd = Math.sqrt(Math.max(num / (totalN - 1), 0));
+                const studies = entries.reduce(
+                    (s, e) => s + (e.studies || 1),
+                    0,
                 );
-                if (subgroups.length === 0)
-                    subgroups.push({ key: "total", type: "total" });
+                return { mean, sd, n: totalN, studies };
+            }
+
+            function getActiveCurves(m) {
+                // Gender empty → single combined curve. Otherwise one per selected gender.
+                const genders =
+                    activeFilters.gender.size > 0
+                        ? [...activeFilters.gender]
+                        : ["combined"];
+
+                // Age empty → no age subgroup; otherwise iterate selected age bins.
+                const ageBins =
+                    activeFilters.age.size > 0 ? [...activeFilters.age] : [null];
+
+                // Region: the region dimension never multiplies the curve count.
+                // 0 selected → "All" branch (region=null). 1 selected → that region. ≥2 selected →
+                // re-pool the per-region leaves into one synthetic leaf for each (gender × age) pair.
+                const regionList = [...activeFilters.region];
+                const multiRegion = regionList.length >= 2;
+                const singleRegion =
+                    regionList.length === 1 ? regionList[0] : null;
 
                 const curves = [];
-                subgroups.forEach((sub) => {
+                ageBins.forEach((ageBin) => {
                     genders.forEach((gender) => {
                         let data;
-                        if (sub.type === "total") {
-                            data = m[gender];
+                        if (multiRegion) {
+                            const leaves = regionList
+                                .map((r) => lookupPool(m, r, ageBin, gender))
+                                .filter(Boolean);
+                            data = poolEntries(leaves);
                         } else {
-                            data =
-                                DEMOG_DATA[sub.type]?.[sub.key]?.[m.id]?.[
-                                    gender
-                                ];
+                            data = lookupPool(
+                                m,
+                                singleRegion,
+                                ageBin,
+                                gender,
+                            );
                         }
                         if (!data) return;
-                        const col = (GROUP_COLORS[sub.key] ??
-                            GROUP_COLORS.total)[gender];
-                        const sexSym = gender === "male" ? "♂" : "♀";
-                        const groupLabel =
-                            sub.key === "total" ? "" : sub.key + " ";
+
+                        // Label collects active filters (region + age). Color is decided separately:
+                        // region never drives color — only Gender and Age do.
+                        const labelParts = [];
+                        if (multiRegion) labelParts.push(`${regionList.length} regions`);
+                        else if (singleRegion) labelParts.push(singleRegion);
+                        if (ageBin) labelParts.push(ageBin);
+
+                        // Color rules — region is intentionally excluded:
+                        //  - combined (no gender filter): fixed accent color regardless of age.
+                        //  - male/female: per-age-bin palette when an age bin is selected,
+                        //    else the base male/female colors.
+                        const colorKey = ageBin || "All";
+                        let col;
+                        if (gender === "combined") {
+                            col = tv("--accent");
+                        } else {
+                            const colorPair =
+                                GROUP_COLORS[colorKey] ?? GROUP_COLORS.All;
+                            col =
+                                colorPair?.[gender] ??
+                                colorPair?.combined ??
+                                "#888";
+                        }
+                        const sexSym =
+                            gender === "male"
+                                ? "♂"
+                                : gender === "female"
+                                  ? "♀"
+                                  : "";
+                        const label =
+                            (labelParts.join(" · ") + " " + sexSym).trim() ||
+                            "All";
                         curves.push({
-                            label: `${groupLabel}${sexSym}`,
+                            label,
                             color: col,
                             gender,
-                            group: sub.key,
+                            group: colorKey,
                             params: getGaussParams(data),
                             data,
                         });
@@ -1437,11 +1622,15 @@
             });
 
             // ── Stats helpers ────────────────────────────────────────────────────────────
+            // Each leaf is a sample-size-pooled normal: { mean, sd, n, studies }.
             function getGaussParams(d) {
-                const z = 1.6449;
-                const sigma = (d.p95 - d.p5) / (2 * z);
-                return { mu: d.p50, sigma };
+                return { mu: d.mean, sigma: d.sd };
             }
+            // Approximate normal-distribution percentiles for a {mu, sigma} pair.
+            const Z90_INV = 1.6449;
+            function curveP5(p)  { return p.mu - Z90_INV * p.sigma; }
+            function curveP50(p) { return p.mu; }
+            function curveP95(p) { return p.mu + Z90_INV * p.sigma; }
             function gaussPDF(x, mu, sigma) {
                 return (
                     (1 / (sigma * Math.sqrt(2 * Math.PI))) *
@@ -1604,10 +1793,12 @@
 
                 // percentile span bands — subtle per-curve shading
                 curves.forEach((c) => {
+                    const p5 = curveP5(c.params);
+                    const p95 = curveP95(c.params);
                     g.append("rect")
-                        .attr("x", x(c.data.p5))
+                        .attr("x", x(p5))
                         .attr("y", 0)
-                        .attr("width", x(c.data.p95) - x(c.data.p5))
+                        .attr("width", x(p95) - x(p5))
                         .attr("height", iH)
                         .attr("fill", c.color)
                         .attr("opacity", 0.05);
@@ -1626,9 +1817,14 @@
                         .attr("height", iH);
                 }
 
-                // gap regions
-                const combinedP5 = Math.min(...curves.map((c) => c.data.p5));
-                const combinedP95 = Math.max(...curves.map((c) => c.data.p95));
+                // gap regions — derive 5th/95th percentile bounds from curve params (mean ± z·sd)
+                const Z90 = 1.6449;
+                const combinedP5 = Math.min(
+                    ...curves.map((c) => c.params.mu - Z90 * c.params.sigma),
+                );
+                const combinedP95 = Math.max(
+                    ...curves.map((c) => c.params.mu + Z90 * c.params.sigma),
+                );
                 [
                     [combinedP5, prod.min],
                     [prod.max, combinedP95],
@@ -1689,7 +1885,7 @@
 
                 // percentile tick marks per curve
                 curves.forEach((c) => {
-                    [c.data.p5, c.data.p50, c.data.p95].forEach((v) => {
+                    [curveP5(c.params), curveP50(c.params), curveP95(c.params)].forEach((v) => {
                         g.append("line")
                             .attr("x1", x(v))
                             .attr("x2", x(v))
@@ -1792,13 +1988,17 @@
 
                 // stats row
                 const statsEl = document.getElementById(`stats_${m.id}`);
+                const totalStudies = curves.reduce(
+                    (s, c) => s + (c.data.studies || 0),
+                    0,
+                );
                 const nioshTag = m.isNiosh
-                    ? `<div class="stat-badge niosh">✦ NIOSH 2005 N=3,997</div>`
+                    ? `<div class="stat-badge niosh">✦ Pooled from ${totalStudies} studies</div>`
                     : "";
                 const curveStats = curves
                     .map(
                         (c) =>
-                            `<div class="stat-badge" style="color:${c.color};border-color:${c.color}50">${c.label} μ=${c.data.p50} | σ≈${c.params.sigma.toFixed(2)}</div>`,
+                            `<div class="stat-badge" style="color:${c.color};border-color:${c.color}50">${c.label} μ=${c.params.mu.toFixed(2)} | σ=${c.params.sigma.toFixed(2)} | N=${c.data.n}</div>`,
                     )
                     .join("");
                 statsEl.innerHTML = `${curveStats}<div class="stat-badge product">Product: ${prod.min}–${prod.max} cm</div>${nioshTag}`;
@@ -1862,7 +2062,7 @@
                             (c) =>
                                 `<div class="summary-row">
         <span class="label" style="color:${c.color}">${c.label}</span>
-        <span style="color:${c.color}">${c.data.p5}–${c.data.p95} cm · median ${c.data.p50} · cov ${(coverage(c.params, prod.min, prod.max) * 100).toFixed(1)}%</span>
+        <span style="color:${c.color}">${curveP5(c.params).toFixed(2)}–${curveP95(c.params).toFixed(2)} cm · μ ${c.params.mu.toFixed(2)} · cov ${(coverage(c.params, prod.min, prod.max) * 100).toFixed(1)}%</span>
       </div>`,
                         )
                         .join("");
@@ -3706,6 +3906,7 @@
             });
 
             // ── Init ──────────────────────────────────────────────────────────────────────
+            buildFilterBar();
             buildMgControls();
             buildInputs();
             buildCharts();

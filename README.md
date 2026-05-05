@@ -51,4 +51,14 @@ The following GitHub secrets are required:
 
 ## Data Files
 
-The numeric datasets that drive each tool live in `data/` as JSON. Each tool loads its dataset via a tiny `.js` shim that assigns the JSON to a global (`window.IMT_DATA` for the Full tool, `window.IMT_FLEX_DATA` for the Flex tool). To reuse a tool with a different population dataset, drop a new JSON next to the existing one, regenerate its shim, and change the `<script src>` line in the HTML. See `data/schema.md` for the expected shape of each file.
+The Full tool's data is **derived from research CSVs** in `data/data_from_research_files/` (one file per measurement: head circumference, ear height, mastoid-to-mastoid, bizygomatic breadth). Each row is a study with `Mean`, `SD`, `Sample Size`, demographic columns. The build script pools studies per `(Region, Gender)` and emits `data/full/measurements.us-adult.json` plus a `.js` shim that the HTML loads via `<script src>` (no `fetch()` — works on `file://`).
+
+To regenerate after editing the CSVs:
+
+```bash
+python3 scripts/build_data.py
+```
+
+The Flex tool's data file (`data/flex/profiles.us-adult.json`) is hand-edited.
+
+See `data/schema.md` for the canonical data layout, units per file, and pooling math.
