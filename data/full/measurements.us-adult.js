@@ -1,0 +1,203 @@
+window.IMT_DATA = {
+  "measurements": [
+    {
+      "id": "cranial",
+      "name": "Cranial Circumference",
+      "unit": "cm",
+      "desc": "Tape at glabella → occipital protuberance",
+      "male":   { "p5": 54.0, "p50": 57.0, "p95": 60.0 },
+      "female": { "p5": 52.0, "p50": 55.0, "p95": 58.0 },
+      "productDefault": { "min": 54.0, "max": 59.0 },
+      "xRange": [49, 64]
+    },
+    {
+      "id": "ear",
+      "name": "Ear Height",
+      "unit": "cm",
+      "desc": "Helix tip → lobule bottom",
+      "male":   { "p5": 5.7, "p50": 6.3, "p95": 7.2 },
+      "female": { "p5": 5.2, "p50": 5.9, "p95": 6.8 },
+      "productDefault": { "min": 5.8, "max": 6.8 },
+      "xRange": [4.5, 8.5]
+    },
+    {
+      "id": "tragus",
+      "name": "Tragus-to-Tragus (Front Arc)",
+      "unit": "cm",
+      "desc": "Surface arc across face, ear to ear",
+      "male":   { "p5": 26.0, "p50": 28.5, "p95": 30.5 },
+      "female": { "p5": 24.5, "p50": 27.0, "p95": 29.0 },
+      "productDefault": { "min": 25.5, "max": 30.0 },
+      "xRange": [22, 33]
+    },
+    {
+      "id": "mastoid",
+      "name": "Mastoid-to-Mastoid (Rear Arc)",
+      "unit": "cm",
+      "desc": "Surface arc over back of skull",
+      "male":   { "p5": 27.0, "p50": 29.5, "p95": 32.0 },
+      "female": { "p5": 25.5, "p50": 28.0, "p95": 30.5 },
+      "productDefault": { "min": 26.5, "max": 31.5 },
+      "xRange": [23, 35]
+    },
+    {
+      "id": "bizygomatic",
+      "name": "Bizygomatic Breadth",
+      "unit": "cm",
+      "desc": "Zygion–zygion straight-line chord (cheekbone to cheekbone)",
+      "male":   { "p5": 13.2, "p50": 14.35, "p95": 15.5 },
+      "female": { "p5": 12.4, "p50": 13.51, "p95": 14.6 },
+      "productDefault": { "min": 13.2, "max": 14.35 },
+      "xRange": [11.0, 17.0],
+      "isNiosh": true
+    },
+    {
+      "id": "maskarcflex",
+      "name": "Mask Arc Flex (BZ-derived)",
+      "unit": "cm",
+      "desc": "Face curvature radius at cheekbone level — smaller = narrower face = more flex demand on mask grooves",
+      "male":   { "p5": 8.04, "p50": 9.2,  "p95": 10.04 },
+      "female": { "p5": 7.91, "p50": 8.64, "p95": 9.38 },
+      "productDefault": { "min": 8.64, "max": 10.04 },
+      "xRange": [6.5, 12.0],
+      "isMaskFlex": true
+    }
+  ],
+
+  "demographics": {
+    "age": {
+      "18-30": {
+        "cranial":     { "male": { "p5": 53.5, "p50": 56.5, "p95": 59.5 },  "female": { "p5": 51.5, "p50": 54.5, "p95": 57.5 } },
+        "ear":         { "male": { "p5": 5.5,  "p50": 6.1,  "p95": 7.0 },   "female": { "p5": 5.0,  "p50": 5.7,  "p95": 6.5 } },
+        "tragus":      { "male": { "p5": 25.5, "p50": 28.0, "p95": 30.0 },  "female": { "p5": 24.0, "p50": 26.5, "p95": 28.5 } },
+        "mastoid":     { "male": { "p5": 26.5, "p50": 29.0, "p95": 31.5 },  "female": { "p5": 25.0, "p50": 27.5, "p95": 30.0 } },
+        "bizygomatic": { "male": { "p5": 13.0, "p50": 14.1, "p95": 15.2 },  "female": { "p5": 12.2, "p50": 13.3, "p95": 14.4 } },
+        "maskarcflex": { "male": { "p5": 7.8,  "p50": 8.95, "p95": 9.8 },   "female": { "p5": 7.7,  "p50": 8.45, "p95": 9.2 } }
+      },
+      "31-45": {
+        "cranial":     { "male": { "p5": 54.0, "p50": 57.0,  "p95": 60.0 },  "female": { "p5": 52.0, "p50": 55.0,  "p95": 58.0 } },
+        "ear":         { "male": { "p5": 5.7,  "p50": 6.3,   "p95": 7.2 },   "female": { "p5": 5.2,  "p50": 5.9,   "p95": 6.8 } },
+        "tragus":      { "male": { "p5": 26.0, "p50": 28.5,  "p95": 30.5 },  "female": { "p5": 24.5, "p50": 27.0,  "p95": 29.0 } },
+        "mastoid":     { "male": { "p5": 27.0, "p50": 29.5,  "p95": 32.0 },  "female": { "p5": 25.5, "p50": 28.0,  "p95": 30.5 } },
+        "bizygomatic": { "male": { "p5": 13.2, "p50": 14.35, "p95": 15.5 },  "female": { "p5": 12.4, "p50": 13.51, "p95": 14.6 } },
+        "maskarcflex": { "male": { "p5": 8.04, "p50": 9.2,   "p95": 10.04 }, "female": { "p5": 7.91, "p50": 8.64,  "p95": 9.38 } }
+      },
+      "46-60": {
+        "cranial":     { "male": { "p5": 54.5, "p50": 57.5,  "p95": 60.5 },  "female": { "p5": 52.5, "p50": 55.5,  "p95": 58.5 } },
+        "ear":         { "male": { "p5": 5.8,  "p50": 6.5,   "p95": 7.5 },   "female": { "p5": 5.3,  "p50": 6.1,   "p95": 7.0 } },
+        "tragus":      { "male": { "p5": 26.5, "p50": 29.0,  "p95": 31.0 },  "female": { "p5": 25.0, "p50": 27.5,  "p95": 29.5 } },
+        "mastoid":     { "male": { "p5": 27.5, "p50": 30.0,  "p95": 32.5 },  "female": { "p5": 26.0, "p50": 28.5,  "p95": 31.0 } },
+        "bizygomatic": { "male": { "p5": 13.3, "p50": 14.5,  "p95": 15.7 },  "female": { "p5": 12.5, "p50": 13.65, "p95": 14.8 } },
+        "maskarcflex": { "male": { "p5": 8.15, "p50": 9.35,  "p95": 10.25 }, "female": { "p5": 8.0,  "p50": 8.8,   "p95": 9.6 } }
+      },
+      "60+": {
+        "cranial":     { "male": { "p5": 54.0, "p50": 57.2,  "p95": 60.3 },  "female": { "p5": 52.0, "p50": 55.2,  "p95": 58.3 } },
+        "ear":         { "male": { "p5": 5.9,  "p50": 6.7,   "p95": 7.7 },   "female": { "p5": 5.4,  "p50": 6.2,   "p95": 7.1 } },
+        "tragus":      { "male": { "p5": 26.0, "p50": 28.8,  "p95": 30.8 },  "female": { "p5": 24.5, "p50": 27.3,  "p95": 29.3 } },
+        "mastoid":     { "male": { "p5": 27.0, "p50": 29.8,  "p95": 32.3 },  "female": { "p5": 25.5, "p50": 28.3,  "p95": 30.8 } },
+        "bizygomatic": { "male": { "p5": 13.1, "p50": 14.4,  "p95": 15.6 },  "female": { "p5": 12.3, "p50": 13.6,  "p95": 14.75 } },
+        "maskarcflex": { "male": { "p5": 8.0,  "p50": 9.25,  "p95": 10.15 }, "female": { "p5": 7.9,  "p50": 8.75,  "p95": 9.55 } }
+      }
+    },
+    "ethnicity": {
+      "white": {
+        "cranial":     { "male": { "p5": 54.0, "p50": 57.0, "p95": 60.0 },  "female": { "p5": 52.0, "p50": 55.0,  "p95": 58.0 } },
+        "ear":         { "male": { "p5": 5.7,  "p50": 6.3,  "p95": 7.2 },   "female": { "p5": 5.2,  "p50": 5.9,   "p95": 6.8 } },
+        "tragus":      { "male": { "p5": 26.0, "p50": 28.5, "p95": 30.5 },  "female": { "p5": 24.5, "p50": 27.0,  "p95": 29.0 } },
+        "mastoid":     { "male": { "p5": 27.0, "p50": 29.5, "p95": 32.0 },  "female": { "p5": 25.5, "p50": 28.0,  "p95": 30.5 } },
+        "bizygomatic": { "male": { "p5": 13.1, "p50": 14.3, "p95": 15.4 },  "female": { "p5": 12.4, "p50": 13.5,  "p95": 14.6 } },
+        "maskarcflex": { "male": { "p5": 7.95, "p50": 9.1,  "p95": 9.95 },  "female": { "p5": 7.85, "p50": 8.6,   "p95": 9.34 } }
+      },
+      "black": {
+        "cranial":     { "male": { "p5": 54.5, "p50": 57.6, "p95": 60.7 },  "female": { "p5": 52.5, "p50": 55.6, "p95": 58.6 } },
+        "ear":         { "male": { "p5": 5.7,  "p50": 6.4,  "p95": 7.3 },   "female": { "p5": 5.2,  "p50": 6.0,  "p95": 6.9 } },
+        "tragus":      { "male": { "p5": 26.3, "p50": 28.9, "p95": 31.0 },  "female": { "p5": 24.8, "p50": 27.4, "p95": 29.4 } },
+        "mastoid":     { "male": { "p5": 27.3, "p50": 30.0, "p95": 32.5 },  "female": { "p5": 25.8, "p50": 28.5, "p95": 31.0 } },
+        "bizygomatic": { "male": { "p5": 13.4, "p50": 14.6, "p95": 16.0 },  "female": { "p5": 12.7, "p50": 13.8, "p95": 15.0 } },
+        "maskarcflex": { "male": { "p5": 8.2,  "p50": 9.45, "p95": 10.4 },  "female": { "p5": 8.05, "p50": 8.9,  "p95": 9.7 } }
+      },
+      "hispanic": {
+        "cranial":     { "male": { "p5": 53.5, "p50": 56.5, "p95": 59.5 },  "female": { "p5": 51.5, "p50": 54.5, "p95": 57.5 } },
+        "ear":         { "male": { "p5": 5.6,  "p50": 6.2,  "p95": 7.1 },   "female": { "p5": 5.1,  "p50": 5.8,  "p95": 6.7 } },
+        "tragus":      { "male": { "p5": 25.5, "p50": 28.0, "p95": 30.0 },  "female": { "p5": 24.0, "p50": 26.5, "p95": 28.5 } },
+        "mastoid":     { "male": { "p5": 26.5, "p50": 29.0, "p95": 31.5 },  "female": { "p5": 25.0, "p50": 27.5, "p95": 30.0 } },
+        "bizygomatic": { "male": { "p5": 13.0, "p50": 14.2, "p95": 15.3 },  "female": { "p5": 12.3, "p50": 13.4, "p95": 14.4 } },
+        "maskarcflex": { "male": { "p5": 7.85, "p50": 9.05, "p95": 9.9 },   "female": { "p5": 7.75, "p50": 8.55, "p95": 9.3 } }
+      },
+      "asian": {
+        "cranial":     { "male": { "p5": 53.0, "p50": 56.0, "p95": 58.8 },  "female": { "p5": 51.0, "p50": 53.9, "p95": 56.8 } },
+        "ear":         { "male": { "p5": 5.4,  "p50": 6.1,  "p95": 6.9 },   "female": { "p5": 5.0,  "p50": 5.7,  "p95": 6.5 } },
+        "tragus":      { "male": { "p5": 25.0, "p50": 27.5, "p95": 29.5 },  "female": { "p5": 23.5, "p50": 26.0, "p95": 28.0 } },
+        "mastoid":     { "male": { "p5": 26.0, "p50": 28.5, "p95": 31.0 },  "female": { "p5": 24.5, "p50": 27.0, "p95": 29.5 } },
+        "bizygomatic": { "male": { "p5": 12.7, "p50": 13.8, "p95": 14.9 },  "female": { "p5": 11.9, "p50": 13.0, "p95": 14.0 } },
+        "maskarcflex": { "male": { "p5": 7.65, "p50": 8.75, "p95": 9.55 },  "female": { "p5": 7.55, "p50": 8.25, "p95": 8.95 } }
+      }
+    }
+  },
+
+  "bzProfiles": [
+    { "label": "P5",  "bz": 12.4,  "colorVar": "--female" },
+    { "label": "P15", "bz": 12.8,  "colorVar": "--warn-alt" },
+    { "label": "P25", "bz": 13.1,  "colorVar": "--product" },
+    { "label": "P35", "bz": 13.4,  "colorVar": "--lime" },
+    { "label": "P50", "bz": 13.9,  "colorVar": "--good" },
+    { "label": "P65", "bz": 14.35, "colorVar": "--niosh" },
+    { "label": "P75", "bz": 14.7,  "colorVar": "--cyan" },
+    { "label": "P85", "bz": 15.0,  "colorVar": "--male" },
+    { "label": "P95", "bz": 15.5,  "colorVar": "--indigo" }
+  ],
+
+  "bzCross": [
+    { "label": "BZ P5",  "bz": 12.4 },
+    { "label": "BZ P35", "bz": 13.4 },
+    { "label": "BZ P65", "bz": 14.35 },
+    { "label": "BZ P95", "bz": 15.5 }
+  ],
+
+  "mgState": {
+    "width": 25.5,
+    "nose": 3.0,
+    "maxflex": 22,
+    "g1": 3.5,
+    "g2": 5.5,
+    "g3": 6.25,
+    "sensor": 7.0,
+    "bzInspect": 13.9,
+    "gapThresh": 22,
+    "flexThresh": 2
+  },
+
+  "mgControls": [
+    { "key": "width",      "label": "Mask Width",            "unit": "cm", "min": 20,   "max": 32,   "step": 0.1 },
+    { "key": "nose",       "label": "Nose Projection",       "unit": "cm", "min": 1.5,  "max": 5.0,  "step": 0.1 },
+    { "key": "maxflex",    "label": "Groove Max Flex",       "unit": "°",  "min": 5,    "max": 45,   "step": 1 },
+    { "key": "sensor",     "label": "Sensor Spacing",        "unit": "cm", "min": 3,    "max": 12,   "step": 0.1 },
+    { "key": "g1",         "label": "Groove 1 ±",            "unit": "cm", "min": 1,    "max": 6,    "step": 0.1 },
+    { "key": "g2",         "label": "Groove 2 ±",            "unit": "cm", "min": 4,    "max": 11,   "step": 0.1 },
+    { "key": "g3",         "label": "Groove 3 ±",            "unit": "cm", "min": 7,    "max": 14,   "step": 0.1 },
+    { "key": "bzInspect",  "label": "BZ Inspect",            "unit": "cm", "min": 11.5, "max": 16.5, "step": 0.05 },
+    { "key": "flexThresh", "label": "Cheek Seal Threshold",  "unit": "mm", "min": 0,    "max": 15,   "step": 0.5 },
+    { "key": "gapThresh",  "label": "Temporal Ref Line",     "unit": "mm", "min": 10,   "max": 50,   "step": 1 }
+  ],
+
+  "dimWeights": {
+    "cranial": 1.0,
+    "ear": 2.0,
+    "tragus": 1.0,
+    "mastoid": 1.0,
+    "bizygomatic": 1.0,
+    "maskarcflex": 3.0
+  },
+
+  "groupColors": {
+    "total":   { "male": "#38bdf8", "female": "#f472b6" },
+    "18-30":   { "male": "#c084fc", "female": "#e879f9" },
+    "31-45":   { "male": "#34d399", "female": "#6ee7b7" },
+    "46-60":   { "male": "#fbbf24", "female": "#fde68a" },
+    "60+":     { "male": "#fb923c", "female": "#fed7aa" },
+    "white":   { "male": "#94a3b8", "female": "#cbd5e1" },
+    "black":   { "male": "#818cf8", "female": "#a5b4fc" },
+    "hispanic":{ "male": "#f87171", "female": "#fca5a5" },
+    "asian":   { "male": "#4ade80", "female": "#86efac" }
+  }
+};

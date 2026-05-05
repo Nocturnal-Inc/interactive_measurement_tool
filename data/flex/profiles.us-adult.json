@@ -1,0 +1,8 @@
+{
+  "profiles": [
+    { "label": "P5",  "bz": 12.4,  "colorVar": "--female" },
+    { "label": "P35", "bz": 13.4,  "colorVar": "--product" },
+    { "label": "P65", "bz": 14.35, "colorVar": "--niosh" },
+    { "label": "P95", "bz": 15.5,  "colorVar": "--indigo" }
+  ]
+}

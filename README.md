@@ -48,3 +48,7 @@ The following GitHub secrets are required:
 - **FAA AM-93-10 (1993)** — cranial circumference measurements
 - **Zhuang & Bradtmiller** — supplementary bizygomatic breadth data
 - **Tollefson et al.** — ear height and related facial measurements
+
+## Data Files
+
+The numeric datasets that drive each tool live in `data/` as JSON. Each tool loads its dataset via a tiny `.js` shim that assigns the JSON to a global (`window.IMT_DATA` for the Full tool, `window.IMT_FLEX_DATA` for the Flex tool). To reuse a tool with a different population dataset, drop a new JSON next to the existing one, regenerate its shim, and change the `<script src>` line in the HTML. See `data/schema.md` for the expected shape of each file.

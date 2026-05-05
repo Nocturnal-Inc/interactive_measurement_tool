@@ -101,16 +101,16 @@ input[type=range] { flex: 1; accent-color: var(--female); }
 <div class="static-row" id="static-row"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="data/flex/profiles.us-adult.js"></script>
 <script>
 const cs = getComputedStyle(document.documentElement);
 const tv = (name) => cs.getPropertyValue(name).trim();
 
-const PROFILES = [
-  {label:'P5',  bz:12.4,  color:tv('--female')},
-  {label:'P35', bz:13.4,  color:tv('--product')},
-  {label:'P65', bz:14.35, color:tv('--niosh')},
-  {label:'P95', bz:15.5,  color:tv('--indigo')},
-];
+const PROFILES = window.IMT_FLEX_DATA.profiles.map((p) => ({
+  label: p.label,
+  bz: p.bz,
+  color: tv(p.colorVar),
+}));
 const panColors = [tv('--product'),tv('--accent'),tv('--niosh'),tv('--male')];
 const nosePr = 3.0;
 const wingLen = 6.5;
