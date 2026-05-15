@@ -27,12 +27,12 @@ OUT_DIR = ROOT / "data" / "full"
 # Plausible ranges drop rows whose Mean (after unit conversion) is outside the band —
 # these are typically wrong-unit entries inside an otherwise-uniform file
 # (e.g. some head_circumference rows have mm values like 584).
-# Note: mastoid_mastoid.csv is currently a placeholder containing bizygomatic-shaped
-# data (~138 mm); user instructed to treat it as mm and reuse for tragus + mastoid.
+# Note: mastoid_mastoid.csv now mirrors head_circumference.csv (cm-scale) — tragus
+# and mastoid distributions are derived from HC until real arc measurements exist.
 SOURCES = [
     ("head_circumference.csv", ["cranial"],            1.0, (40.0, 80.0)),
     ("ear_height.csv",         ["ear"],                0.1, (3.0, 10.0)),
-    ("mastoid_mastoid.csv",    ["tragus", "mastoid"],  0.1, (8.0, 22.0)),
+    ("mastoid_mastoid.csv",    ["tragus", "mastoid"],  1.0, (40.0, 80.0)),
     ("bizygomatic_breadth.csv",["bizygomatic"],        0.1, (8.0, 22.0)),
 ]
 

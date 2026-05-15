@@ -988,20 +988,6 @@
                     ></div>
                     <span class="legend-label">Uncovered gap</span>
                 </div>
-                <div class="legend-item">
-                    <div
-                        style="
-                            width: 10px;
-                            height: 10px;
-                            border-radius: 2px;
-                            background: var(--niosh);
-                            opacity: 0.7;
-                        "
-                    ></div>
-                    <span style="color: var(--niosh)"
-                        >NIOSH 2005 direct measurement</span
-                    >
-                </div>
             </div>
 
             <div class="bin-filter-bar">
@@ -1044,10 +1030,51 @@
                 <div class="bin-group">
                     <span class="bin-group-label">Region</span>
                     <div class="multiselect" id="region-multiselect">
-                        <button type="button" class="multiselect-button" id="region-button" aria-haspopup="listbox" aria-expanded="false">
-                            <span class="multiselect-summary" id="region-summary">All</span>
+                        <button
+                            type="button"
+                            class="multiselect-button"
+                            id="region-button"
+                            aria-haspopup="listbox"
+                            aria-expanded="false"
+                        >
+                            <span
+                                class="multiselect-summary"
+                                id="region-summary"
+                                >All</span
+                            >
                         </button>
-                        <div class="multiselect-panel" id="region-panel" role="listbox" aria-multiselectable="true" hidden></div>
+                        <div
+                            class="multiselect-panel"
+                            id="region-panel"
+                            role="listbox"
+                            aria-multiselectable="true"
+                            hidden
+                        ></div>
+                    </div>
+                </div>
+                <div class="bin-divider"></div>
+                <div class="bin-group">
+                    <span class="bin-group-label">Measurement</span>
+                    <div class="multiselect" id="preset-multiselect">
+                        <button
+                            type="button"
+                            class="multiselect-button"
+                            id="preset-button"
+                            aria-haspopup="listbox"
+                            aria-expanded="false"
+                        >
+                            <span
+                                class="multiselect-summary"
+                                id="preset-summary"
+                                >Explore</span
+                            >
+                        </button>
+                        <div
+                            class="multiselect-panel"
+                            id="preset-panel"
+                            role="listbox"
+                            hidden
+                        ></div>
                     </div>
                 </div>
             </div>
@@ -1371,9 +1398,9 @@
             // Region names other than the "All" sentinel.
             const REGION_OPTIONS = REGIONS.filter((r) => r !== "All");
             const activeFilters = {
-                gender: new Set(),   // "male" / "female"; empty → combined curve
-                age: new Set(),      // age-bin labels; empty → no age subgroups
-                region: new Set(),   // region names; empty → All (single combined curve)
+                gender: new Set(), // "male" / "female"; empty → combined curve
+                age: new Set(), // age-bin labels; empty → no age subgroups
+                region: new Set(), // region names; empty → All (single combined curve)
             };
 
             function toggleBin(cat, val) {
@@ -1411,8 +1438,7 @@
 
                 const allRow = document.createElement("label");
                 allRow.className = "multiselect-option divider";
-                allRow.innerHTML =
-                    `<input type="checkbox" ${allSelected ? "checked" : ""}><span>All</span>`;
+                allRow.innerHTML = `<input type="checkbox" ${allSelected ? "checked" : ""}><span>All</span>`;
                 allRow.querySelector("input").addEventListener("change", () => {
                     activeFilters.region.clear();
                     renderRegionPanel();
@@ -1426,17 +1452,20 @@
                     const row = document.createElement("label");
                     row.className = "multiselect-option";
                     const checked = activeFilters.region.has(r);
-                    row.innerHTML =
-                        `<input type="checkbox" ${checked ? "checked" : ""}><span></span>`;
+                    row.innerHTML = `<input type="checkbox" ${checked ? "checked" : ""}><span></span>`;
                     row.querySelector("span").textContent = r;
-                    row.querySelector("input").addEventListener("change", () => {
-                        if (activeFilters.region.has(r)) activeFilters.region.delete(r);
-                        else activeFilters.region.add(r);
-                        renderRegionPanel();
-                        updateRegionSummary();
-                        updatePillStates();
-                        redrawAll();
-                    });
+                    row.querySelector("input").addEventListener(
+                        "change",
+                        () => {
+                            if (activeFilters.region.has(r))
+                                activeFilters.region.delete(r);
+                            else activeFilters.region.add(r);
+                            renderRegionPanel();
+                            updateRegionSummary();
+                            updatePillStates();
+                            redrawAll();
+                        },
+                    );
                     panel.appendChild(row);
                 });
             }
@@ -1445,6 +1474,91 @@
                 const root = document.getElementById("region-multiselect");
                 const btn = document.getElementById("region-button");
                 const panel = document.getElementById("region-panel");
+                if (!root || !btn || !panel) return;
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const isOpen = root.classList.toggle("open");
+                    panel.hidden = !isOpen;
+                    btn.setAttribute("aria-expanded", String(isOpen));
+                });
+                document.addEventListener("click", (e) => {
+                    if (!root.contains(e.target)) {
+                        root.classList.remove("open");
+                        panel.hidden = true;
+                        btn.setAttribute("aria-expanded", "false");
+                    }
+                });
+            }
+
+            function updatePresetSummary() {
+                const sumEl = document.getElementById("preset-summary");
+                if (sumEl) sumEl.textContent = activePreset;
+            }
+
+            function setProductInputsDisabled(disabled) {
+                const lockedColor = "var(--niosh)";
+                const editableColor = "var(--product)";
+                MEASUREMENTS.forEach((m) => {
+                    ["min", "max"].forEach((t) => {
+                        const el = document.getElementById(`${t}_${m.id}`);
+                        if (!el) return;
+                        el.disabled = disabled;
+                        el.style.color = disabled ? lockedColor : editableColor;
+                        el.style.opacity = "1";
+                    });
+                });
+            }
+
+            function applyPreset(name) {
+                const preset = PRESETS[name];
+                if (!preset) return;
+                activePreset = name;
+                MEASUREMENTS.forEach((m) => {
+                    const vals = preset[m.id];
+                    if (!vals) return;
+                    productState[m.id].min = vals.min;
+                    productState[m.id].max = vals.max;
+                    const minEl = document.getElementById(`min_${m.id}`);
+                    const maxEl = document.getElementById(`max_${m.id}`);
+                    if (minEl) minEl.value = vals.min;
+                    if (maxEl) maxEl.value = vals.max;
+                });
+                setProductInputsDisabled(true);
+                redrawAll();
+            }
+
+            function clearPreset() {
+                activePreset = "Explore";
+                setProductInputsDisabled(false);
+            }
+
+            function renderPresetPanel() {
+                const panel = document.getElementById("preset-panel");
+                if (!panel) return;
+                panel.innerHTML = "";
+                PRESET_OPTIONS.forEach((name) => {
+                    const row = document.createElement("label");
+                    row.className = "multiselect-option";
+                    const checked = activePreset === name;
+                    row.innerHTML = `<input type="radio" name="preset-option" ${checked ? "checked" : ""}><span></span>`;
+                    row.querySelector("span").textContent = name;
+                    row.querySelector("input").addEventListener(
+                        "change",
+                        () => {
+                            if (name === "Explore") clearPreset();
+                            else applyPreset(name);
+                            renderPresetPanel();
+                            updatePresetSummary();
+                        },
+                    );
+                    panel.appendChild(row);
+                });
+            }
+
+            function setupPresetMultiselect() {
+                const root = document.getElementById("preset-multiselect");
+                const btn = document.getElementById("preset-button");
+                const panel = document.getElementById("preset-panel");
                 if (!root || !btn || !panel) return;
                 btn.addEventListener("click", (e) => {
                     e.stopPropagation();
@@ -1471,13 +1585,18 @@
                         btn.dataset.cat = "age";
                         btn.dataset.val = bin;
                         btn.textContent = bin;
-                        btn.addEventListener("click", () => toggleBin("age", bin));
+                        btn.addEventListener("click", () =>
+                            toggleBin("age", bin),
+                        );
                         ageHost.appendChild(btn);
                     });
                 }
                 renderRegionPanel();
                 updateRegionSummary();
                 setupRegionMultiselect();
+                renderPresetPanel();
+                updatePresetSummary();
+                setupPresetMultiselect();
             }
 
             function updatePillStates() {
@@ -1503,8 +1622,10 @@
             // region is a name or null. ageBin is a label or null. null = "All" (the top-level pool).
             function lookupPool(m, region, ageBin, gender) {
                 if (!region && !ageBin) return m[gender];
-                if (!region && ageBin) return DEMOG_DATA.age?.[ageBin]?.[m.id]?.[gender];
-                if (region && !ageBin) return DEMOG_DATA.region?.[region]?.[m.id]?.[gender];
+                if (!region && ageBin)
+                    return DEMOG_DATA.age?.[ageBin]?.[m.id]?.[gender];
+                if (region && !ageBin)
+                    return DEMOG_DATA.region?.[region]?.[m.id]?.[gender];
                 // Region+age intersection isn't precomputed; fall back to region-only.
                 return DEMOG_DATA.region?.[region]?.[m.id]?.[gender];
             }
@@ -1541,7 +1662,9 @@
 
                 // Age empty → no age subgroup; otherwise iterate selected age bins.
                 const ageBins =
-                    activeFilters.age.size > 0 ? [...activeFilters.age] : [null];
+                    activeFilters.age.size > 0
+                        ? [...activeFilters.age]
+                        : [null];
 
                 // Region: the region dimension never multiplies the curve count.
                 // 0 selected → "All" branch (region=null). 1 selected → that region. ≥2 selected →
@@ -1561,19 +1684,15 @@
                                 .filter(Boolean);
                             data = poolEntries(leaves);
                         } else {
-                            data = lookupPool(
-                                m,
-                                singleRegion,
-                                ageBin,
-                                gender,
-                            );
+                            data = lookupPool(m, singleRegion, ageBin, gender);
                         }
                         if (!data) return;
 
                         // Label collects active filters (region + age). Color is decided separately:
                         // region never drives color — only Gender and Age do.
                         const labelParts = [];
-                        if (multiRegion) labelParts.push(`${regionList.length} regions`);
+                        if (multiRegion)
+                            labelParts.push(`${regionList.length} regions`);
                         else if (singleRegion) labelParts.push(singleRegion);
                         if (ageBin) labelParts.push(ageBin);
 
@@ -1615,6 +1734,21 @@
                 return curves;
             }
 
+            // Named product-dimension presets. Keys appear in the Measurement dropdown.
+            // "Explore" is the sentinel for free-edit mode (inputs editable, no values forced).
+            const PRESETS = {
+                "Gen 0.1": {
+                    cranial: { min: 56.0, max: 63.0 },
+                    ear: { min: 0, max: 6 },
+                    tragus: { min: 28, max: 31.5 },
+                    mastoid: { min: 28, max: 31.5 },
+                    bizygomatic: { min: 12.0, max: 14.5 },
+                    maskarcflex: { min: 0.0, max: 9.8 },
+                },
+            };
+            const PRESET_OPTIONS = ["Explore", ...Object.keys(PRESETS)];
+            let activePreset = "Explore";
+
             // product state
             const productState = {};
             MEASUREMENTS.forEach((m) => {
@@ -1628,9 +1762,15 @@
             }
             // Approximate normal-distribution percentiles for a {mu, sigma} pair.
             const Z90_INV = 1.6449;
-            function curveP5(p)  { return p.mu - Z90_INV * p.sigma; }
-            function curveP50(p) { return p.mu; }
-            function curveP95(p) { return p.mu + Z90_INV * p.sigma; }
+            function curveP5(p) {
+                return p.mu - Z90_INV * p.sigma;
+            }
+            function curveP50(p) {
+                return p.mu;
+            }
+            function curveP95(p) {
+                return p.mu + Z90_INV * p.sigma;
+            }
             function gaussPDF(x, mu, sigma) {
                 return (
                     (1 / (sigma * Math.sqrt(2 * Math.PI))) *
@@ -1885,7 +2025,11 @@
 
                 // percentile tick marks per curve
                 curves.forEach((c) => {
-                    [curveP5(c.params), curveP50(c.params), curveP95(c.params)].forEach((v) => {
+                    [
+                        curveP5(c.params),
+                        curveP50(c.params),
+                        curveP95(c.params),
+                    ].forEach((v) => {
                         g.append("line")
                             .attr("x1", x(v))
                             .attr("x2", x(v))
