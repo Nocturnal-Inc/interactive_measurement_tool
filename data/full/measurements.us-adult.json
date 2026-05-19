@@ -74,24 +74,24 @@
         "max": 30.0
       },
       "xRange": [
-        40.8,
-        68.2
+        20.2,
+        34.4
       ],
       "male": {
-        "mean": 56.677,
-        "sd": 1.798,
+        "mean": 28.339,
+        "sd": 0.899,
         "n": 9318,
         "studies": 20
       },
       "female": {
-        "mean": 55.033,
-        "sd": 2.077,
+        "mean": 27.516,
+        "sd": 1.039,
         "n": 9743,
         "studies": 21
       },
       "combined": {
-        "mean": 56.351,
-        "sd": 2.75,
+        "mean": 28.176,
+        "sd": 1.375,
         "n": 115292,
         "studies": 71
       }
@@ -106,24 +106,24 @@
         "max": 31.5
       },
       "xRange": [
-        40.8,
-        68.2
+        20.2,
+        34.4
       ],
       "male": {
-        "mean": 56.677,
-        "sd": 1.798,
+        "mean": 28.339,
+        "sd": 0.899,
         "n": 9318,
         "studies": 20
       },
       "female": {
-        "mean": 55.033,
-        "sd": 2.077,
+        "mean": 27.516,
+        "sd": 1.039,
         "n": 9743,
         "studies": 21
       },
       "combined": {
-        "mean": 56.351,
-        "sd": 2.75,
+        "mean": 28.176,
+        "sd": 1.375,
         "n": 115292,
         "studies": 71
       }
@@ -227,236 +227,6 @@
   ],
   "demographics": {
     "region": {
-      "Not specified": {
-        "cranial": {
-          "male": {
-            "mean": 58.396,
-            "sd": 1.985,
-            "n": 467,
-            "studies": 4
-          },
-          "female": {
-            "mean": 55.813,
-            "sd": 1.713,
-            "n": 693,
-            "studies": 3
-          },
-          "combined": {
-            "mean": 55.63,
-            "sd": 4.025,
-            "n": 32604,
-            "studies": 11
-          }
-        },
-        "ear": {
-          "male": {
-            "mean": 6.658,
-            "sd": 0.454,
-            "n": 71,
-            "studies": 2
-          },
-          "female": {
-            "mean": 6.21,
-            "sd": 0.429,
-            "n": 71,
-            "studies": 2
-          },
-          "combined": {
-            "mean": 6.434,
-            "sd": 0.494,
-            "n": 142,
-            "studies": 4
-          }
-        },
-        "tragus": {
-          "male": {
-            "mean": 58.396,
-            "sd": 1.985,
-            "n": 467,
-            "studies": 4
-          },
-          "female": {
-            "mean": 55.813,
-            "sd": 1.713,
-            "n": 693,
-            "studies": 3
-          },
-          "combined": {
-            "mean": 55.63,
-            "sd": 4.025,
-            "n": 32604,
-            "studies": 11
-          }
-        },
-        "mastoid": {
-          "male": {
-            "mean": 58.396,
-            "sd": 1.985,
-            "n": 467,
-            "studies": 4
-          },
-          "female": {
-            "mean": 55.813,
-            "sd": 1.713,
-            "n": 693,
-            "studies": 3
-          },
-          "combined": {
-            "mean": 55.63,
-            "sd": 4.025,
-            "n": 32604,
-            "studies": 11
-          }
-        }
-      },
-      "Southern Asia + Southeastern Asia": {
-        "ear": {
-          "male": {
-            "mean": 6.07,
-            "sd": 0.38,
-            "n": 30,
-            "studies": 1
-          },
-          "female": {
-            "mean": 5.76,
-            "sd": 0.39,
-            "n": 30,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 5.915,
-            "sd": 0.413,
-            "n": 60,
-            "studies": 2
-          }
-        },
-        "bizygomatic": {
-          "male": {
-            "mean": 14.4,
-            "sd": 0.51,
-            "n": 30,
-            "studies": 1
-          },
-          "female": {
-            "mean": 13.62,
-            "sd": 0.4,
-            "n": 30,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 14.01,
-            "sd": 0.601,
-            "n": 60,
-            "studies": 2
-          }
-        },
-        "maskarcflex": {
-          "male": {
-            "mean": 10.14,
-            "sd": 0.612,
-            "n": 30,
-            "studies": 1
-          },
-          "female": {
-            "mean": 9.229,
-            "sd": 0.454,
-            "n": 30,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 9.678,
-            "sd": 0.702,
-            "n": 60,
-            "studies": 2
-          }
-        }
-      },
-      "Western Europe": {
-        "cranial": {
-          "combined": {
-            "mean": 57.587,
-            "sd": 1.558,
-            "n": 12000,
-            "studies": 2
-          }
-        },
-        "ear": {
-          "male": {
-            "mean": 6.31,
-            "sd": 0.42,
-            "n": 30,
-            "studies": 1
-          },
-          "female": {
-            "mean": 5.84,
-            "sd": 0.4,
-            "n": 30,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 6.283,
-            "sd": 0.425,
-            "n": 11060,
-            "studies": 4
-          }
-        },
-        "tragus": {
-          "combined": {
-            "mean": 57.587,
-            "sd": 1.558,
-            "n": 12000,
-            "studies": 2
-          }
-        },
-        "mastoid": {
-          "combined": {
-            "mean": 57.587,
-            "sd": 1.558,
-            "n": 12000,
-            "studies": 2
-          }
-        },
-        "bizygomatic": {
-          "male": {
-            "mean": 13.32,
-            "sd": 0.75,
-            "n": 30,
-            "studies": 1
-          },
-          "female": {
-            "mean": 12.34,
-            "sd": 0.92,
-            "n": 30,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 13.978,
-            "sd": 0.554,
-            "n": 11060,
-            "studies": 4
-          }
-        },
-        "maskarcflex": {
-          "male": {
-            "mean": 8.893,
-            "sd": 0.833,
-            "n": 30,
-            "studies": 1
-          },
-          "female": {
-            "mean": 7.845,
-            "sd": 0.946,
-            "n": 30,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 9.641,
-            "sd": 0.645,
-            "n": 11060,
-            "studies": 4
-          }
-        }
-      },
       "Eastern Europe": {
         "cranial": {
           "combined": {
@@ -488,16 +258,16 @@
         },
         "tragus": {
           "combined": {
-            "mean": 57.4,
-            "sd": 1.52,
+            "mean": 28.7,
+            "sd": 0.76,
             "n": 400,
             "studies": 1
           }
         },
         "mastoid": {
           "combined": {
-            "mean": 57.4,
-            "sd": 1.52,
+            "mean": 28.7,
+            "sd": 0.76,
             "n": 400,
             "studies": 1
           }
@@ -543,577 +313,65 @@
           }
         }
       },
-      "Western Asia": {
-        "cranial": {
-          "male": {
-            "mean": 57.52,
-            "sd": 1.63,
-            "n": 166,
-            "studies": 1
-          },
-          "female": {
-            "mean": 55.15,
-            "sd": 1.56,
-            "n": 135,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 56.457,
-            "sd": 1.986,
-            "n": 301,
-            "studies": 2
-          }
-        },
+      "Northern Africa": {
         "ear": {
           "male": {
-            "mean": 6.52,
-            "sd": 0.385,
-            "n": 60,
-            "studies": 2
-          },
-          "female": {
-            "mean": 6.06,
-            "sd": 0.333,
-            "n": 60,
-            "studies": 2
-          },
-          "combined": {
-            "mean": 6.29,
-            "sd": 0.426,
-            "n": 120,
-            "studies": 4
-          }
-        },
-        "tragus": {
-          "male": {
-            "mean": 57.52,
-            "sd": 1.63,
-            "n": 166,
-            "studies": 1
-          },
-          "female": {
-            "mean": 55.15,
-            "sd": 1.56,
-            "n": 135,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 56.457,
-            "sd": 1.986,
-            "n": 301,
-            "studies": 2
-          }
-        },
-        "mastoid": {
-          "male": {
-            "mean": 57.52,
-            "sd": 1.63,
-            "n": 166,
-            "studies": 1
-          },
-          "female": {
-            "mean": 55.15,
-            "sd": 1.56,
-            "n": 135,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 56.457,
-            "sd": 1.986,
-            "n": 301,
-            "studies": 2
-          }
-        },
-        "bizygomatic": {
-          "male": {
-            "mean": 14.395,
-            "sd": 0.802,
-            "n": 60,
-            "studies": 2
-          },
-          "female": {
-            "mean": 13.66,
-            "sd": 0.518,
-            "n": 60,
-            "studies": 2
-          },
-          "combined": {
-            "mean": 14.028,
-            "sd": 0.767,
-            "n": 120,
-            "studies": 4
-          }
-        },
-        "maskarcflex": {
-          "male": {
-            "mean": 10.134,
-            "sd": 0.962,
-            "n": 60,
-            "studies": 2
-          },
-          "female": {
-            "mean": 9.275,
-            "sd": 0.59,
-            "n": 60,
-            "studies": 2
-          },
-          "combined": {
-            "mean": 9.699,
-            "sd": 0.897,
-            "n": 120,
-            "studies": 4
-          }
-        }
-      },
-      "Western Africa": {
-        "cranial": {
-          "male": {
-            "mean": 55.817,
-            "sd": 1.935,
-            "n": 799,
-            "studies": 6
-          },
-          "female": {
-            "mean": 54.203,
-            "sd": 4.126,
-            "n": 812,
-            "studies": 6
-          },
-          "combined": {
-            "mean": 55.003,
-            "sd": 3.329,
-            "n": 1611,
-            "studies": 12
-          }
-        },
-        "ear": {
-          "male": {
-            "mean": 5.704,
-            "sd": 0.454,
-            "n": 251,
-            "studies": 3
-          },
-          "female": {
-            "mean": 5.6,
-            "sd": 0.51,
+            "mean": 6.216,
+            "sd": 0.418,
             "n": 77,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 5.615,
-            "sd": 0.479,
-            "n": 712,
-            "studies": 14
-          }
-        },
-        "tragus": {
-          "male": {
-            "mean": 55.817,
-            "sd": 1.935,
-            "n": 799,
-            "studies": 6
+            "studies": 2
           },
           "female": {
-            "mean": 54.203,
-            "sd": 4.126,
-            "n": 812,
-            "studies": 6
+            "mean": 5.978,
+            "sd": 0.424,
+            "n": 83,
+            "studies": 2
           },
           "combined": {
-            "mean": 55.003,
-            "sd": 3.329,
-            "n": 1611,
-            "studies": 12
-          }
-        },
-        "mastoid": {
-          "male": {
-            "mean": 55.817,
-            "sd": 1.935,
-            "n": 799,
-            "studies": 6
-          },
-          "female": {
-            "mean": 54.203,
-            "sd": 4.126,
-            "n": 812,
-            "studies": 6
-          },
-          "combined": {
-            "mean": 55.003,
-            "sd": 3.329,
-            "n": 1611,
-            "studies": 12
-          }
-        }
-      },
-      "Central America": {
-        "cranial": {
-          "combined": {
-            "mean": 54.705,
-            "sd": 2.026,
-            "n": 1500,
-            "studies": 2
-          }
-        },
-        "tragus": {
-          "combined": {
-            "mean": 54.705,
-            "sd": 2.026,
-            "n": 1500,
-            "studies": 2
-          }
-        },
-        "mastoid": {
-          "combined": {
-            "mean": 54.705,
-            "sd": 2.026,
-            "n": 1500,
-            "studies": 2
-          }
-        }
-      },
-      "South Europe": {
-        "ear": {
-          "male": {
-            "mean": 6.265,
-            "sd": 0.398,
-            "n": 120,
+            "mean": 6.092,
+            "sd": 0.437,
+            "n": 160,
             "studies": 4
-          },
-          "female": {
-            "mean": 5.782,
-            "sd": 0.419,
-            "n": 120,
-            "studies": 4
-          },
-          "combined": {
-            "mean": 6.024,
-            "sd": 0.474,
-            "n": 240,
-            "studies": 8
           }
         },
         "bizygomatic": {
           "male": {
-            "mean": 13.315,
-            "sd": 0.976,
-            "n": 203,
-            "studies": 6
-          },
-          "female": {
-            "mean": 12.885,
-            "sd": 0.785,
-            "n": 120,
-            "studies": 4
-          },
-          "combined": {
-            "mean": 13.155,
-            "sd": 0.932,
-            "n": 323,
-            "studies": 10
-          }
-        },
-        "maskarcflex": {
-          "male": {
-            "mean": 8.887,
-            "sd": 1.083,
-            "n": 203,
-            "studies": 6
-          },
-          "female": {
-            "mean": 8.418,
-            "sd": 0.843,
-            "n": 120,
-            "studies": 4
-          },
-          "combined": {
-            "mean": 8.711,
-            "sd": 1.022,
-            "n": 323,
-            "studies": 10
-          }
-        }
-      },
-      "Eastern Asia": {
-        "cranial": {
-          "male": {
-            "mean": 56.688,
-            "sd": 1.358,
-            "n": 2304,
-            "studies": 2
-          },
-          "female": {
-            "mean": 55.024,
-            "sd": 1.483,
-            "n": 3255,
-            "studies": 4
-          },
-          "combined": {
-            "mean": 56.6,
-            "sd": 1.815,
-            "n": 23764,
-            "studies": 11
-          }
-        },
-        "ear": {
-          "male": {
-            "mean": 6.56,
-            "sd": 0.38,
+            "mean": 13.58,
+            "sd": 0.69,
             "n": 30,
             "studies": 1
           },
           "female": {
-            "mean": 6.19,
-            "sd": 0.38,
+            "mean": 13.03,
+            "sd": 0.52,
             "n": 30,
             "studies": 1
           },
           "combined": {
-            "mean": 6.412,
-            "sd": 0.407,
-            "n": 2460,
-            "studies": 4
-          }
-        },
-        "tragus": {
-          "male": {
-            "mean": 56.688,
-            "sd": 1.358,
-            "n": 2304,
+            "mean": 13.305,
+            "sd": 0.666,
+            "n": 60,
             "studies": 2
-          },
-          "female": {
-            "mean": 55.024,
-            "sd": 1.483,
-            "n": 3255,
-            "studies": 4
-          },
-          "combined": {
-            "mean": 56.6,
-            "sd": 1.815,
-            "n": 23764,
-            "studies": 11
           }
         },
-        "mastoid": {
+        "maskarcflex": {
           "male": {
-            "mean": 56.688,
-            "sd": 1.358,
-            "n": 2304,
-            "studies": 2
-          },
-          "female": {
-            "mean": 55.024,
-            "sd": 1.483,
-            "n": 3255,
-            "studies": 4
-          },
-          "combined": {
-            "mean": 56.6,
-            "sd": 1.815,
-            "n": 23764,
-            "studies": 11
-          }
-        },
-        "bizygomatic": {
-          "male": {
-            "mean": 14.72,
-            "sd": 0.56,
+            "mean": 9.184,
+            "sd": 0.781,
             "n": 30,
             "studies": 1
           },
           "female": {
-            "mean": 13.866,
-            "sd": 0.47,
-            "n": 2353,
-            "studies": 3
-          },
-          "combined": {
-            "mean": 13.693,
-            "sd": 0.515,
-            "n": 9783,
-            "studies": 7
-          }
-        },
-        "maskarcflex": {
-          "male": {
-            "mean": 10.528,
-            "sd": 0.687,
+            "mean": 8.574,
+            "sd": 0.565,
             "n": 30,
             "studies": 1
           },
-          "female": {
-            "mean": 9.511,
-            "sd": 0.543,
-            "n": 2353,
-            "studies": 3
-          },
           "combined": {
-            "mean": 9.312,
-            "sd": 0.588,
-            "n": 9783,
-            "studies": 7
-          }
-        }
-      },
-      "Northern Europe": {
-        "cranial": {
-          "combined": {
-            "mean": 57.7,
-            "sd": 1.55,
-            "n": 3000,
-            "studies": 1
-          }
-        },
-        "ear": {
-          "combined": {
-            "mean": 6.28,
-            "sd": 0.42,
-            "n": 2500,
-            "studies": 1
-          }
-        },
-        "tragus": {
-          "combined": {
-            "mean": 57.7,
-            "sd": 1.55,
-            "n": 3000,
-            "studies": 1
-          }
-        },
-        "mastoid": {
-          "combined": {
-            "mean": 57.7,
-            "sd": 1.55,
-            "n": 3000,
-            "studies": 1
-          }
-        },
-        "bizygomatic": {
-          "male": {
-            "mean": 13.31,
-            "sd": 1.0,
-            "n": 39,
-            "studies": 1
-          },
-          "female": {
-            "mean": 12.24,
-            "sd": 0.8,
-            "n": 38,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 13.944,
-            "sd": 0.597,
-            "n": 2577,
-            "studies": 3
-          }
-        },
-        "maskarcflex": {
-          "male": {
-            "mean": 8.882,
-            "sd": 1.109,
-            "n": 39,
-            "studies": 1
-          },
-          "female": {
-            "mean": 7.742,
-            "sd": 0.816,
-            "n": 38,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 9.601,
-            "sd": 0.694,
-            "n": 2577,
-            "studies": 3
-          }
-        }
-      },
-      "Southeastern Asia": {
-        "cranial": {
-          "combined": {
-            "mean": 56.205,
-            "sd": 1.682,
-            "n": 5900,
-            "studies": 2
-          }
-        },
-        "ear": {
-          "male": {
-            "mean": 6.334,
-            "sd": 0.553,
-            "n": 354,
-            "studies": 5
-          },
-          "female": {
-            "mean": 5.82,
-            "sd": 0.375,
-            "n": 571,
-            "studies": 5
-          },
-          "combined": {
-            "mean": 6.129,
-            "sd": 0.447,
-            "n": 5925,
-            "studies": 11
-          }
-        },
-        "tragus": {
-          "combined": {
-            "mean": 56.205,
-            "sd": 1.682,
-            "n": 5900,
-            "studies": 2
-          }
-        },
-        "mastoid": {
-          "combined": {
-            "mean": 56.205,
-            "sd": 1.682,
-            "n": 5900,
-            "studies": 2
-          }
-        },
-        "bizygomatic": {
-          "male": {
-            "mean": 14.555,
-            "sd": 0.518,
+            "mean": 8.876,
+            "sd": 0.738,
             "n": 60,
             "studies": 2
-          },
-          "female": {
-            "mean": 13.63,
-            "sd": 0.526,
-            "n": 60,
-            "studies": 2
-          },
-          "combined": {
-            "mean": 14.093,
-            "sd": 0.697,
-            "n": 120,
-            "studies": 4
-          }
-        },
-        "maskarcflex": {
-          "male": {
-            "mean": 10.327,
-            "sd": 0.628,
-            "n": 60,
-            "studies": 2
-          },
-          "female": {
-            "mean": 9.241,
-            "sd": 0.597,
-            "n": 60,
-            "studies": 2
-          },
-          "combined": {
-            "mean": 9.776,
-            "sd": 0.819,
-            "n": 120,
-            "studies": 4
           }
         }
       },
@@ -1160,40 +418,40 @@
         },
         "tragus": {
           "male": {
-            "mean": 54.988,
-            "sd": 1.753,
+            "mean": 27.494,
+            "sd": 0.876,
             "n": 170,
             "studies": 3
           },
           "female": {
-            "mean": 54.173,
-            "sd": 2.502,
+            "mean": 27.087,
+            "sd": 1.251,
             "n": 151,
             "studies": 3
           },
           "combined": {
-            "mean": 54.605,
-            "sd": 2.173,
+            "mean": 27.302,
+            "sd": 1.087,
             "n": 321,
             "studies": 6
           }
         },
         "mastoid": {
           "male": {
-            "mean": 54.988,
-            "sd": 1.753,
+            "mean": 27.494,
+            "sd": 0.876,
             "n": 170,
             "studies": 3
           },
           "female": {
-            "mean": 54.173,
-            "sd": 2.502,
+            "mean": 27.087,
+            "sd": 1.251,
             "n": 151,
             "studies": 3
           },
           "combined": {
-            "mean": 54.605,
-            "sd": 2.173,
+            "mean": 27.302,
+            "sd": 1.087,
             "n": 321,
             "studies": 6
           }
@@ -1282,40 +540,40 @@
         },
         "tragus": {
           "male": {
-            "mean": 56.788,
-            "sd": 1.576,
+            "mean": 28.394,
+            "sd": 0.788,
             "n": 4317,
             "studies": 2
           },
           "female": {
-            "mean": 55.295,
-            "sd": 1.69,
+            "mean": 27.648,
+            "sd": 0.845,
             "n": 3692,
             "studies": 2
           },
           "combined": {
-            "mean": 56.565,
-            "sd": 1.749,
+            "mean": 28.282,
+            "sd": 0.874,
             "n": 17656,
             "studies": 8
           }
         },
         "mastoid": {
           "male": {
-            "mean": 56.788,
-            "sd": 1.576,
+            "mean": 28.394,
+            "sd": 0.788,
             "n": 4317,
             "studies": 2
           },
           "female": {
-            "mean": 55.295,
-            "sd": 1.69,
+            "mean": 27.648,
+            "sd": 0.845,
             "n": 3692,
             "studies": 2
           },
           "combined": {
-            "mean": 56.565,
-            "sd": 1.749,
+            "mean": 28.282,
+            "sd": 0.874,
             "n": 17656,
             "studies": 8
           }
@@ -1361,6 +619,870 @@
           }
         }
       },
+      "Eastern Asia": {
+        "cranial": {
+          "male": {
+            "mean": 56.688,
+            "sd": 1.358,
+            "n": 2304,
+            "studies": 2
+          },
+          "female": {
+            "mean": 55.024,
+            "sd": 1.483,
+            "n": 3255,
+            "studies": 4
+          },
+          "combined": {
+            "mean": 56.6,
+            "sd": 1.815,
+            "n": 23764,
+            "studies": 11
+          }
+        },
+        "ear": {
+          "male": {
+            "mean": 6.56,
+            "sd": 0.38,
+            "n": 30,
+            "studies": 1
+          },
+          "female": {
+            "mean": 6.19,
+            "sd": 0.38,
+            "n": 30,
+            "studies": 1
+          },
+          "combined": {
+            "mean": 6.412,
+            "sd": 0.407,
+            "n": 2460,
+            "studies": 4
+          }
+        },
+        "tragus": {
+          "male": {
+            "mean": 28.344,
+            "sd": 0.679,
+            "n": 2304,
+            "studies": 2
+          },
+          "female": {
+            "mean": 27.512,
+            "sd": 0.741,
+            "n": 3255,
+            "studies": 4
+          },
+          "combined": {
+            "mean": 28.3,
+            "sd": 0.907,
+            "n": 23764,
+            "studies": 11
+          }
+        },
+        "mastoid": {
+          "male": {
+            "mean": 28.344,
+            "sd": 0.679,
+            "n": 2304,
+            "studies": 2
+          },
+          "female": {
+            "mean": 27.512,
+            "sd": 0.741,
+            "n": 3255,
+            "studies": 4
+          },
+          "combined": {
+            "mean": 28.3,
+            "sd": 0.907,
+            "n": 23764,
+            "studies": 11
+          }
+        },
+        "bizygomatic": {
+          "male": {
+            "mean": 14.72,
+            "sd": 0.56,
+            "n": 30,
+            "studies": 1
+          },
+          "female": {
+            "mean": 13.866,
+            "sd": 0.47,
+            "n": 2353,
+            "studies": 3
+          },
+          "combined": {
+            "mean": 13.693,
+            "sd": 0.515,
+            "n": 9783,
+            "studies": 7
+          }
+        },
+        "maskarcflex": {
+          "male": {
+            "mean": 10.528,
+            "sd": 0.687,
+            "n": 30,
+            "studies": 1
+          },
+          "female": {
+            "mean": 9.511,
+            "sd": 0.543,
+            "n": 2353,
+            "studies": 3
+          },
+          "combined": {
+            "mean": 9.312,
+            "sd": 0.588,
+            "n": 9783,
+            "studies": 7
+          }
+        }
+      },
+      "Caribbean": {
+        "cranial": {
+          "combined": {
+            "mean": 55.772,
+            "sd": 2.096,
+            "n": 4855,
+            "studies": 3
+          }
+        },
+        "tragus": {
+          "combined": {
+            "mean": 27.886,
+            "sd": 1.048,
+            "n": 4855,
+            "studies": 3
+          }
+        },
+        "mastoid": {
+          "combined": {
+            "mean": 27.886,
+            "sd": 1.048,
+            "n": 4855,
+            "studies": 3
+          }
+        }
+      },
+      "Not specified": {
+        "cranial": {
+          "male": {
+            "mean": 58.396,
+            "sd": 1.985,
+            "n": 467,
+            "studies": 4
+          },
+          "female": {
+            "mean": 55.813,
+            "sd": 1.713,
+            "n": 693,
+            "studies": 3
+          },
+          "combined": {
+            "mean": 55.63,
+            "sd": 4.025,
+            "n": 32604,
+            "studies": 11
+          }
+        },
+        "ear": {
+          "male": {
+            "mean": 6.658,
+            "sd": 0.454,
+            "n": 71,
+            "studies": 2
+          },
+          "female": {
+            "mean": 6.21,
+            "sd": 0.429,
+            "n": 71,
+            "studies": 2
+          },
+          "combined": {
+            "mean": 6.434,
+            "sd": 0.494,
+            "n": 142,
+            "studies": 4
+          }
+        },
+        "tragus": {
+          "male": {
+            "mean": 29.198,
+            "sd": 0.992,
+            "n": 467,
+            "studies": 4
+          },
+          "female": {
+            "mean": 27.906,
+            "sd": 0.857,
+            "n": 693,
+            "studies": 3
+          },
+          "combined": {
+            "mean": 27.815,
+            "sd": 2.012,
+            "n": 32604,
+            "studies": 11
+          }
+        },
+        "mastoid": {
+          "male": {
+            "mean": 29.198,
+            "sd": 0.992,
+            "n": 467,
+            "studies": 4
+          },
+          "female": {
+            "mean": 27.906,
+            "sd": 0.857,
+            "n": 693,
+            "studies": 3
+          },
+          "combined": {
+            "mean": 27.815,
+            "sd": 2.012,
+            "n": 32604,
+            "studies": 11
+          }
+        }
+      },
+      "South America": {
+        "cranial": {
+          "male": {
+            "mean": 56.251,
+            "sd": 2.449,
+            "n": 1095,
+            "studies": 2
+          },
+          "female": {
+            "mean": 54.344,
+            "sd": 2.319,
+            "n": 1005,
+            "studies": 2
+          },
+          "combined": {
+            "mean": 55.916,
+            "sd": 2.335,
+            "n": 6480,
+            "studies": 8
+          }
+        },
+        "ear": {
+          "combined": {
+            "mean": 6.25,
+            "sd": 0.41,
+            "n": 2000,
+            "studies": 1
+          }
+        },
+        "tragus": {
+          "male": {
+            "mean": 28.125,
+            "sd": 1.225,
+            "n": 1095,
+            "studies": 2
+          },
+          "female": {
+            "mean": 27.172,
+            "sd": 1.159,
+            "n": 1005,
+            "studies": 2
+          },
+          "combined": {
+            "mean": 27.958,
+            "sd": 1.167,
+            "n": 6480,
+            "studies": 8
+          }
+        },
+        "mastoid": {
+          "male": {
+            "mean": 28.125,
+            "sd": 1.225,
+            "n": 1095,
+            "studies": 2
+          },
+          "female": {
+            "mean": 27.172,
+            "sd": 1.159,
+            "n": 1005,
+            "studies": 2
+          },
+          "combined": {
+            "mean": 27.958,
+            "sd": 1.167,
+            "n": 6480,
+            "studies": 8
+          }
+        }
+      },
+      "Southeastern Asia": {
+        "cranial": {
+          "combined": {
+            "mean": 56.205,
+            "sd": 1.682,
+            "n": 5900,
+            "studies": 2
+          }
+        },
+        "ear": {
+          "male": {
+            "mean": 6.334,
+            "sd": 0.553,
+            "n": 354,
+            "studies": 5
+          },
+          "female": {
+            "mean": 5.82,
+            "sd": 0.375,
+            "n": 571,
+            "studies": 5
+          },
+          "combined": {
+            "mean": 6.129,
+            "sd": 0.447,
+            "n": 5925,
+            "studies": 11
+          }
+        },
+        "tragus": {
+          "combined": {
+            "mean": 28.103,
+            "sd": 0.841,
+            "n": 5900,
+            "studies": 2
+          }
+        },
+        "mastoid": {
+          "combined": {
+            "mean": 28.103,
+            "sd": 0.841,
+            "n": 5900,
+            "studies": 2
+          }
+        },
+        "bizygomatic": {
+          "male": {
+            "mean": 14.555,
+            "sd": 0.518,
+            "n": 60,
+            "studies": 2
+          },
+          "female": {
+            "mean": 13.63,
+            "sd": 0.526,
+            "n": 60,
+            "studies": 2
+          },
+          "combined": {
+            "mean": 14.093,
+            "sd": 0.697,
+            "n": 120,
+            "studies": 4
+          }
+        },
+        "maskarcflex": {
+          "male": {
+            "mean": 10.327,
+            "sd": 0.628,
+            "n": 60,
+            "studies": 2
+          },
+          "female": {
+            "mean": 9.241,
+            "sd": 0.597,
+            "n": 60,
+            "studies": 2
+          },
+          "combined": {
+            "mean": 9.776,
+            "sd": 0.819,
+            "n": 120,
+            "studies": 4
+          }
+        }
+      },
+      "Australia + New Zealand": {
+        "cranial": {
+          "combined": {
+            "mean": 57.7,
+            "sd": 1.57,
+            "n": 3500,
+            "studies": 1
+          }
+        },
+        "ear": {
+          "combined": {
+            "mean": 6.28,
+            "sd": 0.42,
+            "n": 3000,
+            "studies": 1
+          }
+        },
+        "tragus": {
+          "combined": {
+            "mean": 28.85,
+            "sd": 0.785,
+            "n": 3500,
+            "studies": 1
+          }
+        },
+        "mastoid": {
+          "combined": {
+            "mean": 28.85,
+            "sd": 0.785,
+            "n": 3500,
+            "studies": 1
+          }
+        },
+        "bizygomatic": {
+          "combined": {
+            "mean": 13.98,
+            "sd": 0.54,
+            "n": 3000,
+            "studies": 1
+          }
+        },
+        "maskarcflex": {
+          "combined": {
+            "mean": 9.643,
+            "sd": 0.629,
+            "n": 3000,
+            "studies": 1
+          }
+        }
+      },
+      "African + Caribbean": {
+        "ear": {
+          "male": {
+            "mean": 6.27,
+            "sd": 0.34,
+            "n": 21,
+            "studies": 2
+          },
+          "female": {
+            "mean": 6.07,
+            "sd": 0.393,
+            "n": 21,
+            "studies": 2
+          },
+          "combined": {
+            "mean": 6.17,
+            "sd": 0.376,
+            "n": 42,
+            "studies": 4
+          }
+        }
+      },
+      "Western Asia": {
+        "cranial": {
+          "male": {
+            "mean": 57.52,
+            "sd": 1.63,
+            "n": 166,
+            "studies": 1
+          },
+          "female": {
+            "mean": 55.15,
+            "sd": 1.56,
+            "n": 135,
+            "studies": 1
+          },
+          "combined": {
+            "mean": 56.457,
+            "sd": 1.986,
+            "n": 301,
+            "studies": 2
+          }
+        },
+        "ear": {
+          "male": {
+            "mean": 6.52,
+            "sd": 0.385,
+            "n": 60,
+            "studies": 2
+          },
+          "female": {
+            "mean": 6.06,
+            "sd": 0.333,
+            "n": 60,
+            "studies": 2
+          },
+          "combined": {
+            "mean": 6.29,
+            "sd": 0.426,
+            "n": 120,
+            "studies": 4
+          }
+        },
+        "tragus": {
+          "male": {
+            "mean": 28.76,
+            "sd": 0.815,
+            "n": 166,
+            "studies": 1
+          },
+          "female": {
+            "mean": 27.575,
+            "sd": 0.78,
+            "n": 135,
+            "studies": 1
+          },
+          "combined": {
+            "mean": 28.229,
+            "sd": 0.993,
+            "n": 301,
+            "studies": 2
+          }
+        },
+        "mastoid": {
+          "male": {
+            "mean": 28.76,
+            "sd": 0.815,
+            "n": 166,
+            "studies": 1
+          },
+          "female": {
+            "mean": 27.575,
+            "sd": 0.78,
+            "n": 135,
+            "studies": 1
+          },
+          "combined": {
+            "mean": 28.229,
+            "sd": 0.993,
+            "n": 301,
+            "studies": 2
+          }
+        },
+        "bizygomatic": {
+          "male": {
+            "mean": 14.395,
+            "sd": 0.802,
+            "n": 60,
+            "studies": 2
+          },
+          "female": {
+            "mean": 13.66,
+            "sd": 0.518,
+            "n": 60,
+            "studies": 2
+          },
+          "combined": {
+            "mean": 14.028,
+            "sd": 0.767,
+            "n": 120,
+            "studies": 4
+          }
+        },
+        "maskarcflex": {
+          "male": {
+            "mean": 10.134,
+            "sd": 0.962,
+            "n": 60,
+            "studies": 2
+          },
+          "female": {
+            "mean": 9.275,
+            "sd": 0.59,
+            "n": 60,
+            "studies": 2
+          },
+          "combined": {
+            "mean": 9.699,
+            "sd": 0.897,
+            "n": 120,
+            "studies": 4
+          }
+        }
+      },
+      "Southern Asia + Southeastern Asia": {
+        "ear": {
+          "male": {
+            "mean": 6.07,
+            "sd": 0.38,
+            "n": 30,
+            "studies": 1
+          },
+          "female": {
+            "mean": 5.76,
+            "sd": 0.39,
+            "n": 30,
+            "studies": 1
+          },
+          "combined": {
+            "mean": 5.915,
+            "sd": 0.413,
+            "n": 60,
+            "studies": 2
+          }
+        },
+        "bizygomatic": {
+          "male": {
+            "mean": 14.4,
+            "sd": 0.51,
+            "n": 30,
+            "studies": 1
+          },
+          "female": {
+            "mean": 13.62,
+            "sd": 0.4,
+            "n": 30,
+            "studies": 1
+          },
+          "combined": {
+            "mean": 14.01,
+            "sd": 0.601,
+            "n": 60,
+            "studies": 2
+          }
+        },
+        "maskarcflex": {
+          "male": {
+            "mean": 10.14,
+            "sd": 0.612,
+            "n": 30,
+            "studies": 1
+          },
+          "female": {
+            "mean": 9.229,
+            "sd": 0.454,
+            "n": 30,
+            "studies": 1
+          },
+          "combined": {
+            "mean": 9.678,
+            "sd": 0.702,
+            "n": 60,
+            "studies": 2
+          }
+        }
+      },
+      "Northern Europe": {
+        "cranial": {
+          "combined": {
+            "mean": 57.7,
+            "sd": 1.55,
+            "n": 3000,
+            "studies": 1
+          }
+        },
+        "ear": {
+          "combined": {
+            "mean": 6.28,
+            "sd": 0.42,
+            "n": 2500,
+            "studies": 1
+          }
+        },
+        "tragus": {
+          "combined": {
+            "mean": 28.85,
+            "sd": 0.775,
+            "n": 3000,
+            "studies": 1
+          }
+        },
+        "mastoid": {
+          "combined": {
+            "mean": 28.85,
+            "sd": 0.775,
+            "n": 3000,
+            "studies": 1
+          }
+        },
+        "bizygomatic": {
+          "male": {
+            "mean": 13.31,
+            "sd": 1.0,
+            "n": 39,
+            "studies": 1
+          },
+          "female": {
+            "mean": 12.24,
+            "sd": 0.8,
+            "n": 38,
+            "studies": 1
+          },
+          "combined": {
+            "mean": 13.944,
+            "sd": 0.597,
+            "n": 2577,
+            "studies": 3
+          }
+        },
+        "maskarcflex": {
+          "male": {
+            "mean": 8.882,
+            "sd": 1.109,
+            "n": 39,
+            "studies": 1
+          },
+          "female": {
+            "mean": 7.742,
+            "sd": 0.816,
+            "n": 38,
+            "studies": 1
+          },
+          "combined": {
+            "mean": 9.601,
+            "sd": 0.694,
+            "n": 2577,
+            "studies": 3
+          }
+        }
+      },
+      "South Europe": {
+        "ear": {
+          "male": {
+            "mean": 6.265,
+            "sd": 0.398,
+            "n": 120,
+            "studies": 4
+          },
+          "female": {
+            "mean": 5.782,
+            "sd": 0.419,
+            "n": 120,
+            "studies": 4
+          },
+          "combined": {
+            "mean": 6.024,
+            "sd": 0.474,
+            "n": 240,
+            "studies": 8
+          }
+        },
+        "bizygomatic": {
+          "male": {
+            "mean": 13.315,
+            "sd": 0.976,
+            "n": 203,
+            "studies": 6
+          },
+          "female": {
+            "mean": 12.885,
+            "sd": 0.785,
+            "n": 120,
+            "studies": 4
+          },
+          "combined": {
+            "mean": 13.155,
+            "sd": 0.932,
+            "n": 323,
+            "studies": 10
+          }
+        },
+        "maskarcflex": {
+          "male": {
+            "mean": 8.887,
+            "sd": 1.083,
+            "n": 203,
+            "studies": 6
+          },
+          "female": {
+            "mean": 8.418,
+            "sd": 0.843,
+            "n": 120,
+            "studies": 4
+          },
+          "combined": {
+            "mean": 8.711,
+            "sd": 1.022,
+            "n": 323,
+            "studies": 10
+          }
+        }
+      },
+      "Western Europe": {
+        "cranial": {
+          "combined": {
+            "mean": 57.587,
+            "sd": 1.558,
+            "n": 12000,
+            "studies": 2
+          }
+        },
+        "ear": {
+          "male": {
+            "mean": 6.31,
+            "sd": 0.42,
+            "n": 30,
+            "studies": 1
+          },
+          "female": {
+            "mean": 5.84,
+            "sd": 0.4,
+            "n": 30,
+            "studies": 1
+          },
+          "combined": {
+            "mean": 6.283,
+            "sd": 0.425,
+            "n": 11060,
+            "studies": 4
+          }
+        },
+        "tragus": {
+          "combined": {
+            "mean": 28.794,
+            "sd": 0.779,
+            "n": 12000,
+            "studies": 2
+          }
+        },
+        "mastoid": {
+          "combined": {
+            "mean": 28.794,
+            "sd": 0.779,
+            "n": 12000,
+            "studies": 2
+          }
+        },
+        "bizygomatic": {
+          "male": {
+            "mean": 13.32,
+            "sd": 0.75,
+            "n": 30,
+            "studies": 1
+          },
+          "female": {
+            "mean": 12.34,
+            "sd": 0.92,
+            "n": 30,
+            "studies": 1
+          },
+          "combined": {
+            "mean": 13.978,
+            "sd": 0.554,
+            "n": 11060,
+            "studies": 4
+          }
+        },
+        "maskarcflex": {
+          "male": {
+            "mean": 8.893,
+            "sd": 0.833,
+            "n": 30,
+            "studies": 1
+          },
+          "female": {
+            "mean": 7.845,
+            "sd": 0.946,
+            "n": 30,
+            "studies": 1
+          },
+          "combined": {
+            "mean": 9.641,
+            "sd": 0.645,
+            "n": 11060,
+            "studies": 4
+          }
+        }
+      },
       "Southern Africa": {
         "cranial": {
           "combined": {
@@ -1392,16 +1514,16 @@
         },
         "tragus": {
           "combined": {
-            "mean": 57.4,
-            "sd": 1.55,
+            "mean": 28.7,
+            "sd": 0.775,
             "n": 1400,
             "studies": 1
           }
         },
         "mastoid": {
           "combined": {
-            "mean": 57.4,
-            "sd": 1.55,
+            "mean": 28.7,
+            "sd": 0.775,
             "n": 1400,
             "studies": 1
           }
@@ -1447,91 +1569,29 @@
           }
         }
       },
-      "Northern Africa": {
-        "ear": {
-          "male": {
-            "mean": 6.216,
-            "sd": 0.418,
-            "n": 77,
-            "studies": 2
-          },
-          "female": {
-            "mean": 5.978,
-            "sd": 0.424,
-            "n": 83,
-            "studies": 2
-          },
-          "combined": {
-            "mean": 6.092,
-            "sd": 0.437,
-            "n": 160,
-            "studies": 4
-          }
-        },
-        "bizygomatic": {
-          "male": {
-            "mean": 13.58,
-            "sd": 0.69,
-            "n": 30,
-            "studies": 1
-          },
-          "female": {
-            "mean": 13.03,
-            "sd": 0.52,
-            "n": 30,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 13.305,
-            "sd": 0.666,
-            "n": 60,
-            "studies": 2
-          }
-        },
-        "maskarcflex": {
-          "male": {
-            "mean": 9.184,
-            "sd": 0.781,
-            "n": 30,
-            "studies": 1
-          },
-          "female": {
-            "mean": 8.574,
-            "sd": 0.565,
-            "n": 30,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 8.876,
-            "sd": 0.738,
-            "n": 60,
-            "studies": 2
-          }
-        }
-      },
-      "Caribbean": {
+      "Central America": {
         "cranial": {
           "combined": {
-            "mean": 55.772,
-            "sd": 2.096,
-            "n": 4855,
-            "studies": 3
+            "mean": 54.705,
+            "sd": 2.026,
+            "n": 1500,
+            "studies": 2
           }
         },
         "tragus": {
           "combined": {
-            "mean": 55.772,
-            "sd": 2.096,
-            "n": 4855,
-            "studies": 3
+            "mean": 27.353,
+            "sd": 1.013,
+            "n": 1500,
+            "studies": 2
           }
         },
         "mastoid": {
           "combined": {
-            "mean": 55.772,
-            "sd": 2.096,
-            "n": 4855,
-            "studies": 3
+            "mean": 27.353,
+            "sd": 1.013,
+            "n": 1500,
+            "studies": 2
           }
         }
       },
@@ -1576,6 +1636,88 @@
             "sd": 0.145,
             "n": 30,
             "studies": 1
+          }
+        }
+      },
+      "Western Africa": {
+        "cranial": {
+          "male": {
+            "mean": 55.817,
+            "sd": 1.935,
+            "n": 799,
+            "studies": 6
+          },
+          "female": {
+            "mean": 54.203,
+            "sd": 4.126,
+            "n": 812,
+            "studies": 6
+          },
+          "combined": {
+            "mean": 55.003,
+            "sd": 3.329,
+            "n": 1611,
+            "studies": 12
+          }
+        },
+        "ear": {
+          "male": {
+            "mean": 5.704,
+            "sd": 0.454,
+            "n": 251,
+            "studies": 3
+          },
+          "female": {
+            "mean": 5.6,
+            "sd": 0.51,
+            "n": 77,
+            "studies": 1
+          },
+          "combined": {
+            "mean": 5.615,
+            "sd": 0.479,
+            "n": 712,
+            "studies": 14
+          }
+        },
+        "tragus": {
+          "male": {
+            "mean": 27.908,
+            "sd": 0.967,
+            "n": 799,
+            "studies": 6
+          },
+          "female": {
+            "mean": 27.101,
+            "sd": 2.063,
+            "n": 812,
+            "studies": 6
+          },
+          "combined": {
+            "mean": 27.502,
+            "sd": 1.664,
+            "n": 1611,
+            "studies": 12
+          }
+        },
+        "mastoid": {
+          "male": {
+            "mean": 27.908,
+            "sd": 0.967,
+            "n": 799,
+            "studies": 6
+          },
+          "female": {
+            "mean": 27.101,
+            "sd": 2.063,
+            "n": 812,
+            "studies": 6
+          },
+          "combined": {
+            "mean": 27.502,
+            "sd": 1.664,
+            "n": 1611,
+            "studies": 12
           }
         }
       },
@@ -1640,151 +1782,51 @@
             "studies": 2
           }
         }
-      },
-      "South America": {
-        "cranial": {
-          "male": {
-            "mean": 56.251,
-            "sd": 2.449,
-            "n": 1095,
-            "studies": 2
-          },
-          "female": {
-            "mean": 54.344,
-            "sd": 2.319,
-            "n": 1005,
-            "studies": 2
-          },
-          "combined": {
-            "mean": 55.916,
-            "sd": 2.335,
-            "n": 6480,
-            "studies": 8
-          }
-        },
-        "ear": {
-          "combined": {
-            "mean": 6.25,
-            "sd": 0.41,
-            "n": 2000,
-            "studies": 1
-          }
-        },
-        "tragus": {
-          "male": {
-            "mean": 56.251,
-            "sd": 2.449,
-            "n": 1095,
-            "studies": 2
-          },
-          "female": {
-            "mean": 54.344,
-            "sd": 2.319,
-            "n": 1005,
-            "studies": 2
-          },
-          "combined": {
-            "mean": 55.916,
-            "sd": 2.335,
-            "n": 6480,
-            "studies": 8
-          }
-        },
-        "mastoid": {
-          "male": {
-            "mean": 56.251,
-            "sd": 2.449,
-            "n": 1095,
-            "studies": 2
-          },
-          "female": {
-            "mean": 54.344,
-            "sd": 2.319,
-            "n": 1005,
-            "studies": 2
-          },
-          "combined": {
-            "mean": 55.916,
-            "sd": 2.335,
-            "n": 6480,
-            "studies": 8
-          }
-        }
-      },
-      "African + Caribbean": {
-        "ear": {
-          "male": {
-            "mean": 6.27,
-            "sd": 0.34,
-            "n": 21,
-            "studies": 2
-          },
-          "female": {
-            "mean": 6.07,
-            "sd": 0.393,
-            "n": 21,
-            "studies": 2
-          },
-          "combined": {
-            "mean": 6.17,
-            "sd": 0.376,
-            "n": 42,
-            "studies": 4
-          }
-        }
-      },
-      "Australia + New Zealand": {
-        "cranial": {
-          "combined": {
-            "mean": 57.7,
-            "sd": 1.57,
-            "n": 3500,
-            "studies": 1
-          }
-        },
-        "ear": {
-          "combined": {
-            "mean": 6.28,
-            "sd": 0.42,
-            "n": 3000,
-            "studies": 1
-          }
-        },
-        "tragus": {
-          "combined": {
-            "mean": 57.7,
-            "sd": 1.57,
-            "n": 3500,
-            "studies": 1
-          }
-        },
-        "mastoid": {
-          "combined": {
-            "mean": 57.7,
-            "sd": 1.57,
-            "n": 3500,
-            "studies": 1
-          }
-        },
-        "bizygomatic": {
-          "combined": {
-            "mean": 13.98,
-            "sd": 0.54,
-            "n": 3000,
-            "studies": 1
-          }
-        },
-        "maskarcflex": {
-          "combined": {
-            "mean": 9.643,
-            "sd": 0.629,
-            "n": 3000,
-            "studies": 1
-          }
-        }
       }
     },
     "age": {
+      "60+": {
+        "bizygomatic": {
+          "male": {
+            "mean": 14.7,
+            "sd": 0.6,
+            "n": 61,
+            "studies": 1
+          },
+          "female": {
+            "mean": 13.66,
+            "sd": 0.61,
+            "n": 83,
+            "studies": 1
+          },
+          "combined": {
+            "mean": 14.101,
+            "sd": 0.794,
+            "n": 144,
+            "studies": 2
+          }
+        },
+        "maskarcflex": {
+          "male": {
+            "mean": 10.504,
+            "sd": 0.735,
+            "n": 61,
+            "studies": 1
+          },
+          "female": {
+            "mean": 9.275,
+            "sd": 0.694,
+            "n": 83,
+            "studies": 1
+          },
+          "combined": {
+            "mean": 9.785,
+            "sd": 0.933,
+            "n": 144,
+            "studies": 2
+          }
+        }
+      },
       "18-30": {
         "cranial": {
           "male": {
@@ -1828,40 +1870,40 @@
         },
         "tragus": {
           "male": {
-            "mean": 56.014,
-            "sd": 2.289,
+            "mean": 28.007,
+            "sd": 1.144,
             "n": 631,
             "studies": 6
           },
           "female": {
-            "mean": 53.848,
-            "sd": 4.183,
+            "mean": 26.924,
+            "sd": 2.091,
             "n": 692,
             "studies": 6
           },
           "combined": {
-            "mean": 54.881,
-            "sd": 3.58,
+            "mean": 27.441,
+            "sd": 1.79,
             "n": 1323,
             "studies": 12
           }
         },
         "mastoid": {
           "male": {
-            "mean": 56.014,
-            "sd": 2.289,
+            "mean": 28.007,
+            "sd": 1.144,
             "n": 631,
             "studies": 6
           },
           "female": {
-            "mean": 53.848,
-            "sd": 4.183,
+            "mean": 26.924,
+            "sd": 2.091,
             "n": 692,
             "studies": 6
           },
           "combined": {
-            "mean": 54.881,
-            "sd": 3.58,
+            "mean": 27.441,
+            "sd": 1.79,
             "n": 1323,
             "studies": 12
           }
@@ -2012,40 +2054,40 @@
         },
         "tragus": {
           "male": {
-            "mean": 56.51,
-            "sd": 1.405,
+            "mean": 28.255,
+            "sd": 0.703,
             "n": 328,
             "studies": 2
           },
           "female": {
-            "mean": 54.06,
-            "sd": 1.81,
+            "mean": 27.03,
+            "sd": 0.905,
             "n": 21,
             "studies": 1
           },
           "combined": {
-            "mean": 56.363,
-            "sd": 1.544,
+            "mean": 28.181,
+            "sd": 0.772,
             "n": 349,
             "studies": 3
           }
         },
         "mastoid": {
           "male": {
-            "mean": 56.51,
-            "sd": 1.405,
+            "mean": 28.255,
+            "sd": 0.703,
             "n": 328,
             "studies": 2
           },
           "female": {
-            "mean": 54.06,
-            "sd": 1.81,
+            "mean": 27.03,
+            "sd": 0.905,
             "n": 21,
             "studies": 1
           },
           "combined": {
-            "mean": 56.363,
-            "sd": 1.544,
+            "mean": 28.181,
+            "sd": 0.772,
             "n": 349,
             "studies": 3
           }
@@ -2087,48 +2129,6 @@
             "mean": 9.47,
             "sd": 0.935,
             "n": 683,
-            "studies": 2
-          }
-        }
-      },
-      "60+": {
-        "bizygomatic": {
-          "male": {
-            "mean": 14.7,
-            "sd": 0.6,
-            "n": 61,
-            "studies": 1
-          },
-          "female": {
-            "mean": 13.66,
-            "sd": 0.61,
-            "n": 83,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 14.101,
-            "sd": 0.794,
-            "n": 144,
-            "studies": 2
-          }
-        },
-        "maskarcflex": {
-          "male": {
-            "mean": 10.504,
-            "sd": 0.735,
-            "n": 61,
-            "studies": 1
-          },
-          "female": {
-            "mean": 9.275,
-            "sd": 0.694,
-            "n": 83,
-            "studies": 1
-          },
-          "combined": {
-            "mean": 9.785,
-            "sd": 0.933,
-            "n": 144,
             "studies": 2
           }
         }
