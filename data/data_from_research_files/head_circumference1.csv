@@ -50,7 +50,7 @@ Prince 2018,55.2,2.00,877,Not specified,Chinese,Asian,Eastern Asia,
 Prince 2018,55,2.00,928,Not specified,Chinese,Asian,Eastern Asia,
 Nasa,57.4,1.52,"4,500",Not specified,French,White ,Western Europe,
 Nasa,57.7,1.57,"7,500",Not specified,German,White ,Western Europe,
-Nasa,57.7,1.55,"3,000",Not specified,British,White ,Northern Europe,
+Nasa,57.7,1.55,"3,000",Not specified,British,White ,Northern Europse,
 Nasa,56.9,1.60,"6,000",Not specified,American ,White ,North America,
 Nasa,56.1,1.47,"1,500",Not specified,Japanese ,Asian,Eastern Asia,
 Nasa,56.6,1.52,900,Not specified,Korean,Asian,Eastern Asia,
@@ -67,52 +67,47 @@ Zhaung ,56.8,1.60,1886,Not specified,Caucasian,White ,North America,
 Zhaung ,57.5,1.60,1223,Not specified,African American,Black ,North America,
 Zhaung ,56.8,1.60,538,Not specified,Hispanic,Hispanic or Latino,North America,
 Fariborz et al. 2014,57.31,1.31,50,Male ,Persain,MENA,South America,18-30
-Park,57.50,1.50,80,Male ,Not specified,Multiracial,Not specified,18-59
-Park,55.70,1.90,100,Female,Not specified,Multiracial,Not specified,18-59
-Algazi,57.33,2.47,43,Not specified,Not specified,Not specified,Not specified,
-Tanprom 2014,57.47,1.36,96,Male ,Not specified,Not specified,Not specified,
-Tanprom 2014,54.73,1.45,90,Female,Not specified,Not specified,Not specified,
 Fariborz et al. 2014,55.18,1.38,50,Female,Persain,MENA,South America,18-30
 ANSUR 1998,56.77,1.54,1774,Male ,Not specified,Not specified,North America,
 ANSUR 1998,54.62,1.46,2208,Female,Not specified,Not specified,North America,
-Caesar,56.13,2.24,147,Female,African American,Black ,North America,
-Caesar,52.05,1.38,4,Female,Asian/Pacific Islander Asian Indian,Asian +  Pacific Islander,North America,
-Caesar,54.49,1.51,45,Female,Asian/Pacific Islander Chinese,Asian +  Pacific Islander,North America,
-Caesar,54.06,1.48,16,Female,Asian/Pacific Islander Filipano,Asian +  Pacific Islander,North America,
-Caesar,54.23,1.56,7,Female,Asian/Pacific Islander Japanese,Asian +  Pacific Islander,North America,
-Caesar,55.60,8.54,7,Female,Asian/Pacific Islander Korean,Asian +  Pacific Islander,North America,
-Caesar,54.27,7.51,3,Female,Asian/Pacific Islander Other,Asian +  Pacific Islander,North America,
-Caesar,54.36,14.51,11,Female,Asian/Pacific Islander Vietnamese,Asian +  Pacific Islander,North America,
-Caesar,57.50,22.49,4,Female,Native American/Alaskan, Pacific Islander,North America,
-Caesar,55.08,23.64,5,Female,Other,Other,North America,
-Caesar,55.70,24.25,25,Female,Other,Other,North America,
-Caesar,55.50,19.43,7,Female,Other,Other,North America,
-Caesar,55.44,21.74,8,Female,Hispanic,Hispanic or Latino,North America,
-Caesar,54.95,22.79,8,Female,Spanish/Hispanic Other,Hispanic or Latino,North America,
-Caesar,55.90,11.31,2,Female,Puerto Rican,Hispanic or Latino,North America,
-Caesar,55.12,15.48,964,Female,Caucasian,White ,North America,
-Caesar,58.18,18.55,116,Male ,African American,Black ,North America,
-Caesar,56.76,14.84,13,Male ,Asian/Pacific Islander Asian Indian,Asian +  Pacific Islander,North America,
-Caesar,56.79,14.22,38,Male ,Asian/Pacific Islander Chinese,Asian +  Pacific Islander,North America,
-Caesar,56.59,21.75,13,Male ,Asian/Pacific Islander Filipano,Asian +  Pacific Islander,North America,
-Caesar,57.47,13.47,9,Male ,Asian/Pacific Islander Japanese,Asian +  Pacific Islander,North America,
-Caesar,58.10,19.41,4,Male ,Asian/Pacific Islander Korean,Asian +  Pacific Islander,North America,
-Caesar,58.10,18.38,2,Male ,Asian/Pacific Islander Other,Asian +  Pacific Islander,North America,
-Caesar,54.38,10.44,4,Male ,Asian/Pacific Islander Vietnamese,Asian +  Pacific Islander,North America,
-Caesar,57.43,2.08,3,Male ,Native American/Alaskan, Pacific Islander,North America,
-Caesar,57.83,15.84,4,Male ,Other,Other,North America,
-Caesar,58.48,15.47,12,Male ,Other,Other,North America,
-Caesar,56.83,11.95,4,Male ,Other,Other,North America,
-Caesar,57.23,7.37,3,Male ,Hispanic,Hispanic or Latino,North America,
-Caesar,57.48,15.48,16,Male ,Spanish/Hispanic Other,Hispanic or Latino,North America,
-Caesar,57.72,12.94,11,Male ,Puerto Rican,Hispanic or Latino,North America,
-Caesar,56.70,5.57,3,Male ,Spanish/Hispanic Other,Hispanic or Latino,North America,
-Caesar,57.97,1.60,872,Male ,Caucasian,White ,North America,
-Caesar,55.23,1.68,342.00,Female,Not specified,Not specified,North America,18-29
-Caesar,55.23,1.73,485.00,Female,Not specified,Not specified,North America,30-40
-Caesar,55.19,1.62,371.00,Female,Not specified,Not specified,North America,50-60
-Caesar,55.01,1.64,65.00,Female,Not specified,Not specified,North America,60+
-Caesar,57.76,1.74,308.00,Male ,Not specified,Not specified,North America,18-29
-Caesar,57.86,1.58,460.00,Male ,Not specified,Not specified,North America,30-40
-Caesar,58.03,1.68,307.00,Male ,Not specified,Not specified,North America,50-60
-Caesar,57.69,1.58,52.00,Male ,Not specified,Not specified,North America,60+
+Caesar,561.31,22.04,147,Female,African American,Black ,North America,
+Caesar,520.50,13.77,4,Female,Asian/Pacific Islander Asian Indian,Asian +  Pacific Islander,North America,
+Caesar,544.87,15.11,45,Female,Asian/Pacific Islander Chinese,Asian +  Pacific Islander,North America,
+Caesar,540.56,14.82,16,Female,Asian/Pacific Islander Filipano,Asian +  Pacific Islander,North America,
+Caesar,542.29,15.69,7,Female,Asian/Pacific Islander Japanese,Asian +  Pacific Islander,North America,
+Caesar,556.00,8.54,7,Female,Asian/Pacific Islander Korean,Asian +  Pacific Islander,North America,
+Caesar,541.67,7.51,3,Female,Asian/Pacific Islander Other,Asian +  Pacific Islander,North America,
+Caesar,543.55,14.51,11,Female,Asian/Pacific Islander Vietnamese,Asian +  Pacific Islander,North America,
+Caesar,575.00,22.49,4,Female,Native American/Alaskan, Pacific Islander,North America,
+Caesar,550.80,23.64,5,Female,Other,Other,North America,
+Caesar,556.96,24.25,25,Female,Other,Other,North America,
+Caesar,555.00,19.43,7,Female,Other,Other,North America,
+Caesar,554.38,21.74,8,Female,Hispanic,Hispanic or Latino,North America,
+Caesar,549.50,22.79,8,Female,Spanish/Hispanic Other,Hispanic or Latino,North America,
+Caesar,559.00,11.31,2,Female,Puerto Rican,Hispanic or Latino,North America,
+Caesar,551.25,15.48,964,Female,Caucasian,White ,North America,
+Caesar,581.83,18.55,116,Male ,African American,Black ,North America,
+Caesar,567.62,14.84,13,Male ,Asian/Pacific Islander Asian Indian,Asian +  Pacific Islander,North America,
+Caesar,567.89,14.22,38,Male ,Asian/Pacific Islander Chinese,Asian +  Pacific Islander,North America,
+Caesar,565.92,21.75,13,Male ,Asian/Pacific Islander Filipano,Asian +  Pacific Islander,North America,
+Caesar,574.67,13.47,9,Male ,Asian/Pacific Islander Japanese,Asian +  Pacific Islander,North America,
+Caesar,581.00,19.41,4,Male ,Asian/Pacific Islander Korean,Asian +  Pacific Islander,North America,
+Caesar,581.00,18.38,2,Male ,Asian/Pacific Islander Other,Asian +  Pacific Islander,North America,
+Caesar,543.75,10.44,4,Male ,Asian/Pacific Islander Vietnamese,Asian +  Pacific Islander,North America,
+Caesar,574.33,2.08,3,Male ,Native American/Alaskan, Pacific Islander,North America,
+Caesar,578.25,15.84,4,Male ,Other,Other,North America,
+Caesar,584.83,15.47,12,Male ,Other,Other,North America,
+Caesar,568.25,11.95,4,Male ,Other,Other,North America,
+Caesar,572.33,7.37,3,Male ,Hispanic,Hispanic or Latino,North America,
+Caesar,574.75,15.48,16,Male ,Spanish/Hispanic Other,Hispanic or Latino,North America,
+Caesar,577.18,12.94,11,Male ,Puerto Rican,Hispanic or Latino,North America,
+Caesar,567.00,5.57,3,Male ,Spanish/Hispanic Other,Hispanic or Latino,North America,
+Caesar,579.70,15.97,872,Male ,Caucasian,White ,North America,
+Caesar,552.30,16.83,313,Female,Not specified,Not specified,North America,18-29
+Caesar,552.32,17.34,338,Female,Not specified,Not specified,North America,30-40
+Caesar,551.85,16.18,207,Female,Not specified,Not specified,North America,50-60
+Caesar,550.14,16.37,83,Female,Not specified,Not specified,North America,60+
+Caesar,577.63,17.44,283,Male ,Not specified,Not specified,North America,18-29
+Caesar,578.61,15.76,345,Male ,Not specified,Not specified,North America,30-40
+Caesar,580.27,16.81,189,Male ,Not specified,Not specified,North America,50-60
+Caesar,576.93,15.80,61,Male ,Not specified,Not specified,North America,60+
